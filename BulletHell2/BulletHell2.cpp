@@ -52,18 +52,18 @@ void BulletHell2::run()
 	float target_fps = 60; //should be set as a constant later.
 	float millis_per_frame = 1000/target_fps;
 	
-	LARGE_INTEGER StartingTime, EndingTime, ElapsedMiilliseconds;
-	LARGE_INTEGER Frequency;
+	uint64_t StartingTime, EndingTime, ElapsedMiilliseconds;
+	uint64_t Frequency;
 	
-	QueryPerformanceFrequency(&Frequency); 
+	QueryPerformanceFrequency((LARGE_INTEGER*)&Frequency); 
 	
-	QueryPerformanceCounter(&StartingTime);
+	QueryPerformanceCounter((LARGE_INTEGER*)&StartingTime);
 	
 	//run game "main loop" here.
 	while(true)
 	{
-		QueryPerformanceCounter(&EndingTime);
-		ElapsedMilliseconds.QuadPart = EndingTime.QuadPart - StartingTime.QuadPart;
+		QueryPerformanceCounter((LARGE_INTEGER*)&EndingTime);
+		ElapsedMilliseconds = EndingTime - StartingTime;
 		
 		//
 		// We now have the elapsed number of ticks, along with the
@@ -73,12 +73,12 @@ void BulletHell2::run()
 		// to microseconds before dividing by ticks-per-second.
 		//
 		
-		ElapsedMilliseconds.QuadPart *= 1000;
-		ElapsedMilliseconds.QuadPart /= Frequency.QuadPart;
+		ElapsedMilliseconds *= 1000;
+		ElapsedMilliseconds /= Frequency;
 		
-		update((float)ElapsedMilliseconds.QuardPart/millis_per_frame);
+		update((float)ElapsedMilliseconds/millis_per_frame);
 		
-		QueryPerformanceCounter(&StartingTime);
+		QueryPerformanceCounter((LARGE_INTEGER*)&StartingTime);
 	}
 
 	//we need an idea of a "level"
