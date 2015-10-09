@@ -122,6 +122,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="bhmain.cpp" />
+    <ClCompile Include="BulletHell2.cpp" />
     <ClCompile Include="entity.cpp" />
     <ClCompile Include="geometry.cpp" />
     <ClCompile Include="lpng\adler32.c" />
@@ -156,7 +157,9 @@
     <ClCompile Include="lpng\zutil.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BulletHell2.hpp" />
     <ClInclude Include="component.hpp" />
+    <ClInclude Include="components.hpp" />
     <ClInclude Include="entity.hpp" />
     <ClInclude Include="Functions.h" />
     <ClInclude Include="geometry.hpp" />
@@ -165,19 +168,6 @@
     <ClInclude Include="glew\GL\wglew.h" />
     <ClInclude Include="glfw_include\GLFW\glfw3.h" />
     <ClInclude Include="glfw_include\GLFW\glfw3native.h" />
-    <ClInclude Include="lpng\crc32.h" />
-    <ClInclude Include="lpng\deflate.h" />
-    <ClInclude Include="lpng\inffast.h" />
-    <ClInclude Include="lpng\inffixed.h" />
-    <ClInclude Include="lpng\inflate.h" />
-    <ClInclude Include="lpng\inftrees.h" />
-    <ClInclude Include="lpng\png.h" />
-    <ClInclude Include="lpng\pngconf.h" />
-    <ClInclude Include="lpng\trees.h" />
-    <ClInclude Include="lpng\zconf.h" />
-    <ClInclude Include="lpng\zconf.in.h" />
-    <ClInclude Include="lpng\zlib.h" />
-    <ClInclude Include="lpng\zutil.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="glew32.dll" />

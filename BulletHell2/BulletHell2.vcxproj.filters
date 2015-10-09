@@ -22,8 +22,35 @@
     <Filter Include="Resource Files\libs">
       <UniqueIdentifier>{e2202692-9ee3-44aa-ab74-c43626286053}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\GLFW">
-      <UniqueIdentifier>{277ca81c-73d3-498b-bb0c-2b0c577adb88}</UniqueIdentifier>
+    <Filter Include="Header Files\Managers">
+      <UniqueIdentifier>{ae4d5ed9-710f-49cf-8db4-b4e409e4a9f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game Engine">
+      <UniqueIdentifier>{bb0870c1-3e14-4ce2-9892-c7b67bc74c1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game Engine">
+      <UniqueIdentifier>{187a5377-8201-44fb-8963-229846e32771}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game Engine\Entity System">
+      <UniqueIdentifier>{508b0831-377b-4e66-b777-ebd5292db6b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game Engine\Entity System">
+      <UniqueIdentifier>{927ec997-c71f-4ae5-bb39-9c02569fc99e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game Engine\Geometry">
+      <UniqueIdentifier>{fb8cbf6b-317a-4496-a16e-ae7ca7c1c4d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game Engine\Geometry">
+      <UniqueIdentifier>{8c031793-75b0-4baf-a6a7-4a42de655955}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game Engine\Application">
+      <UniqueIdentifier>{20ffd586-ef69-41f8-be32-aa6255c4bb5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game Engine\Application">
+      <UniqueIdentifier>{01bba54e-e1d3-4d7d-86a5-15a6876e72b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Components">
+      <UniqueIdentifier>{459bc114-4221-4792-b2f4-99be444ca905}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\GL">
       <UniqueIdentifier>{f757423b-2b30-4783-b1be-a49925d27205}</UniqueIdentifier>
@@ -37,10 +64,13 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="entity.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Game Engine\Entity System</Filter>
     </ClCompile>
     <ClCompile Include="geometry.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Game Engine\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="BulletHell2.cpp">
+      <Filter>Source Files\Game Engine\Application</Filter>
     </ClCompile>
     <ClCompile Include="lpng\adler32.c">
       <Filter>libpng</Filter>
@@ -138,16 +168,25 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="entity.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Game Engine\Entity System</Filter>
     </ClInclude>
     <ClInclude Include="geometry.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Game Engine\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="glfw_include\GLFW\glfw3.h">
-      <Filter>Header Files\GLFW</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="glfw_include\GLFW\glfw3native.h">
-      <Filter>Header Files\GLFW</Filter>
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BulletHell2.hpp">
+      <Filter>Header Files\Game Engine\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="ManagerView.hpp">
+      <Filter>Header Files\Game Engine\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="components.hpp">
+      <Filter>Header Files\Components</Filter>
     </ClInclude>
     <ClInclude Include="glew\GL\glew.h">
       <Filter>Header Files\GL</Filter>

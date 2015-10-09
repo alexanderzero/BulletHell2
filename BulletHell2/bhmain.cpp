@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 
+#include "BulletHell2.hpp"
 #include "direct.h"
 #include "string.h"
 
@@ -65,6 +66,8 @@ int main(int argc, char** argv)
 	{
 		glfwTerminate();
 		std::cout << "GLFW window failed :<" << std::endl;
+
+
 		std::cin.get();
 		return 0;
 	}
@@ -98,6 +101,13 @@ int main(int argc, char** argv)
 
 	glfwDestroyWindow(window);
 	glfwTerminate();
+
+
+	BulletHell2 game;
+
+	game.startup();
+	game.run();
+	game.shutdown();
 	return 0;
 }
 

@@ -25,10 +25,10 @@ public:
 		*(T*)parent->addComponent(ClassComponentVTable<typename std::decay<T>::type>::get(), id) = std::forward<T>(component);
 	}
 
-	template <typename T>
-	T* create()
+	template <typename T, typename... Args>
+	T* create(Args&&... args)
 	{
-		return (T*)parent->addComponent(ClassComponentVTable<T>::get(), id);
+		return &(*(T*)parent->addComponent(ClassComponentVTable<T>::get(), id) = T(std::forward<Args>(args)...));
 	}
 
 	template <typename T>
