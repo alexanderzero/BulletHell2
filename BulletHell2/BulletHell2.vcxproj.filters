@@ -182,9 +182,6 @@
     <ClInclude Include="BulletHell2.hpp">
       <Filter>Header Files\Game Engine\Application</Filter>
     </ClInclude>
-    <ClInclude Include="ManagerView.hpp">
-      <Filter>Header Files\Game Engine\Application</Filter>
-    </ClInclude>
     <ClInclude Include="components.hpp">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
@@ -200,44 +197,11 @@
     <ClInclude Include="Functions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="lpng\crc32.h">
-      <Filter>libpng</Filter>
+    <ClInclude Include="NameIndex.hpp">
+      <Filter>Header Files\Managers</Filter>
     </ClInclude>
-    <ClInclude Include="lpng\deflate.h">
-      <Filter>libpng</Filter>
-    </ClInclude>
-    <ClInclude Include="lpng\inffast.h">
-      <Filter>libpng</Filter>
-    </ClInclude>
-    <ClInclude Include="lpng\inffixed.h">
-      <Filter>libpng</Filter>
-    </ClInclude>
-    <ClInclude Include="lpng\inflate.h">
-      <Filter>libpng</Filter>
-    </ClInclude>
-    <ClInclude Include="lpng\inftrees.h">
-      <Filter>libpng</Filter>
-    </ClInclude>
-    <ClInclude Include="lpng\png.h">
-      <Filter>libpng</Filter>
-    </ClInclude>
-    <ClInclude Include="lpng\pngconf.h">
-      <Filter>libpng</Filter>
-    </ClInclude>
-    <ClInclude Include="lpng\trees.h">
-      <Filter>libpng</Filter>
-    </ClInclude>
-    <ClInclude Include="lpng\zconf.h">
-      <Filter>libpng</Filter>
-    </ClInclude>
-    <ClInclude Include="lpng\zconf.in.h">
-      <Filter>libpng</Filter>
-    </ClInclude>
-    <ClInclude Include="lpng\zlib.h">
-      <Filter>libpng</Filter>
-    </ClInclude>
-    <ClInclude Include="lpng\zutil.h">
-      <Filter>libpng</Filter>
+    <ClInclude Include="constants.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

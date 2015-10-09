@@ -136,7 +136,7 @@ void init()
 	glVertexAttribPointer(TEX_ATTRIB, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 	int size = 64;
-	png_texture_load("..\\..\\png\\test1.png", &size, &size);
+	png_texture_load("png\\test1.png", &size, &size);
 
 	GLuint prog;
 	GLuint vert;
@@ -256,7 +256,7 @@ void read_shaders(std::string& vert_shader, std::string& frag_shader)
 	//std::string frag_shader;
 	std::string line;
 
-	std::ifstream vertfile("../../shaders/vertex_shader_1.txt");
+	std::ifstream vertfile("shaders/vertex_shader_1.txt");
 	if (vertfile.is_open())
 	{
 		while (getline(vertfile, line))
@@ -267,7 +267,7 @@ void read_shaders(std::string& vert_shader, std::string& frag_shader)
 		vertfile.close();
 	}
 
-	std::ifstream fragfile("../../shaders/fragment_shader_1.txt");
+	std::ifstream fragfile("shaders/fragment_shader_1.txt");
 	if (fragfile.is_open())
 	{
 		while (getline(fragfile, line))

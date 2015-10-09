@@ -21,3 +21,13 @@ struct PositionComponent
 	Vec2 pos;
 };
 
+
+struct SizeComponent
+{
+	SizeComponent() {}
+	SizeComponent(Vec2 pos_in) : sz(pos_in) {}
+	SizeComponent(float x, float y) : sz(Vec2(x, y)) {}
+	Vec2 sz;
+};
+
+struct CameraComponent {}; //makes is-a camera.

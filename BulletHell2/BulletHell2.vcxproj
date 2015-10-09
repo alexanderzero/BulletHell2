@@ -160,6 +160,7 @@
     <ClInclude Include="BulletHell2.hpp" />
     <ClInclude Include="component.hpp" />
     <ClInclude Include="components.hpp" />
+    <ClInclude Include="constants.hpp" />
     <ClInclude Include="entity.hpp" />
     <ClInclude Include="Functions.h" />
     <ClInclude Include="geometry.hpp" />
@@ -168,6 +169,7 @@
     <ClInclude Include="glew\GL\wglew.h" />
     <ClInclude Include="glfw_include\GLFW\glfw3.h" />
     <ClInclude Include="glfw_include\GLFW\glfw3native.h" />
+    <ClInclude Include="NameIndex.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="glew32.dll" />
