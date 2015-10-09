@@ -17,6 +17,7 @@ public:
 	void startup();
 	void run();
 	void shutdown();
+	void update(float delta);
 
 	BulletHellContext* context;
 };
