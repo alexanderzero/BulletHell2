@@ -22,6 +22,9 @@
     <Filter Include="Resource Files\libs">
       <UniqueIdentifier>{e2202692-9ee3-44aa-ab74-c43626286053}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\GLFW">
+      <UniqueIdentifier>{277ca81c-73d3-498b-bb0c-2b0c577adb88}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bhmain.cpp">
@@ -43,6 +46,12 @@
     </ClInclude>
     <ClInclude Include="geometry.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="glfw_include\GLFW\glfw3.h">
+      <Filter>Header Files\GLFW</Filter>
+    </ClInclude>
+    <ClInclude Include="glfw_include\GLFW\glfw3native.h">
+      <Filter>Header Files\GLFW</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

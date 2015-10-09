@@ -128,6 +128,8 @@
     <ClInclude Include="component.hpp" />
     <ClInclude Include="entity.hpp" />
     <ClInclude Include="geometry.hpp" />
+    <ClInclude Include="glfw_include\GLFW\glfw3.h" />
+    <ClInclude Include="glfw_include\GLFW\glfw3native.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="glfw3.dll" />
