@@ -28,6 +28,9 @@
     <Filter Include="Header Files\GL">
       <UniqueIdentifier>{f757423b-2b30-4783-b1be-a49925d27205}</UniqueIdentifier>
     </Filter>
+    <Filter Include="libpng">
+      <UniqueIdentifier>{f86c4dc9-94af-4356-8c8a-b1bb17bc391a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bhmain.cpp">
@@ -38,6 +41,96 @@
     </ClCompile>
     <ClCompile Include="geometry.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lpng\adler32.c">
+      <Filter>libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="lpng\compress.c">
+      <Filter>libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="lpng\crc32.c">
+      <Filter>libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="lpng\deflate.c">
+      <Filter>libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="lpng\gzio.c">
+      <Filter>libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="lpng\infback.c">
+      <Filter>libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="lpng\inffast.c">
+      <Filter>libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="lpng\inflate.c">
+      <Filter>libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="lpng\inftrees.c">
+      <Filter>libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="lpng\minigzip.c">
+      <Filter>libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="lpng\png.c">
+      <Filter>libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="lpng\pngerror.c">
+      <Filter>libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="lpng\pnggccrd.c">
+      <Filter>libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="lpng\pngget.c">
+      <Filter>libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="lpng\pngmem.c">
+      <Filter>libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="lpng\pngpread.c">
+      <Filter>libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="lpng\pngread.c">
+      <Filter>libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="lpng\pngrio.c">
+      <Filter>libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="lpng\pngrtran.c">
+      <Filter>libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="lpng\pngrutil.c">
+      <Filter>libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="lpng\pngset.c">
+      <Filter>libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="lpng\pngtrans.c">
+      <Filter>libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="lpng\pngvcrd.c">
+      <Filter>libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="lpng\pngwio.c">
+      <Filter>libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="lpng\pngwrite.c">
+      <Filter>libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="lpng\pngwtran.c">
+      <Filter>libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="lpng\pngwutil.c">
+      <Filter>libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="lpng\trees.c">
+      <Filter>libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="lpng\uncompr.c">
+      <Filter>libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="lpng\zutil.c">
+      <Filter>libpng</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -68,6 +161,45 @@
     <ClInclude Include="Functions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="lpng\crc32.h">
+      <Filter>libpng</Filter>
+    </ClInclude>
+    <ClInclude Include="lpng\deflate.h">
+      <Filter>libpng</Filter>
+    </ClInclude>
+    <ClInclude Include="lpng\inffast.h">
+      <Filter>libpng</Filter>
+    </ClInclude>
+    <ClInclude Include="lpng\inffixed.h">
+      <Filter>libpng</Filter>
+    </ClInclude>
+    <ClInclude Include="lpng\inflate.h">
+      <Filter>libpng</Filter>
+    </ClInclude>
+    <ClInclude Include="lpng\inftrees.h">
+      <Filter>libpng</Filter>
+    </ClInclude>
+    <ClInclude Include="lpng\png.h">
+      <Filter>libpng</Filter>
+    </ClInclude>
+    <ClInclude Include="lpng\pngconf.h">
+      <Filter>libpng</Filter>
+    </ClInclude>
+    <ClInclude Include="lpng\trees.h">
+      <Filter>libpng</Filter>
+    </ClInclude>
+    <ClInclude Include="lpng\zconf.h">
+      <Filter>libpng</Filter>
+    </ClInclude>
+    <ClInclude Include="lpng\zconf.in.h">
+      <Filter>libpng</Filter>
+    </ClInclude>
+    <ClInclude Include="lpng\zlib.h">
+      <Filter>libpng</Filter>
+    </ClInclude>
+    <ClInclude Include="lpng\zutil.h">
+      <Filter>libpng</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="glfw3.dll">
@@ -90,5 +222,18 @@
     <Library Include="glew\glew32s.lib">
       <Filter>Resource Files\libs</Filter>
     </Library>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="png\test1.png">
+      <Filter>Resource Files\png</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="shaders\fragment_shader_1.txt">
+      <Filter>Resource Files\shaders</Filter>
+    </Text>
+    <Text Include="shaders\vertex_shader_1.txt">
+      <Filter>Resource Files\shaders</Filter>
+    </Text>
   </ItemGroup>
 </Project>

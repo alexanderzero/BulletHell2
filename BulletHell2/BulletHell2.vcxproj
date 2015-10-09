@@ -85,6 +85,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>glew;glfw_include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -123,6 +124,36 @@
     <ClCompile Include="bhmain.cpp" />
     <ClCompile Include="entity.cpp" />
     <ClCompile Include="geometry.cpp" />
+    <ClCompile Include="lpng\adler32.c" />
+    <ClCompile Include="lpng\compress.c" />
+    <ClCompile Include="lpng\crc32.c" />
+    <ClCompile Include="lpng\deflate.c" />
+    <ClCompile Include="lpng\gzio.c" />
+    <ClCompile Include="lpng\infback.c" />
+    <ClCompile Include="lpng\inffast.c" />
+    <ClCompile Include="lpng\inflate.c" />
+    <ClCompile Include="lpng\inftrees.c" />
+    <ClCompile Include="lpng\minigzip.c" />
+    <ClCompile Include="lpng\png.c" />
+    <ClCompile Include="lpng\pngerror.c" />
+    <ClCompile Include="lpng\pnggccrd.c" />
+    <ClCompile Include="lpng\pngget.c" />
+    <ClCompile Include="lpng\pngmem.c" />
+    <ClCompile Include="lpng\pngpread.c" />
+    <ClCompile Include="lpng\pngread.c" />
+    <ClCompile Include="lpng\pngrio.c" />
+    <ClCompile Include="lpng\pngrtran.c" />
+    <ClCompile Include="lpng\pngrutil.c" />
+    <ClCompile Include="lpng\pngset.c" />
+    <ClCompile Include="lpng\pngtrans.c" />
+    <ClCompile Include="lpng\pngvcrd.c" />
+    <ClCompile Include="lpng\pngwio.c" />
+    <ClCompile Include="lpng\pngwrite.c" />
+    <ClCompile Include="lpng\pngwtran.c" />
+    <ClCompile Include="lpng\pngwutil.c" />
+    <ClCompile Include="lpng\trees.c" />
+    <ClCompile Include="lpng\uncompr.c" />
+    <ClCompile Include="lpng\zutil.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="component.hpp" />
@@ -134,6 +165,19 @@
     <ClInclude Include="glew\GL\wglew.h" />
     <ClInclude Include="glfw_include\GLFW\glfw3.h" />
     <ClInclude Include="glfw_include\GLFW\glfw3native.h" />
+    <ClInclude Include="lpng\crc32.h" />
+    <ClInclude Include="lpng\deflate.h" />
+    <ClInclude Include="lpng\inffast.h" />
+    <ClInclude Include="lpng\inffixed.h" />
+    <ClInclude Include="lpng\inflate.h" />
+    <ClInclude Include="lpng\inftrees.h" />
+    <ClInclude Include="lpng\png.h" />
+    <ClInclude Include="lpng\pngconf.h" />
+    <ClInclude Include="lpng\trees.h" />
+    <ClInclude Include="lpng\zconf.h" />
+    <ClInclude Include="lpng\zconf.in.h" />
+    <ClInclude Include="lpng\zlib.h" />
+    <ClInclude Include="lpng\zutil.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="glew32.dll" />
@@ -144,6 +188,13 @@
     <Library Include="glew\glew32s.lib" />
     <Library Include="glfw3.lib" />
     <Library Include="glfw3dll.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="png\test1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="shaders\fragment_shader_1.txt" />
+    <Text Include="shaders\vertex_shader_1.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
