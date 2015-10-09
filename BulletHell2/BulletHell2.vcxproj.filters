@@ -13,6 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Resource Files\png">
+      <UniqueIdentifier>{f073e74d-1d39-47f5-a91d-02db2ad054ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\shaders">
+      <UniqueIdentifier>{0a0b28b0-3d90-4551-9aef-ea628b495137}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\libs">
+      <UniqueIdentifier>{e2202692-9ee3-44aa-ab74-c43626286053}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bhmain.cpp">
@@ -35,5 +44,15 @@
     <ClInclude Include="geometry.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="glfw3.dll">
+      <Filter>Resource Files\libs</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="glfw3.lib">
+      <Filter>Resource Files\libs</Filter>
+    </Library>
   </ItemGroup>
 </Project>
