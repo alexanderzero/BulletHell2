@@ -7,6 +7,13 @@
 #include "NameIndex.hpp"
 #include "constants.hpp"
 
+//what's in a player?
+//what's in a level?
+//what's in an enemy? a bullet?
+//DEFINE DATA HERE!
+
+
+
 Entity createPlayer(BulletHellContext* ctxt)
 {
 	Entity out(ctxt->eSystem);
@@ -36,7 +43,6 @@ void BulletHell2::startup()
 	auto eSystem = context->eSystem = new EntitySystem;
 	auto managers = context->managers = new ManagerView;
 	managers->nameIndex = new NameIndex;
-	
 
 	//link things together that need to know about each other.
 	eSystem->installListener(managers->nameIndex);
