@@ -54,5 +54,8 @@
     <Library Include="glfw3.lib">
       <Filter>Resource Files\libs</Filter>
     </Library>
+    <Library Include="glfw3dll.lib">
+      <Filter>Resource Files\libs</Filter>
+    </Library>
   </ItemGroup>
 </Project>
