@@ -118,7 +118,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="bhmain.cpp" />
+    <ClCompile Include="entity.cpp" />
+    <ClCompile Include="geometry.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="component.hpp" />
+    <ClInclude Include="entity.hpp" />
+    <ClInclude Include="geometry.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
