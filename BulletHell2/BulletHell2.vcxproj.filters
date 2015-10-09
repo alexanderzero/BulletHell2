@@ -43,6 +43,15 @@
     <Filter Include="Source Files\Game Engine\Geometry">
       <UniqueIdentifier>{8c031793-75b0-4baf-a6a7-4a42de655955}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Game Engine\Application">
+      <UniqueIdentifier>{20ffd586-ef69-41f8-be32-aa6255c4bb5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game Engine\Application">
+      <UniqueIdentifier>{01bba54e-e1d3-4d7d-86a5-15a6876e72b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Components">
+      <UniqueIdentifier>{459bc114-4221-4792-b2f4-99be444ca905}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bhmain.cpp">
@@ -53,6 +62,9 @@
     </ClCompile>
     <ClCompile Include="geometry.cpp">
       <Filter>Source Files\Game Engine\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="BulletHell2.cpp">
+      <Filter>Source Files\Game Engine\Application</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -65,6 +77,21 @@
     <ClInclude Include="geometry.hpp">
       <Filter>Header Files\Game Engine\Geometry</Filter>
     </ClInclude>
+    <ClInclude Include="glfw_include\GLFW\glfw3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="glfw_include\GLFW\glfw3native.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BulletHell2.hpp">
+      <Filter>Header Files\Game Engine\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="ManagerView.hpp">
+      <Filter>Header Files\Game Engine\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="components.hpp">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="glfw3.dll">
@@ -75,5 +102,6 @@
     <Library Include="glfw3.lib">
       <Filter>Resource Files\libs</Filter>
     </Library>
+    <Library Include="glfw3dll.lib" />
   </ItemGroup>
 </Project>

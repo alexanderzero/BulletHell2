@@ -121,15 +121,19 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="bhmain.cpp" />
+    <ClCompile Include="BulletHell2.cpp" />
     <ClCompile Include="entity.cpp" />
     <ClCompile Include="geometry.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BulletHell2.hpp" />
     <ClInclude Include="component.hpp" />
+    <ClInclude Include="components.hpp" />
     <ClInclude Include="entity.hpp" />
     <ClInclude Include="geometry.hpp" />
     <ClInclude Include="glfw_include\GLFW\glfw3.h" />
     <ClInclude Include="glfw_include\GLFW\glfw3native.h" />
+    <ClInclude Include="ManagerView.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="glfw3.dll" />
