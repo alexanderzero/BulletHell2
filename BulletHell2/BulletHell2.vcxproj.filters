@@ -25,6 +25,9 @@
     <Filter Include="Header Files\GLFW">
       <UniqueIdentifier>{277ca81c-73d3-498b-bb0c-2b0c577adb88}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\GL">
+      <UniqueIdentifier>{f757423b-2b30-4783-b1be-a49925d27205}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bhmain.cpp">
@@ -53,9 +56,24 @@
     <ClInclude Include="glfw_include\GLFW\glfw3native.h">
       <Filter>Header Files\GLFW</Filter>
     </ClInclude>
+    <ClInclude Include="glew\GL\glew.h">
+      <Filter>Header Files\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="glew\GL\glxew.h">
+      <Filter>Header Files\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="glew\GL\wglew.h">
+      <Filter>Header Files\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="Functions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="glfw3.dll">
+      <Filter>Resource Files\libs</Filter>
+    </None>
+    <None Include="glew32.dll">
       <Filter>Resource Files\libs</Filter>
     </None>
   </ItemGroup>
@@ -64,6 +82,12 @@
       <Filter>Resource Files\libs</Filter>
     </Library>
     <Library Include="glfw3dll.lib">
+      <Filter>Resource Files\libs</Filter>
+    </Library>
+    <Library Include="glew\glew32.lib">
+      <Filter>Resource Files\libs</Filter>
+    </Library>
+    <Library Include="glew\glew32s.lib">
       <Filter>Resource Files\libs</Filter>
     </Library>
   </ItemGroup>

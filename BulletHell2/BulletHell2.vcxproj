@@ -84,11 +84,11 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>glfw_include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>glew;glfw_include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3dll.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3dll.lib;glew/glew32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -127,14 +127,21 @@
   <ItemGroup>
     <ClInclude Include="component.hpp" />
     <ClInclude Include="entity.hpp" />
+    <ClInclude Include="Functions.h" />
     <ClInclude Include="geometry.hpp" />
+    <ClInclude Include="glew\GL\glew.h" />
+    <ClInclude Include="glew\GL\glxew.h" />
+    <ClInclude Include="glew\GL\wglew.h" />
     <ClInclude Include="glfw_include\GLFW\glfw3.h" />
     <ClInclude Include="glfw_include\GLFW\glfw3native.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="glew32.dll" />
     <None Include="glfw3.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Library Include="glew\glew32.lib" />
+    <Library Include="glew\glew32s.lib" />
     <Library Include="glfw3.lib" />
     <Library Include="glfw3dll.lib" />
   </ItemGroup>
