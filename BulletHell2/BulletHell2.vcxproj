@@ -155,6 +155,7 @@
     <ClCompile Include="lpng\trees.c" />
     <ClCompile Include="lpng\uncompr.c" />
     <ClCompile Include="lpng\zutil.c" />
+    <ClCompile Include="sprite.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BulletHell2.hpp" />
@@ -168,6 +169,7 @@
     <ClInclude Include="glew\GL\wglew.h" />
     <ClInclude Include="glfw_include\GLFW\glfw3.h" />
     <ClInclude Include="glfw_include\GLFW\glfw3native.h" />
+    <ClInclude Include="sprite.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="glew32.dll" />
