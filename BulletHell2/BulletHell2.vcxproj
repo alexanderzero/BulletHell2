@@ -123,6 +123,7 @@
   <ItemGroup>
     <ClCompile Include="bhmain.cpp" />
     <ClCompile Include="BulletHell2.cpp" />
+    <ClCompile Include="constants.cpp" />
     <ClCompile Include="entity.cpp" />
     <ClCompile Include="geometry.cpp" />
     <ClCompile Include="lpng\adler32.c" />
@@ -155,9 +156,11 @@
     <ClCompile Include="lpng\trees.c" />
     <ClCompile Include="lpng\uncompr.c" />
     <ClCompile Include="lpng\zutil.c" />
+    <ClCompile Include="NameIndex.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BulletHell2.hpp" />
+    <ClInclude Include="CameraManager.hpp" />
     <ClInclude Include="component.hpp" />
     <ClInclude Include="components.hpp" />
     <ClInclude Include="constants.hpp" />

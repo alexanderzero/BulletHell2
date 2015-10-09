@@ -2,7 +2,7 @@
 
 //forward decls only!
 class EntitySystem;
-class ManagerView;
+struct ManagerView;
 
 //struct of forward decls, access what globals you want here
 struct BulletHellContext

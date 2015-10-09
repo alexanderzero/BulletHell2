@@ -46,6 +46,13 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 int main(int argc, char** argv)
 {
+	BulletHell2 game;
+
+	game.startup();
+	game.run();
+	game.shutdown();
+
+
 	if (!glfwInit())
 	{
 		std::cout << "GLFW init failed :<" << std::endl;
@@ -103,11 +110,7 @@ int main(int argc, char** argv)
 	glfwTerminate();
 
 
-	BulletHell2 game;
 
-	game.startup();
-	game.run();
-	game.shutdown();
 	return 0;
 }
 

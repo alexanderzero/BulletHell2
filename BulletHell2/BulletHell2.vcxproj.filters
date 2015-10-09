@@ -58,6 +58,9 @@
     <Filter Include="libpng">
       <UniqueIdentifier>{f86c4dc9-94af-4356-8c8a-b1bb17bc391a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Manager">
+      <UniqueIdentifier>{0a2b3f97-590c-47c1-8c30-45a13fd15b63}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bhmain.cpp">
@@ -162,6 +165,12 @@
     <ClCompile Include="lpng\zutil.c">
       <Filter>libpng</Filter>
     </ClCompile>
+    <ClCompile Include="constants.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NameIndex.cpp">
+      <Filter>Source Files\Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="component.hpp">
@@ -202,6 +211,9 @@
     </ClInclude>
     <ClInclude Include="constants.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraManager.hpp">
+      <Filter>Header Files\Managers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

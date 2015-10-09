@@ -11,29 +11,33 @@ class Entity
 public:
 	Entity(EntitySystem* e = nullptr);  //if not entity system, nothing works, but you can re-assign as a different entity later.
 	void destroy(); //it's easy to leak in this engine by not destroying... do careful!
-	void sendUpdate();
+	void update();
 
 	template <typename T>
 	T* get()
 	{
+		if (!parent) return nullptr;
 		return (T*)parent->getComponent(ClassComponentVTable<T>::get(), id);
 	}
 
 	template <typename T>
 	void set(T&& component)
 	{
+		if (!parent) return;
 		*(T*)parent->addComponent(ClassComponentVTable<typename std::decay<T>::type>::get(), id) = std::forward<T>(component);
 	}
 
 	template <typename T, typename... Args>
 	T* create(Args&&... args)
 	{
+		if (!parent) return nullptr;
 		return &(*(T*)parent->addComponent(ClassComponentVTable<T>::get(), id) = T(std::forward<Args>(args)...));
 	}
 
 	template <typename T>
 	void remove()
 	{
+		if (!parent) return;
 		parent->removeComponent(ClassComponentVTable<T>::get(), id);
 	}
 
@@ -45,6 +49,16 @@ public:
 private:
 	EntityID id;
 	EntitySystem* parent;
+};
+
+extern Entity nullEntity; //special entity marking it as "false"
+
+
+class EntitySystemListener
+{
+public:
+	virtual void onNewEntity(Entity e) = 0;
+	virtual void onDestroyEntity(Entity e) = 0;
 };
 
 class EntitySystem
@@ -59,6 +73,9 @@ public:
 	//low-level memory management.
 	EntityID allocID();
 	void freeID(EntityID id);
+
+	void installListener(EntitySystemListener* listener);
+	void uninstallListener(EntitySystemListener* listener);
 
 	void* addComponent(ComponentVTable* vtable, EntityID id);
 	void* getComponent(ComponentVTable* vtable, EntityID id);
