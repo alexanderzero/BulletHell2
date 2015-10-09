@@ -49,7 +49,37 @@ void BulletHell2::startup()
 }
 void BulletHell2::run()
 {
+	float target_fps = 60; //should be set as a constant later.
+	float millis_per_frame = 1000/target_fps;
+	
+	LARGE_INTEGER StartingTime, EndingTime, ElapsedMiilliseconds;
+	LARGE_INTEGER Frequency;
+	
+	QueryPerformanceFrequency(&Frequency); 
+	
+	QueryPerformanceCounter(&StartingTime);
+	
 	//run game "main loop" here.
+	while(true)
+	{
+		QueryPerformanceCounter(&EndingTime);
+		ElapsedMilliseconds.QuadPart = EndingTime.QuadPart - StartingTime.QuadPart;
+		
+		//
+		// We now have the elapsed number of ticks, along with the
+		// number of ticks-per-second. We use these values
+		// to convert to the number of elapsed microseconds.
+		// To guard against loss-of-precision, we convert
+		// to microseconds before dividing by ticks-per-second.
+		//
+		
+		ElapsedMilliseconds.QuadPart *= 1000;
+		ElapsedMilliseconds.QuadPart /= Frequency.QuadPart;
+		
+		update((float)ElapsedMilliseconds.QuardPart/millis_per_frame);
+		
+		QueryPerformanceCounter(&StartingTime);
+	}
 
 	//we need an idea of a "level"
 	auto ent = createPlayer(context);
@@ -73,3 +103,10 @@ void BulletHell2::shutdown()
 	delete context;
 }
 
+//delta is the fraction of time relative to a single frame at your target framerate
+//If the delta value is 0.5, half a frame of your target framerate is passed
+//If the delta value is 2.0, two frames of your target framerate is passed
+void BulletHell2::update(float delta)
+{
+	
+}
