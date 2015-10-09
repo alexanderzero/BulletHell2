@@ -3,6 +3,9 @@
 #include <fstream>
 
 #include "BulletHell2.hpp"
+#include "direct.h"
+#include "string.h"
+
 #include "Functions.h"
 
 #include "lpng/png.h"
@@ -65,7 +68,7 @@ int main(int argc, char** argv)
 		std::cout << "GLFW window failed :<" << std::endl;
 
 
-	std::cin.get();
+		std::cin.get();
 		return 0;
 	}
 
@@ -111,6 +114,17 @@ int main(int argc, char** argv)
 
 void init()
 {
+	char* buffer;
+
+	// Get the current working directory: 
+	if ((buffer = _getcwd(NULL, 0)) == NULL)
+		perror("_getcwd error");
+	else
+	{
+		printf("%s \nLength: %d\n", buffer, strnlen(buffer,99999));
+		free(buffer);
+	}
+
 	GLuint vao;
 	//GLuint bufs[2];
 	GLuint bufs[3];
