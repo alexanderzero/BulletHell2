@@ -22,16 +22,37 @@
     <Filter Include="Resource Files\libs">
       <UniqueIdentifier>{e2202692-9ee3-44aa-ab74-c43626286053}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Managers">
+      <UniqueIdentifier>{ae4d5ed9-710f-49cf-8db4-b4e409e4a9f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game Engine">
+      <UniqueIdentifier>{bb0870c1-3e14-4ce2-9892-c7b67bc74c1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game Engine">
+      <UniqueIdentifier>{187a5377-8201-44fb-8963-229846e32771}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game Engine\Entity System">
+      <UniqueIdentifier>{508b0831-377b-4e66-b777-ebd5292db6b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game Engine\Entity System">
+      <UniqueIdentifier>{927ec997-c71f-4ae5-bb39-9c02569fc99e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game Engine\Geometry">
+      <UniqueIdentifier>{fb8cbf6b-317a-4496-a16e-ae7ca7c1c4d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game Engine\Geometry">
+      <UniqueIdentifier>{8c031793-75b0-4baf-a6a7-4a42de655955}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bhmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="entity.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Game Engine\Entity System</Filter>
     </ClCompile>
     <ClCompile Include="geometry.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Game Engine\Geometry</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -39,10 +60,10 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="entity.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Game Engine\Entity System</Filter>
     </ClInclude>
     <ClInclude Include="geometry.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Game Engine\Geometry</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
