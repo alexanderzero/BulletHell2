@@ -7,6 +7,12 @@
 #include "NameIndex.hpp"
 #include "constants.hpp"
 
+#include "Time.hpp"
+#include "EntitySystemView.hpp"
+
+#include "window.hpp"
+
+
 //what's in a player?
 //what's in a level?
 //what's in an enemy? a bullet?
@@ -14,10 +20,13 @@
 
 
 
+
+EntitySystem* eSystem;
+
 Entity createPlayer(BulletHellContext* ctxt)
 {
-	Entity out(ctxt->eSystem);
-	entitySetName(ctxt, out, "player");
+	Entity out(ctxt->world);
+	entitySetName(ctxt->world, out, "player");
 	out.create<PositionComponent>(10.0f, 10.0f);
 
 	out.update();
@@ -26,8 +35,8 @@ Entity createPlayer(BulletHellContext* ctxt)
 
 Entity createCamera(BulletHellContext* ctxt)
 {
-	Entity out(ctxt->eSystem);
-	entitySetName(ctxt, out, "camera");
+	Entity out(ctxt->world);
+	entitySetName(ctxt->world, out, "camera");
 	out.create<PositionComponent>(constants::cameraSize.x/2, 0.0f);
 	out.create<SizeComponent>(constants::cameraSize);
 	out.create<CameraComponent>();
@@ -39,52 +48,60 @@ Entity createCamera(BulletHellContext* ctxt)
 void BulletHell2::startup()
 {
 	//game initialization, create everything here and hook it all up.
-	context = new BulletHellContext;
-	auto eSystem = context->eSystem = new EntitySystem;
-	auto managers = context->managers = new ManagerView;
-	managers->nameIndex = new NameIndex;
+
+   //global systems
+   timeStart();
+  
+
+   //context stuff
+	context = new BulletHellContext;   
+
+
+   //game tick
+   context->currentTick = 0;
+
+   //game window
+   WindowInit windowInitData;
+   windowInitData.width = constants::defaultResolutionWidth;
+   windowInitData.height = constants::defaultResolutionHeight;
+   windowInitData.title = constants::windowTitle;
+   context->window = new Window(windowInitData);
+
+   //entity system stuff
+	auto eSystemView = context->world = new EntitySystemView;
+   auto eSystem = eSystemView->system = new EntitySystem;
+   eSystemView->nameIndex = new NameIndex;
 
 	//link things together that need to know about each other.
-	eSystem->installListener(managers->nameIndex);
+   eSystem->installListener(eSystemView->nameIndex);
 }
 void BulletHell2::run()
 {
-	float target_fps = 60; //should be set as a constant later.
-	float millis_per_frame = 1000/target_fps;
-	
-	uint64_t StartingTime, EndingTime, ElapsedMiilliseconds;
-	uint64_t Frequency;
-	
-	QueryPerformanceFrequency((LARGE_INTEGER*)&Frequency); 
-	
-	QueryPerformanceCounter((LARGE_INTEGER*)&StartingTime);
+   auto prevTime = timeCurrentMicroseconds();
+
+
+   //we need an idea of a "level"
+   auto ent = createPlayer(context);
+   auto cam = createCamera(context);
+
 	
 	//run game "main loop" here.
-	while(true)
+	while(context->window->isOpen())
 	{
-		QueryPerformanceCounter((LARGE_INTEGER*)&EndingTime);
-		ElapsedMilliseconds = EndingTime - StartingTime;
-		
-		//
-		// We now have the elapsed number of ticks, along with the
-		// number of ticks-per-second. We use these values
-		// to convert to the number of elapsed microseconds.
-		// To guard against loss-of-precision, we convert
-		// to microseconds before dividing by ticks-per-second.
-		//
-		
-		ElapsedMilliseconds *= 1000;
-		ElapsedMilliseconds /= Frequency;
-		
-		update((float)ElapsedMilliseconds/millis_per_frame);
-		
-		QueryPerformanceCounter((LARGE_INTEGER*)&StartingTime);
+      auto currentTime = timeCurrentMicroseconds();
+      auto elapsedTime = currentTime - prevTime;
+				
+      if (elapsedTime >= constants::microsecondsPerFrame)
+      {
+         prevTime = currentTime;
+         update();
+      }
+      else if (constants::microsecondsPerFrame - elapsedTime > 3000)
+      {
+         timeSleep();
+      }
 	}
-
-	//we need an idea of a "level"
-	auto ent = createPlayer(context);
-	auto cam = createCamera(context);
-
+   
 	//auto player = entityGetByName(context, "player");
 	//printf("player position (%f, %f)\n", player.get<PositionComponent>()->pos.x, player.get<PositionComponent>()->pos.y);
 
@@ -95,18 +112,18 @@ void BulletHell2::shutdown()
 {
 	//final thing called, do cleanup here.
 	//kill esys before managers...
-	delete context->eSystem;
-
-	delete context->managers->nameIndex;
-	delete context->managers;
+	delete context->world->system;
+	delete context->world->nameIndex;
+	delete context->world;
 	
+   delete context->window;
+
 	delete context;
 }
 
-//delta is the fraction of time relative to a single frame at your target framerate
-//If the delta value is 0.5, half a frame of your target framerate is passed
-//If the delta value is 2.0, two frames of your target framerate is passed
-void BulletHell2::update(float delta)
+void BulletHell2::update()
 {
-	
+	//update.
+   ++context->currentTick;
+   context->window->update();
 }

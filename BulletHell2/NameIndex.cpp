@@ -2,6 +2,7 @@
 #include "Components.hpp"
 #include "BulletHell2.hpp"
 #include "ManagerView.hpp"
+#include "EntitySystemView.hpp"
 
 void NameIndex::onNewEntity(Entity entity)
 {
@@ -19,12 +20,12 @@ Entity NameIndex::getEntity(std::string characterName)
 }
  
 
-void entitySetName(BulletHellContext* ctxt, Entity e, std::string const& name)
+void entitySetName(EntitySystemView* ctxt, Entity e, std::string const& name)
 {
 	e.create<NameComponent>(name);
-	ctxt->managers->nameIndex->onNewEntity(e);
+	ctxt->nameIndex->onNewEntity(e);
 }
-Entity entityGetByName(BulletHellContext* ctxt, std::string const& name)
+Entity entityGetByName(EntitySystemView* ctxt, std::string const& name)
 {
-	return ctxt->managers->nameIndex->getEntity(name);
+	return ctxt->nameIndex->getEntity(name);
 }

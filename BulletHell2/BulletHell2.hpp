@@ -1,14 +1,17 @@
 #pragma once
 
+#include "stdint.h"
+
 //forward decls only!
-class EntitySystem;
-struct ManagerView;
+struct EntitySystemView;
+class Window;
 
 //struct of forward decls, access what globals you want here
 struct BulletHellContext
 {
-	EntitySystem* eSystem;
-	ManagerView* managers;
+   EntitySystemView* world;
+   Window* window;
+   uint64_t currentTick;
 };
 
 class BulletHell2
@@ -17,7 +20,7 @@ public:
 	void startup();
 	void run();
 	void shutdown();
-	void update(float delta);
+	void update();
 
 	BulletHellContext* context;
 };

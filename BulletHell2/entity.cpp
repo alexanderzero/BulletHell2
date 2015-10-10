@@ -3,6 +3,7 @@
 
 #include "Entity.hpp"
 #include <vector>
+#include "EntitySystemView.hpp"
 
 Entity nullEntity;
 
@@ -12,6 +13,10 @@ Entity::Entity(EntitySystem* e)
 {
 	parent = e;
 	if (parent) id = parent->allocID();
+}
+Entity::Entity(EntitySystemView* eView)
+   : Entity(eView->system) //delegating constructor???
+{
 }
 void Entity::destroy()
 {

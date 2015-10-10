@@ -126,6 +126,7 @@
     <ClCompile Include="constants.cpp" />
     <ClCompile Include="entity.cpp" />
     <ClCompile Include="geometry.cpp" />
+    <ClCompile Include="graphics.cpp" />
     <ClCompile Include="lpng\adler32.c" />
     <ClCompile Include="lpng\compress.c" />
     <ClCompile Include="lpng\crc32.c" />
@@ -157,6 +158,7 @@
     <ClCompile Include="lpng\uncompr.c" />
     <ClCompile Include="lpng\zutil.c" />
     <ClCompile Include="NameIndex.cpp" />
+    <ClCompile Include="Time.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BulletHell2.hpp" />
@@ -165,6 +167,7 @@
     <ClInclude Include="components.hpp" />
     <ClInclude Include="constants.hpp" />
     <ClInclude Include="entity.hpp" />
+    <ClInclude Include="EntitySystemView.hpp" />
     <ClInclude Include="Functions.h" />
     <ClInclude Include="geometry.hpp" />
     <ClInclude Include="glew\GL\glew.h" />
@@ -173,6 +176,8 @@
     <ClInclude Include="glfw_include\GLFW\glfw3.h" />
     <ClInclude Include="glfw_include\GLFW\glfw3native.h" />
     <ClInclude Include="NameIndex.hpp" />
+    <ClInclude Include="Time.hpp" />
+    <ClInclude Include="window.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="glew32.dll" />

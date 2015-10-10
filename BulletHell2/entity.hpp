@@ -4,12 +4,14 @@
 #include "Component.hpp"
 
 class EntitySystem;
+struct EntitySystemView;
 
 //entities are value types.  copying does a shallow copy.  kill them with .destroy().
 class Entity
 {
 public:
 	Entity(EntitySystem* e = nullptr);  //if not entity system, nothing works, but you can re-assign as a different entity later.
+   Entity(EntitySystemView* eView);
 	void destroy(); //it's easy to leak in this engine by not destroying... do careful!
 	void update();
 
