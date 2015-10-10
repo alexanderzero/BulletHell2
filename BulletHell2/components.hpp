@@ -22,6 +22,14 @@ struct PositionComponent
 };
 
 
+struct VelocityComponent
+{
+   VelocityComponent() {}
+   VelocityComponent(Vec2 vel_in) : vel(vel_in) {}
+   VelocityComponent(float x, float y) : vel(Vec2(x, y)) {}
+   Vec2 vel;
+};
+
 struct SizeComponent
 {
 	SizeComponent() {}
@@ -30,4 +38,5 @@ struct SizeComponent
 	Vec2 sz;
 };
 
+struct EnemyComponent {}; //is-a enemy 
 struct CameraComponent {}; //makes is-a camera.

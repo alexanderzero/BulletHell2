@@ -189,6 +189,12 @@
     <ClCompile Include="graphics.cpp">
       <Filter>Source Files\Game Engine\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="RunLevelState.cpp">
+      <Filter>Source Files\Game Engine\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="TestLevel.cpp">
+      <Filter>Source Files\Game Engine\Application</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="component.hpp">
@@ -241,6 +247,12 @@
     </ClInclude>
     <ClInclude Include="window.hpp">
       <Filter>Header Files\Game Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Level.hpp">
+      <Filter>Header Files\Game Engine\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="RunLevelState.hpp">
+      <Filter>Header Files\Game Engine\Application</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

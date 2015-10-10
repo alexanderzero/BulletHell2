@@ -12,16 +12,14 @@
 
 #include "window.hpp"
 
+#include "RunLevelState.hpp"
 
-//what's in a player?
-//what's in a level?
-//what's in an enemy? a bullet?
-//DEFINE DATA HERE!
-
-
-
-
-EntitySystem* eSystem;
+void startGame(BulletHellContext* ctxt)
+{
+   //for now, let's jump straight into a test level.
+   Level level = testLevelCreate(ctxt);
+   ctxt->currentState = runLevelStateCreate(ctxt, std::move(level));
+}
 
 Entity createPlayer(BulletHellContext* ctxt)
 {
@@ -57,8 +55,10 @@ void BulletHell2::startup()
 	context = new BulletHellContext;   
 
 
+
    //game tick
    context->currentTick = 0;
+   context->gameRunning = true;
 
    //game window
    WindowInit windowInitData;
@@ -78,15 +78,9 @@ void BulletHell2::startup()
 void BulletHell2::run()
 {
    auto prevTime = timeCurrentMicroseconds();
-
-
-   //we need an idea of a "level"
-   auto ent = createPlayer(context);
-   auto cam = createCamera(context);
-
-	
+   	
 	//run game "main loop" here.
-	while(context->window->isOpen())
+	while(context->window->isOpen() && context->gameRunning)
 	{
       auto currentTime = timeCurrentMicroseconds();
       auto elapsedTime = currentTime - prevTime;
@@ -102,6 +96,10 @@ void BulletHell2::run()
       }
 	}
    
+   //we need an idea of a "level"
+   auto ent = createPlayer(context);
+   auto cam = createCamera(context);
+
 	//auto player = entityGetByName(context, "player");
 	//printf("player position (%f, %f)\n", player.get<PositionComponent>()->pos.x, player.get<PositionComponent>()->pos.y);
 
@@ -125,5 +123,10 @@ void BulletHell2::update()
 {
 	//update.
    ++context->currentTick;
+
+   if (!context->currentState) startGame(context);
+
+   context->currentState->update();
+
    context->window->update();
 }
