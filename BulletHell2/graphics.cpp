@@ -12,18 +12,28 @@
 
 #include "window.hpp"
 
+#include "constants.hpp"
+
 #define POSITION_ATTRIB 0
 #define COLOR_ATTRIB 1
 #define TEX_ATTRIB 2
 
 int vert_count = 4;
 
-GLfloat vert_data[] = {
-   -0.5, 0.5, 0.0,
-   -0.5, -0.5, 0.0,
-   0.5, 0.5, 0.0,
-   0.5, -0.5, 0.0
-};
+// GLfloat vert_data[] = {
+//    -0.5, 0.5, 0.0,
+//    -0.5, -0.5, 0.0,
+//    0.5, 0.5, 0.0,
+//    0.5, -0.5, 0.0
+// };
+
+ GLfloat vert_data[] = {
+    0, 1080, 0.0,
+    0, 0, 0.0,
+    1920, 1080, 0.0,
+    1920, 0, 0.0
+ };
+
 
 GLfloat col_data[] = {
    1.0, 0.0, 0.0,
@@ -108,18 +118,18 @@ void init()
    glCompileShader(vert);
    glCompileShader(frag);
 
-   //int status_vert;
-   //glGetShaderiv(vert, GL_COMPILE_STATUS, &status_vert);
-   //if (status_vert == GL_FALSE)
-   //{
-   //	int breakfail = 0;
-   //}
-   //int status_frag;
-   //glGetShaderiv(frag, GL_COMPILE_STATUS, &status_frag);
-   //if (status_frag == GL_FALSE)
-   //{
-   //	int breakfail = 0;
-   //}
+   int status_vert;
+   glGetShaderiv(vert, GL_COMPILE_STATUS, &status_vert);
+   if (status_vert == GL_FALSE)
+   {
+   	int breakfail = 0;
+   }
+   int status_frag;
+   glGetShaderiv(frag, GL_COMPILE_STATUS, &status_frag);
+   if (status_frag == GL_FALSE)
+   {
+   	int breakfail = 0;
+   }
 
    glAttachShader(prog, vert);
    glAttachShader(prog, frag);
@@ -128,32 +138,43 @@ void init()
    glBindAttribLocation(prog, COLOR_ATTRIB, "color");
    glBindAttribLocation(prog, TEX_ATTRIB, "tex_in");
 
-   glUniform1i(glGetUniformLocation(prog, "tex"), 0);
 
+   
    glLinkProgram(prog);
    glUseProgram(prog);
 
    glValidateProgram(prog);
+
+   glUniform2f(glGetUniformLocation(prog, "uCameraSize"), constants::cameraSize.x, constants::cameraSize.y);
+
+   glUniform1i(glGetUniformLocation(prog, "tex"), 0);
 }
 
 void render(GLFWwindow* window)
 {
-   float ratio;
    int width, height;
    glfwGetFramebufferSize(window, &width, &height);
-   ratio = width / (float)height;
+
+
+   //unused currently.
+   //float ratio;
+   //ratio = width / (float)height;
+
+
    glViewport(0, 0, width, height);
    glClear(GL_COLOR_BUFFER_BIT);
 
-   glMatrixMode(GL_PROJECTION);
-   glLoadIdentity();
-   glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
-   glMatrixMode(GL_MODELVIEW);
-   glLoadIdentity();
+//this does nothing, we're using shaders, derp
+
+//    glMatrixMode(GL_PROJECTION);
+//    glLoadIdentity();
+//    glOrtho(0, constants::cameraSize.x, 0, constants::cameraSize.y, 1.f, -1.f);
+//    glMatrixMode(GL_MODELVIEW);
+//    glLoadIdentity();
 
    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-   glfwSwapBuffers(window);
+   //glfwSwapBuffers(window);
 
 
 
@@ -170,7 +191,7 @@ void render(GLFWwindow* window)
    //glVertex3f(0.f, 0.6f, 0.f);
    //glEnd();
    //glfwSwapBuffers(window);
-   glfwPollEvents();
+   //glfwPollEvents();
 }
 
 void getOpenGLVersion(int& major, int& minor)
@@ -442,15 +463,42 @@ Window::~Window()
 
    glfwDestroyWindow(pImpl->window);
    glfwTerminate();
-}
-void Window::update()
-{
-   if (isOpen())
-   {
-      render(pImpl->window);
-   }
-}
+} 
 bool Window::isOpen()
 {
    return pImpl->window && !glfwWindowShouldClose(pImpl->window);
+}
+
+void Window::updateInput()
+{
+   if (!isOpen()) return;
+   glfwPollEvents();
+}
+
+void Window::startDraw()
+{
+   if (!isOpen()) return;
+   render(pImpl->window);
+}
+void Window::endDraw()
+{
+   if (!isOpen()) return;
+   glfwSwapBuffers(pImpl->window);
+}
+
+void Window::drawSpriteHACK(Vec2 const& bottomMiddle, Vec2 const& size)
+{
+   //let's do some god-awful opengl!     
+
+   //this sorta works for some god-forsaken reason.
+   glBegin(GL_TRIANGLES);
+   glVertex2f(bottomMiddle.x-size.x/2, bottomMiddle.y);
+   glVertex2f(bottomMiddle.x + size.x / 2, bottomMiddle.y);
+   glVertex2f(bottomMiddle.x + size.x / 2, bottomMiddle.y+size.y);
+
+
+   glVertex2f(bottomMiddle.x - size.x / 2, bottomMiddle.y);
+   glVertex2f(bottomMiddle.x + size.x / 2, bottomMiddle.y + size.y);
+   glVertex2f(bottomMiddle.x - size.x / 2, bottomMiddle.y + size.y);
+   glEnd();
 }

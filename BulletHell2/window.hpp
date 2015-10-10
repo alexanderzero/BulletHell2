@@ -2,6 +2,7 @@
 
 #include <string>
 #include <memory>
+#include "geometry.hpp"
 
 struct WindowInit
 {
@@ -14,7 +15,14 @@ class Window
 public:
    Window(WindowInit const& initData);
    ~Window();
-   void update();
+
+   void updateInput();
+   
+   void startDraw();
+   void endDraw();
+
+   void drawSpriteHACK(Vec2 const& bottomMiddle, Vec2 const& size);
+
    bool isOpen();
 private:
    class Impl;

@@ -1,6 +1,41 @@
 #include "RunLevelState.hpp"
 
+#include "window.hpp"
+#include "entity.hpp"
+#include "entitySystemView.hpp"
+#include "components.hpp"
 
+
+//placeholder...
+void updatePhysics(BulletHellContext* ctxt)
+{
+   for (auto ePair : ctxt->world->system->componentsOfType<VelocityComponent>())
+   {
+      Entity e(ePair.entity, ctxt->world->system);
+
+      auto pos = e.get<PositionComponent>();
+      auto vel = e.get<VelocityComponent>();
+      
+      if (!pos) continue;
+
+      pos->pos += vel->vel;
+   }
+}
+
+//HASKC AKLHC GAC HACK HACK  TODO: ANYTHING ELSE
+void drawSpritesHacked(BulletHellContext* ctxt)
+{
+   for (auto enemyPair : ctxt->world->system->componentsOfType<EnemyComponent>())
+   {
+      Entity enemy(enemyPair.entity, ctxt->world->system);
+
+      auto pos = enemy.get<PositionComponent>();
+      auto sz = enemy.get<SizeComponent>();
+      if (!pos || !sz) continue;
+
+      ctxt->window->drawSpriteHACK(pos->pos, sz->sz);
+   }
+}
 
 class LevelRun : public BulletHellState
 {
@@ -22,6 +57,18 @@ public:
       //todo: transition to a score screen or a next level or literally anything else
    }
 
+   void drawLevel()
+   {
+      updatePhysics(ctxt);
+
+      //todo - this should probably be in a nicer, shared spot... hack it in here for now.
+      ctxt->window->startDraw();
+
+      drawSpritesHacked(ctxt);
+
+      ctxt->window->endDraw();
+   }
+
    virtual void update() override
    {
       //update the sections...
@@ -31,7 +78,11 @@ public:
          { 
             auto& section = m_level.sections[m_level.currentSection];
             section->onUpdate();
-            if (!section->finished()) return;  //more to do laterererer
+            if (!section->finished())
+            {
+               drawLevel();
+               return;  //more to do laterererer
+            }
          }
          ++m_level.currentSection;
          if (checkWin()) break;

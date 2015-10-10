@@ -124,9 +124,11 @@ void BulletHell2::update()
 	//update.
    ++context->currentTick;
 
+
+   //update the input...
+   context->window->updateInput();
+
+   //update the simulation state.
    if (!context->currentState) startGame(context);
-
    context->currentState->update();
-
-   context->window->update();
 }

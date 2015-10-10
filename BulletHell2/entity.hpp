@@ -12,6 +12,7 @@ class Entity
 public:
 	Entity(EntitySystem* e = nullptr);  //if not entity system, nothing works, but you can re-assign as a different entity later.
    Entity(EntitySystemView* eView);
+   Entity(EntityID id_in, EntitySystem* parent_in);
 	void destroy(); //it's easy to leak in this engine by not destroying... do careful!
 	void update();
 

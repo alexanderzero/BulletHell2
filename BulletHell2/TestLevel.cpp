@@ -38,7 +38,7 @@ public:
 
          //todo: better constant handling...
          e.create<PositionComponent>(left ? -xOffset : 1920 + xOffset, 800.0f);
-         e.create<VelocityComponent>(left ? xVel : -xVel, xVel / -2);
+         e.create<VelocityComponent>(left ? xVel : -xVel, xVel / -8);
 
          e.create<EnemyComponent>();
          e.create<SizeComponent>(64.0f, 64.0f);

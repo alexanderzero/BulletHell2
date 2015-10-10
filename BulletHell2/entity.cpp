@@ -18,6 +18,11 @@ Entity::Entity(EntitySystemView* eView)
    : Entity(eView->system) //delegating constructor???
 {
 }
+Entity::Entity(EntityID id_in, EntitySystem* parent_in)
+{
+   id = id_in;
+   parent = parent_in;
+}
 void Entity::destroy()
 {
 	if (parent) parent->freeID(id);
