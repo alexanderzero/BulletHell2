@@ -37,6 +37,11 @@ public:
 		parent->removeComponent(ClassComponentVTable<T>::get(), id);
 	}
 
+	explicit operator bool() const {
+
+		return parent != nullptr;
+	}
+
 private:
 	EntityID id;
 	EntitySystem* parent;

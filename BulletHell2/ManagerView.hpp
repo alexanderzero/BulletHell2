@@ -1,6 +1,8 @@
 #pragma once
 
-class ManagerView
-{
+class NameIndex;
 
+struct ManagerView
+{
+	NameIndex* nameIndex;
 };
