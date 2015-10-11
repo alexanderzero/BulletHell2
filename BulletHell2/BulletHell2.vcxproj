@@ -159,6 +159,7 @@
     <ClCompile Include="lpng\zutil.c" />
     <ClCompile Include="NameIndex.cpp" />
     <ClCompile Include="RunLevelState.cpp" />
+    <ClCompile Include="sprite.cpp" />
     <ClCompile Include="TestLevel.cpp" />
     <ClCompile Include="Time.cpp" />
   </ItemGroup>
@@ -180,6 +181,7 @@
     <ClInclude Include="Level.hpp" />
     <ClInclude Include="NameIndex.hpp" />
     <ClInclude Include="RunLevelState.hpp" />
+    <ClInclude Include="sprite.h" />
     <ClInclude Include="Time.hpp" />
     <ClInclude Include="window.hpp" />
   </ItemGroup>

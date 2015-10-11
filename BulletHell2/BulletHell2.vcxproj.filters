@@ -195,6 +195,9 @@
     <ClCompile Include="TestLevel.cpp">
       <Filter>Source Files\Game Engine\Application</Filter>
     </ClCompile>
+    <ClCompile Include="sprite.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="component.hpp">
@@ -253,6 +256,9 @@
     </ClInclude>
     <ClInclude Include="RunLevelState.hpp">
       <Filter>Header Files\Game Engine\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="sprite.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
