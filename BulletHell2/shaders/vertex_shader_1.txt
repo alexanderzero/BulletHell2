@@ -7,8 +7,16 @@ in vec2 tex_in;
 out vec3 vcol;
 out vec2 tex_out;
 
+uniform vec2 uCameraSize;
+
 void main(void) {
     vcol = color;
-    gl_Position = vec4(position, 1.0);
+
+	vec2 xFrmCamera = position.xy * 2; //NDC space is -1 to 1, multiply by two (because we're 0 to cameraSize)
+	xFrmCamera /= uCameraSize; //scale to (0 to 2)
+	xFrmCamera -= vec2(1.0, 1.0); //rebase to (-1 to 1)
+	
+    gl_Position = vec4(xFrmCamera, position.z, 1.0);
+
     tex_out = tex_in;
 }

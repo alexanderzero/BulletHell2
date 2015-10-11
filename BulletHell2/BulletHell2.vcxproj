@@ -123,8 +123,10 @@
   <ItemGroup>
     <ClCompile Include="bhmain.cpp" />
     <ClCompile Include="BulletHell2.cpp" />
+    <ClCompile Include="constants.cpp" />
     <ClCompile Include="entity.cpp" />
     <ClCompile Include="geometry.cpp" />
+    <ClCompile Include="graphics.cpp" />
     <ClCompile Include="lpng\adler32.c" />
     <ClCompile Include="lpng\compress.c" />
     <ClCompile Include="lpng\crc32.c" />
@@ -155,14 +157,19 @@
     <ClCompile Include="lpng\trees.c" />
     <ClCompile Include="lpng\uncompr.c" />
     <ClCompile Include="lpng\zutil.c" />
-    <ClCompile Include="sprite.cpp" />
+    <ClCompile Include="NameIndex.cpp" />
+    <ClCompile Include="RunLevelState.cpp" />
+    <ClCompile Include="TestLevel.cpp" />
+    <ClCompile Include="Time.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BulletHell2.hpp" />
+    <ClInclude Include="CameraManager.hpp" />
     <ClInclude Include="component.hpp" />
     <ClInclude Include="components.hpp" />
     <ClInclude Include="constants.hpp" />
     <ClInclude Include="entity.hpp" />
+    <ClInclude Include="EntitySystemView.hpp" />
     <ClInclude Include="Functions.h" />
     <ClInclude Include="geometry.hpp" />
     <ClInclude Include="glew\GL\glew.h" />
@@ -170,8 +177,11 @@
     <ClInclude Include="glew\GL\wglew.h" />
     <ClInclude Include="glfw_include\GLFW\glfw3.h" />
     <ClInclude Include="glfw_include\GLFW\glfw3native.h" />
-    <ClInclude Include="sprite.h" />
+    <ClInclude Include="Level.hpp" />
     <ClInclude Include="NameIndex.hpp" />
+    <ClInclude Include="RunLevelState.hpp" />
+    <ClInclude Include="Time.hpp" />
+    <ClInclude Include="window.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="glew32.dll" />

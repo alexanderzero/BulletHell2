@@ -3,6 +3,9 @@
 
 #include "Entity.hpp"
 #include <vector>
+#include "EntitySystemView.hpp"
+
+Entity nullEntity;
 
 int g_ComponentTypeCounter;
 
@@ -11,11 +14,20 @@ Entity::Entity(EntitySystem* e)
 	parent = e;
 	if (parent) id = parent->allocID();
 }
+Entity::Entity(EntitySystemView* eView)
+   : Entity(eView->system) //delegating constructor???
+{
+}
+Entity::Entity(EntityID id_in, EntitySystem* parent_in)
+{
+   id = id_in;
+   parent = parent_in;
+}
 void Entity::destroy()
 {
 	if (parent) parent->freeID(id);
 }
-void Entity::sendUpdate()
+void Entity::update()
 {
 	parent->updateID(id);
 }
@@ -88,6 +100,7 @@ public:
 		}
 	}
 
+	std::vector<EntitySystemListener*> listeners;
 	std::vector<EntityID> IDFreeList;
 	EntityID maxID;
 
@@ -167,4 +180,13 @@ void* EntitySystem::rawComponentData(ComponentVTable* vtable, size_t& outCount)
 	auto pool = pImpl->getPool(vtable);
 	outCount = pool->size();
 	return pool->data();
+}
+void EntitySystem::installListener(EntitySystemListener* listener)
+{
+	pImpl->listeners.push_back(listener);
+}
+void EntitySystem::uninstallListener(EntitySystemListener* listener)
+{
+	auto iter = std::find(begin(pImpl->listeners), end(pImpl->listeners), listener);
+	if (iter != end(pImpl->listeners)) pImpl->listeners.erase(iter);
 }

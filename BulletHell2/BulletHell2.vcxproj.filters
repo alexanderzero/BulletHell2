@@ -58,6 +58,21 @@
     <Filter Include="libpng">
       <UniqueIdentifier>{f86c4dc9-94af-4356-8c8a-b1bb17bc391a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Manager">
+      <UniqueIdentifier>{0a2b3f97-590c-47c1-8c30-45a13fd15b63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game Engine\System">
+      <UniqueIdentifier>{0188d9f9-6e9e-4d4a-8e8b-45895234ed4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game Engine\System">
+      <UniqueIdentifier>{2c86e8cf-6937-40be-82ac-f1a0b4aac7fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game Engine\Graphics">
+      <UniqueIdentifier>{632ac5df-8d31-49cf-a2cb-792a0b3a3f99}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game Engine\Graphics">
+      <UniqueIdentifier>{215a7b08-5518-48c4-bbf3-8b0967790fb9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bhmain.cpp">
@@ -162,8 +177,23 @@
     <ClCompile Include="lpng\zutil.c">
       <Filter>libpng</Filter>
     </ClCompile>
-    <ClCompile Include="sprite.cpp">
+    <ClCompile Include="constants.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NameIndex.cpp">
+      <Filter>Source Files\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Time.cpp">
+      <Filter>Source Files\Game Engine\System</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics.cpp">
+      <Filter>Source Files\Game Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="RunLevelState.cpp">
+      <Filter>Source Files\Game Engine\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="TestLevel.cpp">
+      <Filter>Source Files\Game Engine\Application</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -205,6 +235,24 @@
     </ClInclude>
     <ClInclude Include="constants.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraManager.hpp">
+      <Filter>Header Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Time.hpp">
+      <Filter>Header Files\Game Engine\System</Filter>
+    </ClInclude>
+    <ClInclude Include="EntitySystemView.hpp">
+      <Filter>Header Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="window.hpp">
+      <Filter>Header Files\Game Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Level.hpp">
+      <Filter>Header Files\Game Engine\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="RunLevelState.hpp">
+      <Filter>Header Files\Game Engine\Application</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
