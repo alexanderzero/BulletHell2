@@ -85,6 +85,9 @@
     <Filter Include="Header Files\FMOD">
       <UniqueIdentifier>{e7d564b4-85a8-488e-9c2d-96028b29cc37}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\sfx">
+      <UniqueIdentifier>{c6ac7e75-77ff-4070-b135-0e56d4506270}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bhmain.cpp">
@@ -358,6 +361,9 @@
   <ItemGroup>
     <Media Include="music\test.mp3">
       <Filter>Resource Files\music</Filter>
+    </Media>
+    <Media Include="sfx\blast.wav">
+      <Filter>Resource Files\sfx</Filter>
     </Media>
   </ItemGroup>
 </Project>

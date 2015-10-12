@@ -221,6 +221,7 @@
   </ItemGroup>
   <ItemGroup>
     <Media Include="music\test.mp3" />
+    <Media Include="sfx\blast.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

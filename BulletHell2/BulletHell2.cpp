@@ -83,8 +83,13 @@ void BulletHell2::run()
 {
    auto prevTime = timeCurrentMicroseconds();
 
-   auto song = new Sound(Sound::createSong(*context->audio, "music/test.mp3"));
-   song->play();
+   auto song = Sound::createSong(*context->audio, "music/test.mp3");
+   song.play();
+   song.detach();
+
+   auto sfx = Sound::createSample(*context->audio, "sfx/blast.wav");
+   sfx.play();
+   sfx.detach();
 
 	//run game "main loop" here.
 	while(context->window->isOpen() && context->gameRunning)

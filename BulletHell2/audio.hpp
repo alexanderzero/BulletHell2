@@ -3,6 +3,7 @@
 #include <memory>
 #include <string>
 
+class SoundImpl;
 class Audio;
 
 class Sound
@@ -12,14 +13,16 @@ public:
    Sound(Sound&& rhs);
    Sound& operator=(Sound&& rhs);
 
-   void play();
    static Sound createSong(Audio& audio, std::string songPath);
+   static Sound createSample(Audio& audio, std::string samplePath);
+
+   void play();
+   void detach(); //continue playing after this sound dies.
 
 private:
    Sound();
 
-   class Impl;
-   std::unique_ptr<Impl> pImpl;
+   std::unique_ptr<SoundImpl> pImpl;
 };
 
 

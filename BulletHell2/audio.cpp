@@ -1,45 +1,36 @@
 #include "audio.hpp"
 
 #include "fmod/fmod.hpp"
+#include <vector>
+#include <algorithm>
+
+
+
 
 //AUDIO SYSTEM
+
+
 
 class AudioImpl
 {
 public:
-   AudioImpl()
-   {
-      FMOD::System_Create(&system);
-      system->init(512, FMOD_INIT_NORMAL, nullptr);
-   }
-   ~AudioImpl()
-   {
-      system->release();
-   }
+   AudioImpl();
+   ~AudioImpl();
+   void update();
    FMOD::System* system;
+   std::vector<std::unique_ptr<SoundImpl> > detachedSounds;
 };
 
-Audio::Audio() : pImpl(new AudioImpl) {}
-Audio::~Audio() {}
-
-void Audio::update()
-{
-   pImpl->system->update();
-}
-
-
-//SOUNDS
-
-class Sound::Impl
+class SoundImpl
 {
 public:
-   Impl()
+   SoundImpl()
    {
       sound = nullptr;
       system = nullptr;
       playingChannel = nullptr;
    }
-   ~Impl()
+   ~SoundImpl()
    {
       if (sound) sound->release();
    }
@@ -47,7 +38,7 @@ public:
    {
       if (!sound) return;
       stop();
-      system->playSound(sound, nullptr, false, &playingChannel);
+      system->pImpl->system->playSound(sound, nullptr, false, &playingChannel);
    }
    void stop()
    {
@@ -55,10 +46,45 @@ public:
       playingChannel->stop();
    }
 
-   FMOD::System* system;
+   Audio* system;
    FMOD::Sound* sound;
    FMOD::Channel* playingChannel;
 };
+
+
+AudioImpl::AudioImpl()
+{
+   FMOD::System_Create(&system);
+   system->init(512, FMOD_INIT_NORMAL, nullptr);
+}
+AudioImpl::~AudioImpl()
+{
+   system->release();
+}
+void AudioImpl::update()
+{
+   system->update();
+
+   //kill bad sounds
+   detachedSounds.erase(std::remove_if(begin(detachedSounds), end(detachedSounds), [=](std::unique_ptr<SoundImpl>& sound) {
+      if (!sound->sound || !sound->playingChannel) return true; 
+      bool stillPlaying = false;
+      sound->playingChannel->isPlaying(&stillPlaying);
+      return !stillPlaying;
+   }), detachedSounds.end());
+}
+
+Audio::Audio() : pImpl(new AudioImpl) {}
+Audio::~Audio() {}
+
+void Audio::update()
+{
+   pImpl->update();
+}
+
+
+//SOUNDS
+
 
 
 Sound::~Sound()
@@ -73,7 +99,7 @@ void Sound::play()
 }
 
 Sound::Sound()
-   : pImpl(new Impl)
+   : pImpl(new SoundImpl)
 {
 
 
@@ -88,7 +114,11 @@ Sound& Sound::operator=(Sound&& rhs)
    return *this;
 }
 
-
+void Sound::detach()
+{
+   if (!pImpl) return;
+   pImpl->system->pImpl->detachedSounds.push_back(std::move(pImpl));
+}
 
 //CONSTRUCTION
 
@@ -97,7 +127,16 @@ Sound Sound::createSong(Audio& audio, std::string songPath)
    //"songs" are streamed in for efficiency.
    Sound out;
    auto fSys = audio.pImpl->system;
-   out.pImpl->system = audio.pImpl->system;
+   out.pImpl->system = &audio;
    fSys->createStream(songPath.c_str(), FMOD_DEFAULT | FMOD_LOOP_NORMAL, nullptr, &out.pImpl->sound);
+   return out;
+}
+
+Sound Sound::createSample(Audio& audio, std::string samplePath)
+{
+   Sound out;
+   auto fSys = audio.pImpl->system;
+   out.pImpl->system = &audio;
+   fSys->createSound(samplePath.c_str(), FMOD_CREATESAMPLE | FMOD_DEFAULT, nullptr, &out.pImpl->sound);
    return out;
 }
