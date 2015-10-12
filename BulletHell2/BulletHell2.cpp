@@ -16,6 +16,8 @@
 
 #include "audio.hpp"
 
+#include "ShotType.hpp"
+
 
 Entity createPlayer(BulletHellContext* ctxt)
 {
@@ -25,7 +27,8 @@ Entity createPlayer(BulletHellContext* ctxt)
    out.create<SizeComponent>(32.0f, 32.0f);
    out.create<PlayerComponent>();
    out.create<WorldBoundedComponent>();
-
+   out.create<ShotComponent>(Shot("PlayerShot"));  
+   
 	out.update();
 	return out;
 }
@@ -64,6 +67,11 @@ void BulletHell2::startup()
 
    //context stuff
 	context = new BulletHellContext;   
+
+
+   //static data
+   hackBuildTestShotTypes(context->shotTypes);
+
 
    //audio
    context->audio = new Audio;

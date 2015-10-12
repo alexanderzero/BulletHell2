@@ -20,6 +20,7 @@ public:
 struct BulletHellContext
 {
    EntitySystemView* world;
+
    Window* window;
    uint64_t currentTick;
    bool gameRunning;
@@ -27,6 +28,9 @@ struct BulletHellContext
 
    //audio-related
    Audio* audio;
+
+   //constant databases
+   EntitySystemView* shotTypes;
 };
 
 

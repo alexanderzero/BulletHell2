@@ -225,6 +225,9 @@
     <ClCompile Include="input.cpp">
       <Filter>Source Files\Game Engine\Input</Filter>
     </ClCompile>
+    <ClCompile Include="ShotType.cpp">
+      <Filter>Source Files\Game Engine\Application</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="component.hpp">
@@ -319,6 +322,9 @@
     </ClInclude>
     <ClInclude Include="input.hpp">
       <Filter>Header Files\Game Engine\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="ShotType.hpp">
+      <Filter>Header Files\Game Engine\Application</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -16,6 +16,8 @@
 
 #include "input.hpp"
 
+#include "assert.h"
+
 #define POSITION_ATTRIB 0
 #define COLOR_ATTRIB 1
 #define TEX_ATTRIB 2
@@ -65,11 +67,22 @@ static KeyPressType translateGLFWKeyEvent(int action)
    if (action == GLFW_PRESS) return KeyPressType::Down;
    else if (action == GLFW_RELEASE) return KeyPressType::Up;
    else if (action == GLFW_REPEAT) return KeyPressType::Repeated;
+
+   //how'd I get here
+   assert(0 && "bad enum state!");
+
+   return KeyPressType::Down;
 }
 static int translateGLFWKey(int key)
 {
    // r/shittyprogramming
    // this one is kinda annoying to do right, since you want to hide implementation details.  Probably should be a table something or somewhere when we have more cases?
+
+   if (key >= 'a' && key <= 'z')
+   {
+      //I don't think GLFW ever does this, but eh, just fix it regardless
+      return key - ('a' - 'A');
+   }
 
    if (key == GLFW_KEY_LEFT) return KeyType::Left;
    else if (key == GLFW_KEY_RIGHT) return  KeyType::Right;

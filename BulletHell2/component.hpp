@@ -79,7 +79,7 @@ public:
 		{
 			p[idx] = std::move(p.back());
 			//update indirection...
-			indirection[p[idx].entity] = idx;
+			indirection[p[idx].entity] = idx+1;
 		}
 		p.pop_back();
 	}

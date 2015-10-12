@@ -10,7 +10,55 @@
 
 #include "constants.hpp"
 
-//placeholder...
+#include "NameIndex.hpp"
+
+
+void playerFireShot(BulletHellContext* ctxt, Entity player, Shot& shot)
+{
+   //get the actual shot from the context.
+   auto shotType = entityGetByName(ctxt->shotTypes, shot.type);
+   if (!shotType) return; //not a valid shot type?
+
+   //manage cooldowns.
+   shot.nextFireTime = ctxt->currentTick;
+   if (auto cooldown = shotType.get<CooldownComponent>()) shot.nextFireTime += cooldown->ticks;
+
+   //actual entity creation...  note later this might be a fan, or something completely different.  This a placeholder til we figure out requirements of the system a bit more, and also if we want to reuse it directly for enemies
+
+   Entity bullet(ctxt->world);
+
+   //centered on player for now.  more fire types later based on the shot type
+   bullet.create<PositionComponent>(*player.get<PositionComponent>());
+   
+   bullet.create<SizeComponent>(4.0f, 32.0f); //hacked, add graphical/collision data to shot type later.
+
+   bullet.create<DieOffscreenComponent>(); //don't leak!  note that some shots of enemies might not have this and be simply timed, or may have bounds expanded to allow for slight offscreen action
+
+   //copy velocity component from shot type, if it exists
+   if (auto vel = shotType.get<VelocityComponent>()) bullet.create<VelocityComponent>(*vel);
+
+   bullet.create<PlayerBulletComponent>(); //for indexing
+
+   bullet.update();
+}
+void playerFire(BulletHellContext* ctxt, Entity player)
+{
+   //ok, we're firing, but what do we fire?
+   //two parts to this - what active data do we have (e.g. current weapon cooldown)
+   //and what static data do we have (e.g. cooldown to reset after firing, how much damage we do on hit, etc)
+   //and then, where are they stored?
+
+   //a single player may also have multiple weapons (main firing gun with homing bullets that fire at a different cooldown rate.)
+
+   auto shotComp = player.get<ShotComponent>();
+   if (!shotComp) return; // nothing to fire...
+   for (auto&& shot : shotComp->shots)
+   {
+      if (shot.nextFireTime > ctxt->currentTick) continue; //on cooldown
+      playerFireShot(ctxt, player, shot);
+   }
+}
+
 void updatePlayerVelocity(BulletHellContext* ctxt)
 {
    for (auto player : ctxt->world->system->entitiesWithComponent<PlayerComponent>())
@@ -35,6 +83,8 @@ void updatePlayerVelocity(BulletHellContext* ctxt)
    }
 }
 
+
+
 void enforceWorldBoundaries(BulletHellContext* ctxt)
 {
    for (auto ent : ctxt->world->system->entitiesWithComponent<WorldBoundedComponent>())
@@ -49,6 +99,21 @@ void enforceWorldBoundaries(BulletHellContext* ctxt)
       if (pos->pos.y < 0) pos->pos.y = 0;
       else if (pos->pos.y > constants::cameraSize.y) pos->pos.y = constants::cameraSize.y;
    }
+
+   std::vector<Entity> offscreenEntities;
+   for (auto ent : ctxt->world->system->entitiesWithComponent<DieOffscreenComponent>())
+   {
+      auto pos = ent.get<PositionComponent>();
+      if (!pos) continue;
+
+
+      if (pos->pos.x < 0 || pos->pos.x > constants::cameraSize.x ||
+         pos->pos.y < 0 || pos->pos.y > constants::cameraSize.y)
+      {
+         offscreenEntities.push_back(ent); //do this in two passes to be nice with iteration
+      }
+   }
+   for (auto&& ent : offscreenEntities) ent.destroy();
 }
 
 void updatePhysics(BulletHellContext* ctxt)
@@ -72,26 +137,25 @@ void updatePhysics(BulletHellContext* ctxt)
    //todo - handle collision cases here.
 }
 
-void drawSpritesHacked(BulletHellContext* ctxt)
+template <typename T>
+void drawSpritesWithComponent(BulletHellContext* ctxt)
 {
-   for (auto enemy : ctxt->world->system->entitiesWithComponent<EnemyComponent>())
+   for (auto enemy : ctxt->world->system->entitiesWithComponent<T>())
    {
       auto pos = enemy.get<PositionComponent>();
       auto sz = enemy.get<SizeComponent>();
       if (!pos || !sz) continue;
 
-	   ctxt->window->drawSprite(pos->pos.x, pos->pos.y);
-   }
-
-   //draw player
-   for (auto player : ctxt->world->system->entitiesWithComponent<PlayerComponent>())
-   {
-      auto pos = player.get<PositionComponent>();
-      auto sz = player.get<SizeComponent>();
-      if (!pos || !sz) continue;
-
       ctxt->window->drawSprite(pos->pos.x, pos->pos.y);
    }
+}
+
+void drawSpritesHacked(BulletHellContext* ctxt)
+{
+   //doing this gives us a rough z-order.  Might want a dedicated Z-order component, though.
+   drawSpritesWithComponent<EnemyComponent>(ctxt);
+   drawSpritesWithComponent<PlayerComponent>(ctxt);
+   drawSpritesWithComponent<PlayerBulletComponent>(ctxt);
 }
 
 class LevelRun : public BulletHellState
@@ -135,8 +199,17 @@ public:
             case KeyType::Up: pc->up = isDown; break;
 
             case KeyType::LeftShift: case KeyType::RightShift: pc->focused = isDown; break;  //kind of awkward - the shifts affect each other.  refcount?
+
+            case 'Z': pc->firing = isDown; break;
             }
          }
+      }
+
+      //TODO: move this somewhere nicer?
+      for (auto&& player : players)
+      {
+         auto pc = player.get<PlayerComponent>();
+         if (pc->firing) playerFire(ctxt, player);
       }
    }
 
