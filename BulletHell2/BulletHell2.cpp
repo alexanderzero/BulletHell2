@@ -16,18 +16,15 @@
 
 #include "audio.hpp"
 
-void startGame(BulletHellContext* ctxt)
-{
-   //for now, let's jump straight into a test level.
-   Level level = testLevelCreate(ctxt);
-   ctxt->currentState = runLevelStateCreate(ctxt, std::move(level));
-}
 
 Entity createPlayer(BulletHellContext* ctxt)
 {
 	Entity out(ctxt->world);
 	entitySetName(ctxt->world, out, "player");
-	out.create<PositionComponent>(10.0f, 10.0f);
+	out.create<PositionComponent>(constants::cameraSize.x/2, 0.0f);
+   out.create<SizeComponent>(32.0f, 32.0f);
+   out.create<PlayerComponent>();
+   out.create<WorldBoundedComponent>();
 
 	out.update();
 	return out;
@@ -43,6 +40,18 @@ Entity createCamera(BulletHellContext* ctxt)
 
 	out.update();
 	return out;
+}
+
+
+void startGame(BulletHellContext* ctxt)
+{
+   //for now, let's jump straight into a test level.
+   Level level = testLevelCreate(ctxt);
+   ctxt->currentState = runLevelStateCreate(ctxt, std::move(level));
+
+   //we need a player to control in the level.
+
+   createPlayer(ctxt);
 }
 
 void BulletHell2::startup()
@@ -83,6 +92,7 @@ void BulletHell2::run()
 {
    auto prevTime = timeCurrentMicroseconds();
 
+   /*
    auto song = Sound::createSong(*context->audio, "music/test.mp3");
    song.play();
    song.detach();
@@ -90,7 +100,8 @@ void BulletHell2::run()
    auto sfx = Sound::createSample(*context->audio, "sfx/blast.wav");
    sfx.play();
    sfx.detach();
-
+   */
+   
 	//run game "main loop" here.
 	while(context->window->isOpen() && context->gameRunning)
 	{
@@ -108,15 +119,8 @@ void BulletHell2::run()
       }
 	}
    
-   //we need an idea of a "level"
-   auto ent = createPlayer(context);
-   auto cam = createCamera(context);
+   
 
-	//auto player = entityGetByName(context, "player");
-	//printf("player position (%f, %f)\n", player.get<PositionComponent>()->pos.x, player.get<PositionComponent>()->pos.y);
-
-	ent.destroy();
-	cam.destroy();
 }
 void BulletHell2::shutdown()
 {

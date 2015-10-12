@@ -22,7 +22,6 @@ public:
    void startDraw();
    void endDraw();
 
-   void drawSpriteHACK(Vec2 const& bottomMiddle, Vec2 const& size);
    void drawSprite(float x, float y);
 
    bool isOpen();

@@ -106,6 +106,17 @@ public:
 		return out;
 	}
 
+   template <typename T>
+   std::vector<Entity> entitiesWithComponent()
+   {
+      std::vector<Entity> out;
+      for (auto&& ePair : componentsOfType<T>())
+      {
+         out.push_back(Entity(ePair.entity, this));
+      }
+      return out;
+   }
+
 private:
 	class Impl;
 	std::unique_ptr<Impl> pImpl;

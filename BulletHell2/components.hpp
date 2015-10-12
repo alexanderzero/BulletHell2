@@ -38,5 +38,21 @@ struct SizeComponent
 	Vec2 sz;
 };
 
+
+struct PlayerComponent {
+
+   PlayerComponent()
+   {
+      memset(this, 0, sizeof(*this)); //clear initial flags to false.
+   }
+
+   //controls state.
+   bool left, right, up, down;
+   bool focused;
+
+}; //is-a player
 struct EnemyComponent {}; //is-a enemy 
 struct CameraComponent {}; //makes is-a camera.
+
+
+struct WorldBoundedComponent {}; //forced to always be in the world bounds.

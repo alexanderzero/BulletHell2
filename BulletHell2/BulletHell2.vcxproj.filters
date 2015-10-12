@@ -88,6 +88,12 @@
     <Filter Include="Resource Files\sfx">
       <UniqueIdentifier>{c6ac7e75-77ff-4070-b135-0e56d4506270}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Game Engine\Input">
+      <UniqueIdentifier>{1f90d018-d3bc-4aa7-a449-710a67eace16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game Engine\Input">
+      <UniqueIdentifier>{e86606f4-da5b-4165-8561-8e1e93129904}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bhmain.cpp">
@@ -216,6 +222,9 @@
     <ClCompile Include="audio.cpp">
       <Filter>Source Files\Game Engine\Audio</Filter>
     </ClCompile>
+    <ClCompile Include="input.cpp">
+      <Filter>Source Files\Game Engine\Input</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="component.hpp">
@@ -307,6 +316,9 @@
     </ClInclude>
     <ClInclude Include="fmod\fmod_output.h">
       <Filter>Header Files\FMOD</Filter>
+    </ClInclude>
+    <ClInclude Include="input.hpp">
+      <Filter>Header Files\Game Engine\Input</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

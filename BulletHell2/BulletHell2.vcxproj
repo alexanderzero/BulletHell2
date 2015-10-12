@@ -128,6 +128,7 @@
     <ClCompile Include="entity.cpp" />
     <ClCompile Include="geometry.cpp" />
     <ClCompile Include="graphics.cpp" />
+    <ClCompile Include="input.cpp" />
     <ClCompile Include="lpng\adler32.c" />
     <ClCompile Include="lpng\compress.c" />
     <ClCompile Include="lpng\crc32.c" />
@@ -188,6 +189,7 @@
     <ClInclude Include="glew\GL\wglew.h" />
     <ClInclude Include="glfw_include\GLFW\glfw3.h" />
     <ClInclude Include="glfw_include\GLFW\glfw3native.h" />
+    <ClInclude Include="input.hpp" />
     <ClInclude Include="Level.hpp" />
     <ClInclude Include="NameIndex.hpp" />
     <ClInclude Include="resource.h" />

@@ -16,4 +16,9 @@ namespace constants
    
    //UI
    extern const Vec2 cameraSize;
+
+
+   //PLAYER STATS
+   extern const float playerSpeed;
+   extern const float playerFocusedSpeed;
 }

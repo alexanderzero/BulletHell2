@@ -14,6 +14,8 @@
 
 #include "constants.hpp"
 
+#include "input.hpp"
+
 #define POSITION_ATTRIB 0
 #define COLOR_ATTRIB 1
 #define TEX_ATTRIB 2
@@ -57,10 +59,38 @@ GLint uniform_ypos;
 GLint uniform_xsize;
 GLint uniform_ysize;
 
+
+static KeyPressType translateGLFWKeyEvent(int action)
+{
+   if (action == GLFW_PRESS) return KeyPressType::Down;
+   else if (action == GLFW_RELEASE) return KeyPressType::Up;
+   else if (action == GLFW_REPEAT) return KeyPressType::Repeated;
+}
+static int translateGLFWKey(int key)
+{
+   // r/shittyprogramming
+   // this one is kinda annoying to do right, since you want to hide implementation details.  Probably should be a table something or somewhere when we have more cases?
+
+   if (key == GLFW_KEY_LEFT) return KeyType::Left;
+   else if (key == GLFW_KEY_RIGHT) return  KeyType::Right;
+   else if (key == GLFW_KEY_UP) return  KeyType::Up;
+   else if (key == GLFW_KEY_DOWN) return  KeyType::Down;
+   else if (key == GLFW_KEY_LEFT_SHIFT) return  KeyType::LeftShift;
+   else if (key == GLFW_KEY_RIGHT_SHIFT) return  KeyType::RightShift;
+
+   return key;
+}
+
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
       glfwSetWindowShouldClose(window, GL_TRUE);
+
+   KeyEvent ev;
+   ev.type = translateGLFWKeyEvent(action);
+   ev.key = translateGLFWKey(key);
+
+   inputPushEvent(ev);
 }
 
 
@@ -496,6 +526,11 @@ bool Window::isOpen()
 void Window::updateInput()
 {
    if (!isOpen()) return;
+
+   //flush stale events
+   inputFlushQueue();
+
+   //get fresh events
    glfwPollEvents();
 }
 
@@ -508,23 +543,6 @@ void Window::endDraw()
 {
    if (!isOpen()) return;
    glfwSwapBuffers(pImpl->window);
-}
-
-void Window::drawSpriteHACK(Vec2 const& bottomMiddle, Vec2 const& size)
-{
-   //let's do some god-awful opengl!     
-
-   //this sorta works for some god-forsaken reason.
-   glBegin(GL_TRIANGLES);
-   glVertex2f(bottomMiddle.x-size.x/2, bottomMiddle.y);
-   glVertex2f(bottomMiddle.x + size.x / 2, bottomMiddle.y);
-   glVertex2f(bottomMiddle.x + size.x / 2, bottomMiddle.y+size.y);
-
-
-   glVertex2f(bottomMiddle.x - size.x / 2, bottomMiddle.y);
-   glVertex2f(bottomMiddle.x + size.x / 2, bottomMiddle.y + size.y);
-   glVertex2f(bottomMiddle.x - size.x / 2, bottomMiddle.y + size.y);
-   glEnd();
 }
 
 void Window::drawSprite(float x, float y)
