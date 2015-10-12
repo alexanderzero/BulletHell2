@@ -205,7 +205,7 @@
       <Filter>Source Files\Game Engine\Application</Filter>
     </ClCompile>
     <ClCompile Include="sprite.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Game Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="audio.cpp">
       <Filter>Source Files\Game Engine\Audio</Filter>
@@ -270,7 +270,7 @@
       <Filter>Header Files\Game Engine\Application</Filter>
     </ClInclude>
     <ClInclude Include="sprite.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Game Engine\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
@@ -309,6 +309,9 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="png\test1.png">
+      <Filter>Resource Files\png</Filter>
+    </Image>
+    <Image Include="png\fireball_1.png">
       <Filter>Resource Files\png</Filter>
     </Image>
   </ItemGroup>

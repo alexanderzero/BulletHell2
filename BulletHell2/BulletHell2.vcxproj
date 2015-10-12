@@ -201,6 +201,7 @@
     <Library Include="glfw3dll.lib" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="png\fireball_1.png" />
     <Image Include="png\test1.png" />
   </ItemGroup>
   <ItemGroup>
