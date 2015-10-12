@@ -3,9 +3,11 @@
 #include "stdint.h"
 #include <memory>
 
+
 //forward decls only!
 struct EntitySystemView;
 class Window;
+class Audio;
 
 class BulletHellState
 {
@@ -22,6 +24,9 @@ struct BulletHellContext
    uint64_t currentTick;
    bool gameRunning;
    std::unique_ptr<BulletHellState> currentState;//game FSM
+
+   //audio-related
+   Audio* audio;
 };
 
 

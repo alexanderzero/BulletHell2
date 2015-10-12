@@ -14,6 +14,8 @@
 
 #include "RunLevelState.hpp"
 
+#include "audio.hpp"
+
 void startGame(BulletHellContext* ctxt)
 {
    //for now, let's jump straight into a test level.
@@ -54,8 +56,10 @@ void BulletHell2::startup()
    //context stuff
 	context = new BulletHellContext;   
 
+   //audio
+   context->audio = new Audio;
 
-
+   
    //game tick
    context->currentTick = 0;
    context->gameRunning = true;
@@ -78,7 +82,10 @@ void BulletHell2::startup()
 void BulletHell2::run()
 {
    auto prevTime = timeCurrentMicroseconds();
-   	
+
+   auto song = new Sound(Sound::createSong(*context->audio, "music/test.mp3"));
+   song->play();
+
 	//run game "main loop" here.
 	while(context->window->isOpen() && context->gameRunning)
 	{
@@ -116,6 +123,8 @@ void BulletHell2::shutdown()
 	
    delete context->window;
 
+   delete context->audio;
+
 	delete context;
 }
 
@@ -131,4 +140,5 @@ void BulletHell2::update()
    //update the simulation state.
    if (!context->currentState) startGame(context);
    context->currentState->update();
+
 }

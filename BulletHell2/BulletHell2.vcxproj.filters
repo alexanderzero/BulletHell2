@@ -73,6 +73,15 @@
     <Filter Include="Source Files\Game Engine\Graphics">
       <UniqueIdentifier>{215a7b08-5518-48c4-bbf3-8b0967790fb9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Game Engine\Audio">
+      <UniqueIdentifier>{49529f5c-4af3-4f13-979c-86ce77c9c474}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game Engine\Audio">
+      <UniqueIdentifier>{4bdf7de4-2b0e-4f3c-bb8f-7e35188598dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\music">
+      <UniqueIdentifier>{dd2ccab8-9083-4111-8625-5ff55b51f214}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bhmain.cpp">
@@ -198,6 +207,9 @@
     <ClCompile Include="sprite.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="audio.cpp">
+      <Filter>Source Files\Game Engine\Audio</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="component.hpp">
@@ -260,12 +272,21 @@
     <ClInclude Include="sprite.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="audio.hpp">
+      <Filter>Header Files\Game Engine\Audio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="glfw3.dll">
       <Filter>Resource Files\libs</Filter>
     </None>
     <None Include="glew32.dll">
+      <Filter>Resource Files\libs</Filter>
+    </None>
+    <None Include="fmodL64.dll">
       <Filter>Resource Files\libs</Filter>
     </None>
   </ItemGroup>
@@ -282,6 +303,9 @@
     <Library Include="glew\glew32s.lib">
       <Filter>Resource Files\libs</Filter>
     </Library>
+    <Library Include="fmodL64_vc.lib">
+      <Filter>Resource Files\libs</Filter>
+    </Library>
   </ItemGroup>
   <ItemGroup>
     <Image Include="png\test1.png">
@@ -295,5 +319,15 @@
     <Text Include="shaders\vertex_shader_1.txt">
       <Filter>Resource Files\shaders</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="BulletHell2.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="music\test.mp3">
+      <Filter>Resource Files\music</Filter>
+    </Media>
   </ItemGroup>
 </Project>
