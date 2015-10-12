@@ -82,6 +82,9 @@
     <Filter Include="Resource Files\music">
       <UniqueIdentifier>{dd2ccab8-9083-4111-8625-5ff55b51f214}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\FMOD">
+      <UniqueIdentifier>{e7d564b4-85a8-488e-9c2d-96028b29cc37}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bhmain.cpp">
@@ -277,6 +280,30 @@
     </ClInclude>
     <ClInclude Include="audio.hpp">
       <Filter>Header Files\Game Engine\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="fmod\fmod.h">
+      <Filter>Header Files\FMOD</Filter>
+    </ClInclude>
+    <ClInclude Include="fmod\fmod.hpp">
+      <Filter>Header Files\FMOD</Filter>
+    </ClInclude>
+    <ClInclude Include="fmod\fmod_codec.h">
+      <Filter>Header Files\FMOD</Filter>
+    </ClInclude>
+    <ClInclude Include="fmod\fmod_common.h">
+      <Filter>Header Files\FMOD</Filter>
+    </ClInclude>
+    <ClInclude Include="fmod\fmod_dsp.h">
+      <Filter>Header Files\FMOD</Filter>
+    </ClInclude>
+    <ClInclude Include="fmod\fmod_dsp_effects.h">
+      <Filter>Header Files\FMOD</Filter>
+    </ClInclude>
+    <ClInclude Include="fmod\fmod_errors.h">
+      <Filter>Header Files\FMOD</Filter>
+    </ClInclude>
+    <ClInclude Include="fmod\fmod_output.h">
+      <Filter>Header Files\FMOD</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
