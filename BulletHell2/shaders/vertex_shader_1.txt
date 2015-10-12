@@ -8,9 +8,18 @@ out vec3 vcol;
 out vec2 tex_out;
 
 uniform vec2 uCameraSize;
+uniform float x_position;
+uniform float y_position;
+uniform float width;
+uniform float height;
 
 void main(void) {
     vcol = color;
+
+	position.x *= width;
+	position.y *= height;
+	position.x += x_position;
+	position.y += y_position;
 
 	vec2 xFrmCamera = position.xy * 2; //NDC space is -1 to 1, multiply by two (because we're 0 to cameraSize)
 	xFrmCamera /= uCameraSize; //scale to (0 to 2)

@@ -28,12 +28,11 @@ int vert_count = 4;
 // };
 
  GLfloat vert_data[] = {
-    0, 1080, 0.0,
+    0, 1, 0.0,
     0, 0, 0.0,
-    1920, 1080, 0.0,
-    1920, 0, 0.0
+    1, 1, 0.0,
+    1, 0, 0.0
  };
-
 
 GLfloat col_data[] = {
    1.0, 0.0, 0.0,
@@ -48,6 +47,10 @@ GLfloat tex_data[] = {
    1.0, 1.0,
    1.0, 0.0
 };
+
+
+GLuint prog;
+GLuint background_texture;
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -95,9 +98,8 @@ void init()
    glVertexAttribPointer(TEX_ATTRIB, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
    int size = 64;
-   png_texture_load("png\\test1.png", &size, &size);
+   background_texture = png_texture_load("png\\test1.png", &size, &size);
 
-   GLuint prog;
    GLuint vert;
    GLuint frag;
 
@@ -172,6 +174,12 @@ void render(GLFWwindow* window)
 //    glMatrixMode(GL_MODELVIEW);
 //    glLoadIdentity();
 
+   //Draw the background
+   glBindTexture(GL_TEXTURE_2D, background_texture);
+   glUniform1f(glGetUniformLocation(prog, "x_position"), 0.0);
+   glUniform1f(glGetUniformLocation(prog, "y_position"), 0.0);
+   glUniform1f(glGetUniformLocation(prog, "width"), 1920.0);
+   glUniform1f(glGetUniformLocation(prog, "height"), 1080.0);
    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
    //glfwSwapBuffers(window);
@@ -456,6 +464,7 @@ public:
 Window::Window(WindowInit const& initData)
    : pImpl(new Impl(initData))
 {
+	test_sprite.SetFile("png/fireball_1.png");
 }
 Window::~Window() 
 {
@@ -501,4 +510,14 @@ void Window::drawSpriteHACK(Vec2 const& bottomMiddle, Vec2 const& size)
    glVertex2f(bottomMiddle.x + size.x / 2, bottomMiddle.y + size.y);
    glVertex2f(bottomMiddle.x - size.x / 2, bottomMiddle.y + size.y);
    glEnd();
+}
+
+void Window::drawSprite(float x, float y)
+{
+	glBindTexture(GL_TEXTURE_2D, test_sprite.texture_handle);
+	glUniform1f(glGetUniformLocation(prog, "x_position"), x);
+	glUniform1f(glGetUniformLocation(prog, "y_position"), y);
+	glUniform1f(glGetUniformLocation(prog, "width"), test_sprite.width);
+	glUniform1f(glGetUniformLocation(prog, "height"), test_sprite.height);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }

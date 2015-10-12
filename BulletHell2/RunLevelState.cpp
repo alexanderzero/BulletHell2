@@ -33,7 +33,8 @@ void drawSpritesHacked(BulletHellContext* ctxt)
       auto sz = enemy.get<SizeComponent>();
       if (!pos || !sz) continue;
 
-      ctxt->window->drawSpriteHACK(pos->pos, sz->sz);
+      //ctxt->window->drawSpriteHACK(pos->pos, sz->sz);
+	  ctxt->window->drawSprite(pos->pos.x, pos->pos.y);
    }
 }
 
