@@ -16,16 +16,18 @@ uniform float height;
 void main(void) {
     vcol = color;
 
-	position.x *= width;
-	position.y *= height;
-	position.x += x_position;
-	position.y += y_position;
+	vec3 temp_pos = position;
 
-	vec2 xFrmCamera = position.xy * 2; //NDC space is -1 to 1, multiply by two (because we're 0 to cameraSize)
+	temp_pos.x *= width;
+	temp_pos.y *= height;
+	temp_pos.x += x_position;
+	temp_pos.y += y_position;
+
+	vec2 xFrmCamera = temp_pos.xy * 2; //NDC space is -1 to 1, multiply by two (because we're 0 to cameraSize)
 	xFrmCamera /= uCameraSize; //scale to (0 to 2)
 	xFrmCamera -= vec2(1.0, 1.0); //rebase to (-1 to 1)
 	
-    gl_Position = vec4(xFrmCamera, position.z, 1.0);
+    gl_Position = vec4(xFrmCamera, temp_pos.z, 1.0);
 
     tex_out = tex_in;
 }

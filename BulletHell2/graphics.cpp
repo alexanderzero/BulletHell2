@@ -28,10 +28,10 @@ int vert_count = 4;
 // };
 
  GLfloat vert_data[] = {
-    0, 1, 0.0,
-    0, 0, 0.0,
-    1, 1, 0.0,
-    1, 0, 0.0
+	0.0, 1.0, 0.0,
+	0.0, 0.0, 0.0,
+	1.0, 1.0, 0.0,
+	1.0, 0.0, 0.0
  };
 
 GLfloat col_data[] = {
@@ -51,6 +51,11 @@ GLfloat tex_data[] = {
 
 GLuint prog;
 GLuint background_texture;
+
+GLint uniform_xpos;
+GLint uniform_ypos;
+GLint uniform_xsize;
+GLint uniform_ysize;
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -121,16 +126,23 @@ void init()
    glCompileShader(frag);
 
    int status_vert;
+   bool shader_failed = false;
    glGetShaderiv(vert, GL_COMPILE_STATUS, &status_vert);
    if (status_vert == GL_FALSE)
    {
-   	int breakfail = 0;
+	   shader_failed = true;
    }
    int status_frag;
    glGetShaderiv(frag, GL_COMPILE_STATUS, &status_frag);
    if (status_frag == GL_FALSE)
    {
-   	int breakfail = 0;
+	   shader_failed = true;
+   }
+
+   if (shader_failed)
+   {
+		std::cout << "Shader confirmed garbage. Learn how to program idiot" << std::endl;
+		std::cin.get();
    }
 
    glAttachShader(prog, vert);
@@ -139,8 +151,6 @@ void init()
    glBindAttribLocation(prog, POSITION_ATTRIB, "position");
    glBindAttribLocation(prog, COLOR_ATTRIB, "color");
    glBindAttribLocation(prog, TEX_ATTRIB, "tex_in");
-
-
    
    glLinkProgram(prog);
    glUseProgram(prog);
@@ -150,6 +160,11 @@ void init()
    glUniform2f(glGetUniformLocation(prog, "uCameraSize"), constants::cameraSize.x, constants::cameraSize.y);
 
    glUniform1i(glGetUniformLocation(prog, "tex"), 0);
+
+   uniform_xpos  = glGetUniformLocation(prog, "x_position");
+   uniform_ypos  = glGetUniformLocation(prog, "y_position");
+   uniform_xsize = glGetUniformLocation(prog, "width");
+   uniform_ysize = glGetUniformLocation(prog, "height");
 }
 
 void render(GLFWwindow* window)
@@ -176,10 +191,10 @@ void render(GLFWwindow* window)
 
    //Draw the background
    glBindTexture(GL_TEXTURE_2D, background_texture);
-   glUniform1f(glGetUniformLocation(prog, "x_position"), 0.0);
-   glUniform1f(glGetUniformLocation(prog, "y_position"), 0.0);
-   glUniform1f(glGetUniformLocation(prog, "width"), 1920.0);
-   glUniform1f(glGetUniformLocation(prog, "height"), 1080.0);
+   glUniform1f(uniform_xpos, 0.0);
+   glUniform1f(uniform_ypos, 0.0);
+   glUniform1f(uniform_xsize, 1920.0);
+   glUniform1f(uniform_ysize, 1080.0);
    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
    //glfwSwapBuffers(window);
@@ -464,7 +479,7 @@ public:
 Window::Window(WindowInit const& initData)
    : pImpl(new Impl(initData))
 {
-	test_sprite.SetFile("png/fireball_1.png");
+	test_sprite.SetFile("png\\fireball_1.png");
 }
 Window::~Window() 
 {
@@ -515,9 +530,9 @@ void Window::drawSpriteHACK(Vec2 const& bottomMiddle, Vec2 const& size)
 void Window::drawSprite(float x, float y)
 {
 	glBindTexture(GL_TEXTURE_2D, test_sprite.texture_handle);
-	glUniform1f(glGetUniformLocation(prog, "x_position"), x);
-	glUniform1f(glGetUniformLocation(prog, "y_position"), y);
-	glUniform1f(glGetUniformLocation(prog, "width"), test_sprite.width);
-	glUniform1f(glGetUniformLocation(prog, "height"), test_sprite.height);
+	glUniform1f(uniform_xpos, x);
+	glUniform1f(uniform_ypos, y);
+	glUniform1f(uniform_xsize, test_sprite.width);
+	glUniform1f(uniform_ysize, test_sprite.height);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }
