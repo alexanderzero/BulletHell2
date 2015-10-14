@@ -27,7 +27,18 @@ Entity createPlayer(BulletHellContext* ctxt)
    out.create<SizeComponent>(32.0f, 32.0f);
    out.create<PlayerComponent>();
    out.create<WorldBoundedComponent>();
-   out.create<ShotComponent>(Shot("PlayerShot"));  
+
+
+   std::vector<Shot> shots;
+   Shot shot1("PlayerShot");
+   Shot shot2("PlayerShot");
+   shot1.offset = Vec2(8.0f, 0.0f);
+   shot2.offset = Vec2(-8.0f, 0.0f);
+   shots.push_back(shot1);
+   shots.push_back(shot2);
+   out.create<ShotComponent>(std::move(shots));  
+
+
    out.create<SpriteComponent>("png/player_temp.png");
    
 	out.update();

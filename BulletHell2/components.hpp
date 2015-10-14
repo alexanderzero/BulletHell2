@@ -110,6 +110,7 @@ struct Shot
    Shot() : nextFireTime(0) {}
    Shot(std::string name) : type(std::move(name)), nextFireTime(0) {}
    std::string type;
+   Vec2 offset; //physical offset on the character to fire this from.
    uint64_t nextFireTime;
 };
 

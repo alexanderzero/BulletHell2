@@ -17,12 +17,13 @@ struct BulletHellContext;
 struct EntitySystemView;
 void hackBuildTestShotTypes(EntitySystemView*& shotTypes);
 
+struct Shot;
 
 class IShotType
 {
 public:
    virtual ~IShotType() {}
-   virtual void fire(Entity ent) = 0;
+   virtual void fire(Entity ent, Shot* shot) = 0;
 };
 
 int getShotCooldown(ShotType shot);

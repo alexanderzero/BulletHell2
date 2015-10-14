@@ -53,14 +53,22 @@ void hackBuildTestShotTypes(EntitySystemView*& shotTypes)
 class ShotComponentImpl : public IShotType
 {
 public:
-   virtual void fire(Entity ent) override
+   virtual void fire(Entity ent, Shot* shot) override
    {
       //actual entity creation...  note later this might be a fan, or something completely different.  This a placeholder til we figure out requirements of the system a bit more, and also if we want to reuse it directly for enemies
 
       Entity bullet(ctxt->world);
 
       //centered on player for now.  more fire types later based on the shot type
-      bullet.create<PositionComponent>(*ent.get<PositionComponent>());
+      auto position = ent.get<PositionComponent>()->pos;
+      
+
+      if (shot)
+      {
+         position += shot->offset;
+      }
+
+      bullet.create<PositionComponent>(position);
 
       if (ent.get<PlayerComponent>())
          bullet.create<SizeComponent>(4.0f, 32.0f); //hacked, add graphical/collision data to shot type later.

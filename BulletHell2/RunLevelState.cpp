@@ -27,7 +27,12 @@ void fireShot(BulletHellContext* ctxt, Entity player, Shot& shot)
    if (auto cooldown = shotType.get<CooldownComponent>()) shot.nextFireTime += cooldown->ticks;
 
    //fire!
-   if (auto shot = getShotType(ctxt, shotType)) shot->fire(player);
+   if (auto shotInterface = getShotType(ctxt, shotType))
+   {
+      shotInterface->fire(player, &shot);
+   }
+   
+
 }
 void fireAllWeapons(BulletHellContext* ctxt, Entity player)
 {
