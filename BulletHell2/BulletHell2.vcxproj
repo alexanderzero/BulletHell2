@@ -215,8 +215,10 @@
     <Library Include="glfw3dll.lib" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="png\babble_red.png" />
     <Image Include="png\bg1.png" />
     <Image Include="png\fireball_1.png" />
+    <Image Include="png\needle.png" />
     <Image Include="png\player_temp.png" />
     <Image Include="png\test1.png" />
   </ItemGroup>

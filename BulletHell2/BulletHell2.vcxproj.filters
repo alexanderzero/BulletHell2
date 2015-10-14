@@ -374,6 +374,12 @@
     <Image Include="png\player_temp.png">
       <Filter>Resource Files\png</Filter>
     </Image>
+    <Image Include="png\babble_red.png">
+      <Filter>Resource Files\png</Filter>
+    </Image>
+    <Image Include="png\needle.png">
+      <Filter>Resource Files\png</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Text Include="shaders\fragment_shader_1.txt">

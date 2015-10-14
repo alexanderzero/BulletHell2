@@ -15,6 +15,7 @@ ShotType buildPlayerShotType(EntitySystemView* shotTypes)
    entitySetName(shotTypes, playerShot, "PlayerShot");
    playerShot.create<CooldownComponent>(10);
    playerShot.create<VelocityComponent>(0.0f, 32.0f);
+   playerShot.create<SpriteComponent>("png/needle.png");
    playerShot.update();
 
    return playerShot;
@@ -29,6 +30,7 @@ ShotType buildEnemyShotType(EntitySystemView* shotTypes)
    playerShot.create<VelocityComponent>(0.0f, 0.0f);
    playerShot.create<AccelerationComponent>(0.0f, -0.2f);
    playerShot.create<MaxSpeedComponent>(8.0f);
+   playerShot.create<SpriteComponent>("png/babble_red.png");
    playerShot.update();
 
    return playerShot;
@@ -71,6 +73,9 @@ public:
       if (auto vel = shotType.get<VelocityComponent>()) bullet.create<VelocityComponent>(*vel);
       if (auto spd = shotType.get<MaxSpeedComponent>()) bullet.create<MaxSpeedComponent>(*spd);
       if (auto acc = shotType.get<AccelerationComponent>()) bullet.create<AccelerationComponent>(*acc);
+      
+      //graphics
+      if (auto spr = shotType.get<SpriteComponent>()) bullet.create<SpriteComponent>(*spr);
 
       if (ent.get<PlayerComponent>()) bullet.create<PlayerBulletComponent>(); //for indexing
       if (ent.get<EnemyComponent>()) bullet.create<EnemyBulletComponent>(); //for indexing
