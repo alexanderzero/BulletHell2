@@ -22,7 +22,8 @@ public:
    void startDraw();
    void endDraw();
 
-   void drawSprite(float x, float y);
+   void drawSprite(float x, float y, int flip_horizontal, int flip_vertical);
+   void drawSprite(float x, float y, int flip_horizontal, int flip_vertical, Sprite* sprite);
 
    bool isOpen();
 private:
