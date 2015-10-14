@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
+#include <unordered_map>
 
 #include "BulletHell2.hpp"
 #include "direct.h"
@@ -55,6 +56,9 @@ GLfloat tex_data[] = {
 
 GLuint prog;
 GLuint background_texture;
+
+//Sprites :D
+std::unordered_map<std::string, Sprite> sprite_map;
 
 //Sprite properties
 GLint uniform_xpos;
@@ -590,4 +594,17 @@ void Window::drawSprite(float x, float y, int flip_horizontal, int flip_vertical
 	glUniform1i(uniform_flip_vert, flip_vertical);
 	glUniform2fv(uniform_rotation, 1, (const GLfloat*)&rotation_vector);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+}
+
+Sprite* GetSprite(std::string file_path)
+{
+	std::unordered_map<std::string,Sprite>::iterator it = sprite_map.find(file_path);
+	if (it != sprite_map.end())
+		return &it->second;
+	else
+	{
+		auto newit = sprite_map.insert(std::make_pair(file_path, Sprite()));
+		newit.first->second.SetFile(file_path);
+		return &newit.first->second;
+	}
 }

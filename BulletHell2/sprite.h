@@ -5,7 +5,6 @@
 #include <GL/glew.h>
 #include <gl/GL.h>
 
-
 class Sprite
 {
 public:
@@ -20,6 +19,6 @@ public:
 
 private:
 	std::string path_name;
-
-
 };
+
+Sprite* GetSprite(std::string file_path);
