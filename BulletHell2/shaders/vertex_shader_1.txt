@@ -12,11 +12,24 @@ uniform float x_position;
 uniform float y_position;
 uniform float width;
 uniform float height;
+uniform int   flip_horizontal;
+uniform int   flip_vertical;
 
 void main(void) {
     vcol = color;
 
 	vec3 temp_pos = position;
+
+	if(flip_horizontal == 1)
+	{
+		temp_pos.x *= -1;
+		temp_pos.x += 1;
+	}
+	if(flip_vertical == 1)
+	{
+		temp_pos.y *= -1;
+		temp_pos.y += 1;
+	}
 
 	temp_pos.x *= width;
 	temp_pos.y *= height;

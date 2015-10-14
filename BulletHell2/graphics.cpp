@@ -56,10 +56,13 @@ GLfloat tex_data[] = {
 GLuint prog;
 GLuint background_texture;
 
+//Sprite properties
 GLint uniform_xpos;
 GLint uniform_ypos;
 GLint uniform_xsize;
-GLint uniform_ysize;
+GLint uniform_ysize;     
+GLint uniform_flip_horz; //flip horizontal
+GLint uniform_flip_vert; //flip vertical
 
 
 static KeyPressType translateGLFWKeyEvent(int action)
@@ -208,6 +211,8 @@ void init()
    uniform_ypos  = glGetUniformLocation(prog, "y_position");
    uniform_xsize = glGetUniformLocation(prog, "width");
    uniform_ysize = glGetUniformLocation(prog, "height");
+   uniform_flip_horz = glGetUniformLocation(prog, "flip_horizontal");
+   uniform_flip_vert = glGetUniformLocation(prog, "flip_vertical");
 }
 
 void render(GLFWwindow* window)
@@ -558,12 +563,21 @@ void Window::endDraw()
    glfwSwapBuffers(pImpl->window);
 }
 
-void Window::drawSprite(float x, float y)
+void Window::drawSprite(float x, float y, int flip_horizontal, int flip_vertical)
 {
-	glBindTexture(GL_TEXTURE_2D, test_sprite.texture_handle);
+	drawSprite(x, y, flip_horizontal, flip_vertical, &test_sprite);
+}
+
+void Window::drawSprite(float x, float y, int flip_horizontal, int flip_vertical, Sprite* sprite)
+{
+	//int flip_horizontal = 0;
+	//int flip_vertical = 1;
+	glBindTexture(GL_TEXTURE_2D, sprite->texture_handle);
 	glUniform1f(uniform_xpos, x);
 	glUniform1f(uniform_ypos, y);
-	glUniform1f(uniform_xsize, test_sprite.width);
-	glUniform1f(uniform_ysize, test_sprite.height);
+	glUniform1f(uniform_xsize, sprite->width);
+	glUniform1f(uniform_ysize, sprite->height);
+	glUniform1i(uniform_flip_horz, flip_horizontal);
+	glUniform1i(uniform_flip_vert, flip_vertical);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }
