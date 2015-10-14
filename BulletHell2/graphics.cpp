@@ -24,19 +24,19 @@
 
 int vert_count = 4;
 
-// GLfloat vert_data[] = {
-//    -0.5, 0.5, 0.0,
-//    -0.5, -0.5, 0.0,
-//    0.5, 0.5, 0.0,
-//    0.5, -0.5, 0.0
-// };
-
  GLfloat vert_data[] = {
-	0.0, 1.0, 0.0,
-	0.0, 0.0, 0.0,
-	1.0, 1.0, 0.0,
-	1.0, 0.0, 0.0
+    -0.5, 0.5, 0.0,
+    -0.5, -0.5, 0.0,
+    0.5, 0.5, 0.0,
+    0.5, -0.5, 0.0
  };
+
+ //GLfloat vert_data[] = {
+	//0.0, 1.0, 0.0,
+	//0.0, 0.0, 0.0,
+	//1.0, 1.0, 0.0,
+	//1.0, 0.0, 0.0
+ //};
 
 GLfloat col_data[] = {
    1.0, 0.0, 0.0,
@@ -63,6 +63,7 @@ GLint uniform_xsize;
 GLint uniform_ysize;     
 GLint uniform_flip_horz; //flip horizontal
 GLint uniform_flip_vert; //flip vertical
+GLint uniform_rotation;  //first line of the rotation matrix as a 2D vector
 
 
 static KeyPressType translateGLFWKeyEvent(int action)
@@ -213,6 +214,10 @@ void init()
    uniform_ysize = glGetUniformLocation(prog, "height");
    uniform_flip_horz = glGetUniformLocation(prog, "flip_horizontal");
    uniform_flip_vert = glGetUniformLocation(prog, "flip_vertical");
+   uniform_rotation = glGetUniformLocation(prog, "rotation_vector");
+
+   glEnable(GL_BLEND);
+   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void render(GLFWwindow* window)
@@ -238,11 +243,13 @@ void render(GLFWwindow* window)
 //    glLoadIdentity();
 
    //Draw the background
+   Vec2 rotation_vector(cos(0), sin(0));
    glBindTexture(GL_TEXTURE_2D, background_texture);
-   glUniform1f(uniform_xpos, 0.0);
-   glUniform1f(uniform_ypos, 0.0);
+   glUniform1f(uniform_xpos, 960.0);
+   glUniform1f(uniform_ypos, 540.0);
    glUniform1f(uniform_xsize, 1920.0);
    glUniform1f(uniform_ysize, 1080.0);
+   glUniform2fv(uniform_rotation, 1, (const GLfloat*)&rotation_vector);
    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
    //glfwSwapBuffers(window);
@@ -563,15 +570,17 @@ void Window::endDraw()
    glfwSwapBuffers(pImpl->window);
 }
 
-void Window::drawSprite(float x, float y, int flip_horizontal, int flip_vertical)
+void Window::drawSprite(float x, float y, int flip_horizontal, int flip_vertical, float rotation)
 {
-	drawSprite(x, y, flip_horizontal, flip_vertical, &test_sprite);
+	drawSprite(x, y, flip_horizontal, flip_vertical, rotation, &test_sprite);
 }
 
-void Window::drawSprite(float x, float y, int flip_horizontal, int flip_vertical, Sprite* sprite)
+void Window::drawSprite(float x, float y, int flip_horizontal, int flip_vertical, float rotation, Sprite* sprite)
 {
 	//int flip_horizontal = 0;
 	//int flip_vertical = 1;
+	float radians = degToRad(rotation);
+	Vec2 rotation_vector(cos(radians), sin(radians));
 	glBindTexture(GL_TEXTURE_2D, sprite->texture_handle);
 	glUniform1f(uniform_xpos, x);
 	glUniform1f(uniform_ypos, y);
@@ -579,5 +588,6 @@ void Window::drawSprite(float x, float y, int flip_horizontal, int flip_vertical
 	glUniform1f(uniform_ysize, sprite->height);
 	glUniform1i(uniform_flip_horz, flip_horizontal);
 	glUniform1i(uniform_flip_vert, flip_vertical);
+	glUniform2fv(uniform_rotation, 1, (const GLfloat*)&rotation_vector);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }

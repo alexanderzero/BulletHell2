@@ -14,12 +14,14 @@ uniform float width;
 uniform float height;
 uniform int   flip_horizontal;
 uniform int   flip_vertical;
+uniform vec2  rotation_vector; //the first line of the rotation matrix
 
 void main(void) {
     vcol = color;
 
 	vec3 temp_pos = position;
 
+	//flipping the image
 	if(flip_horizontal == 1)
 	{
 		temp_pos.x *= -1;
@@ -31,8 +33,16 @@ void main(void) {
 		temp_pos.y += 1;
 	}
 
+	//scale
 	temp_pos.x *= width;
 	temp_pos.y *= height;
+
+	//rotation
+	float x_rotated = dot(rotation_vector, temp_pos.xy);
+	float y_rotated = dot(vec2(-rotation_vector.y, rotation_vector.x),temp_pos.xy);
+	temp_pos.xy = vec2(x_rotated, y_rotated);
+
+	//position
 	temp_pos.x += x_position;
 	temp_pos.y += y_position;
 

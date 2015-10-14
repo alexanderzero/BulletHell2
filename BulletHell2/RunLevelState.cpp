@@ -177,7 +177,7 @@ void drawSpritesWithComponent(BulletHellContext* ctxt)
       auto sz = enemy.get<SizeComponent>();
       if (!pos || !sz) continue;
 
-      ctxt->window->drawSprite(pos->pos.x, pos->pos.y, 0, 0);
+      ctxt->window->drawSprite(pos->pos.x, pos->pos.y, 0, 0, 45);
    }
 }
 
