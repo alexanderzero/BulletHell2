@@ -12,6 +12,7 @@
 
 #include "NameIndex.hpp"
 
+#include "ShotType.hpp"
 
 void playerFireShot(BulletHellContext* ctxt, Entity player, Shot& shot)
 {
@@ -23,23 +24,8 @@ void playerFireShot(BulletHellContext* ctxt, Entity player, Shot& shot)
    shot.nextFireTime = ctxt->currentTick;
    if (auto cooldown = shotType.get<CooldownComponent>()) shot.nextFireTime += cooldown->ticks;
 
-   //actual entity creation...  note later this might be a fan, or something completely different.  This a placeholder til we figure out requirements of the system a bit more, and also if we want to reuse it directly for enemies
-
-   Entity bullet(ctxt->world);
-
-   //centered on player for now.  more fire types later based on the shot type
-   bullet.create<PositionComponent>(*player.get<PositionComponent>());
-   
-   bullet.create<SizeComponent>(4.0f, 32.0f); //hacked, add graphical/collision data to shot type later.
-
-   bullet.create<DieOffscreenComponent>(); //don't leak!  note that some shots of enemies might not have this and be simply timed, or may have bounds expanded to allow for slight offscreen action
-
-   //copy velocity component from shot type, if it exists
-   if (auto vel = shotType.get<VelocityComponent>()) bullet.create<VelocityComponent>(*vel);
-
-   bullet.create<PlayerBulletComponent>(); //for indexing
-
-   bullet.update();
+   //fire!
+   if (auto shot = getShotType(ctxt, shotType)) shot->fire(player);
 }
 void playerFire(BulletHellContext* ctxt, Entity player)
 {

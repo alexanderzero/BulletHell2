@@ -13,5 +13,16 @@ typedef Entity ShotType;
 //we re-use certain components in shot types to mean different things.
 
 
+struct BulletHellContext;
 struct EntitySystemView;
 void hackBuildTestShotTypes(EntitySystemView*& shotTypes);
+
+
+class IShotType
+{
+public:
+   virtual ~IShotType() {}
+   virtual void fire(Entity ent) = 0;
+};
+
+IShotType* getShotType(BulletHellContext* context, ShotType shotType);
