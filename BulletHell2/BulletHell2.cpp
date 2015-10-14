@@ -28,6 +28,7 @@ Entity createPlayer(BulletHellContext* ctxt)
    out.create<PlayerComponent>();
    out.create<WorldBoundedComponent>();
    out.create<ShotComponent>(Shot("PlayerShot"));  
+   out.create<SpriteComponent>("png/player_temp.png");
    
 	out.update();
 	return out;

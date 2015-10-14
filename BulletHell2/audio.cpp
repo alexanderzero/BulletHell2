@@ -59,6 +59,7 @@ AudioImpl::AudioImpl()
 }
 AudioImpl::~AudioImpl()
 {
+   detachedSounds.clear();
    system->release();
 }
 void AudioImpl::update()

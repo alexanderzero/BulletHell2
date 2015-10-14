@@ -68,6 +68,13 @@ struct PlayerComponent {
 }; //is-a player
 
 
+struct SpriteComponent
+{
+   SpriteComponent() {}
+   SpriteComponent(std::string sprite_in) : sprite(std::move(sprite_in)) {}
+   std::string sprite;
+};
+
 struct EnemyBulletComponent {};
 struct PlayerBulletComponent {};
 

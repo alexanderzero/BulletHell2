@@ -13,6 +13,7 @@
 #include "NameIndex.hpp"
 
 #include "ShotType.hpp"
+#include "sprite.h"
 
 void fireShot(BulletHellContext* ctxt, Entity player, Shot& shot)
 {
@@ -144,7 +145,6 @@ void handleCollisions(BulletHellContext* ctxt)
    }
 
    //player hit?
-
    auto enemyBullets = ctxt->world->system->entitiesWithComponent<EnemyBulletComponent>();
    auto players = ctxt->world->system->entitiesWithComponent<PlayerComponent>();
 
@@ -163,7 +163,6 @@ void handleCollisions(BulletHellContext* ctxt)
          }
       }
    }
-
 
    destroyMarkedForDeletion(ctxt->world);
 }
@@ -217,9 +216,24 @@ void drawSpritesWithComponent(BulletHellContext* ctxt)
    {
       auto pos = enemy.get<PositionComponent>();
       auto sz = enemy.get<SizeComponent>();
+
       if (!pos || !sz) continue;
 
-      ctxt->window->drawSprite(pos->pos.x, pos->pos.y, 0, 0, 45);
+      Sprite* sprite = nullptr;
+      if (auto sprComp = enemy.get<SpriteComponent>())
+      {
+         sprite = GetSprite(sprComp->sprite);
+      }
+
+      if (sprite)
+      {
+         ctxt->window->drawSprite(pos->pos.x, pos->pos.y, 0, 0, 0, sprite);
+      }
+      else
+      {
+         ctxt->window->drawSprite(pos->pos.x, pos->pos.y, 0, 0, 0);
+      }
+      
    }
 }
 
