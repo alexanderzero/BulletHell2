@@ -215,6 +215,9 @@ void init()
    uniform_flip_horz = glGetUniformLocation(prog, "flip_horizontal");
    uniform_flip_vert = glGetUniformLocation(prog, "flip_vertical");
    uniform_rotation = glGetUniformLocation(prog, "rotation_vector");
+
+   glEnable(GL_BLEND);
+   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void render(GLFWwindow* window)
