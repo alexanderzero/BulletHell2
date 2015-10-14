@@ -22,6 +22,7 @@ void playerFireShot(BulletHellContext* ctxt, Entity player, Shot& shot)
 
    //manage cooldowns.
    shot.nextFireTime = ctxt->currentTick;
+   shot.nextFireTime += getShotCooldown(shotType);
    if (auto cooldown = shotType.get<CooldownComponent>()) shot.nextFireTime += cooldown->ticks;
 
    //fire!
@@ -130,8 +131,7 @@ void handleCollisions(BulletHellContext* ctxt)
    auto enemies = ctxt->world->system->entitiesWithComponent<EnemyComponent>();
    auto bullets = ctxt->world->system->entitiesWithComponent<PlayerBulletComponent>();
     
-   //just do a really stupid brute force n x m implementation right
-   
+   //just do a really stupid brute force n x m implementation right now   
    for (auto&& enemy : enemies)
    {
       for (auto&& bullet : bullets)

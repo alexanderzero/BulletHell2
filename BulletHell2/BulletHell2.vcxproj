@@ -160,6 +160,7 @@
     <ClCompile Include="lpng\uncompr.c" />
     <ClCompile Include="lpng\zutil.c" />
     <ClCompile Include="NameIndex.cpp" />
+    <ClCompile Include="random.cpp" />
     <ClCompile Include="RunLevelState.cpp" />
     <ClCompile Include="ShotType.cpp" />
     <ClCompile Include="sprite.cpp" />
@@ -193,6 +194,7 @@
     <ClInclude Include="input.hpp" />
     <ClInclude Include="Level.hpp" />
     <ClInclude Include="NameIndex.hpp" />
+    <ClInclude Include="random.hpp" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="RunLevelState.hpp" />
     <ClInclude Include="ShotType.hpp" />

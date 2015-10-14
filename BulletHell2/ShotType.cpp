@@ -5,12 +5,12 @@
 #include "NameIndex.hpp"
 #include "components.hpp"
 #include "BulletHell2.hpp"
+#include "random.hpp"
 
 
 ShotType buildPlayerShotType(EntitySystemView* shotTypes)
 {
    ShotType playerShot(shotTypes);
-
 
    entitySetName(shotTypes, playerShot, "PlayerShot");
    playerShot.create<CooldownComponent>(10);
@@ -63,6 +63,14 @@ public:
 std::unordered_map<EntityID, IShotType*> g_shotType;
 
 //TODO: this assumes only one context.
+int getShotCooldown(ShotType shot)
+{
+   if (auto cooldown = shot.get<CooldownComponent>()) return cooldown->ticks;
+   if (auto cooldown = shot.get<CooldownRangeComponent>()) return randomInt(cooldown->ticksMin, cooldown->ticksMax);   
+
+   return 0;
+}
+
 IShotType* getShotType(BulletHellContext* context, ShotType shotType)
 {
    auto shotID = shotType.getID();
