@@ -48,7 +48,10 @@ public:
 
 		return parent != nullptr;
 	}
-
+   EntityID getID()
+   {
+      return id;
+   }
 private:
 	EntityID id;
 	EntitySystem* parent;
