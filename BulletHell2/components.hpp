@@ -30,6 +30,21 @@ struct VelocityComponent
    Vec2 vel;
 };
 
+struct AccelerationComponent
+{
+   AccelerationComponent() {}
+   AccelerationComponent(Vec2 accel_in) : accel(accel_in) {}
+   AccelerationComponent(float x, float y) : accel(Vec2(x, y)) {}
+   Vec2 accel;
+};
+
+struct MaxSpeedComponent
+{
+   MaxSpeedComponent() {}
+   MaxSpeedComponent(float speed) : maxSpeed(speed) {}
+   float maxSpeed;
+};
+
 struct SizeComponent
 {
 	SizeComponent() {}
@@ -52,7 +67,10 @@ struct PlayerComponent {
 
 }; //is-a player
 
+
+struct EnemyBulletComponent {};
 struct PlayerBulletComponent {};
+
 struct EnemyComponent {}; //is-a enemy 
 struct CameraComponent {}; //makes is-a camera.
 

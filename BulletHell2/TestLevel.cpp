@@ -43,6 +43,7 @@ public:
          e.create<EnemyComponent>();
          e.create<SizeComponent>(64.0f, 64.0f);
          
+         e.create<ShotComponent>(Shot("EnemyShot"));
 
          e.update();
       }

@@ -14,7 +14,7 @@
 
 #include "ShotType.hpp"
 
-void playerFireShot(BulletHellContext* ctxt, Entity player, Shot& shot)
+void fireShot(BulletHellContext* ctxt, Entity player, Shot& shot)
 {
    //get the actual shot from the context.
    auto shotType = entityGetByName(ctxt->shotTypes, shot.type);
@@ -28,7 +28,7 @@ void playerFireShot(BulletHellContext* ctxt, Entity player, Shot& shot)
    //fire!
    if (auto shot = getShotType(ctxt, shotType)) shot->fire(player);
 }
-void playerFire(BulletHellContext* ctxt, Entity player)
+void fireAllWeapons(BulletHellContext* ctxt, Entity player)
 {
    //ok, we're firing, but what do we fire?
    //two parts to this - what active data do we have (e.g. current weapon cooldown)
@@ -42,7 +42,7 @@ void playerFire(BulletHellContext* ctxt, Entity player)
    for (auto&& shot : shotComp->shots)
    {
       if (shot.nextFireTime > ctxt->currentTick) continue; //on cooldown
-      playerFireShot(ctxt, player, shot);
+      fireShot(ctxt, player, shot);
    }
 }
 
@@ -69,7 +69,6 @@ void updatePlayerVelocity(BulletHellContext* ctxt)
       player.create<VelocityComponent>(velocity); //overwrites the old velocity value.
    }
 }
-
 
 
 void enforceWorldBoundaries(BulletHellContext* ctxt)
@@ -144,12 +143,55 @@ void handleCollisions(BulletHellContext* ctxt)
       }
    }
 
+   //player hit?
+
+   auto enemyBullets = ctxt->world->system->entitiesWithComponent<EnemyBulletComponent>();
+   auto players = ctxt->world->system->entitiesWithComponent<PlayerComponent>();
+
+   for (auto&& player : players)
+   {
+      for (auto&& bullet : enemyBullets)
+      {
+         if (entitiesCollide(player, bullet))
+         {
+            //YOU GOT HIT YOU SUCK
+            auto sfx = Sound::createSample(*ctxt->audio, "sfx/blast.wav");
+            sfx.play();
+            sfx.detach();
+
+            bullet.create<MarkedForDeletionComponent>();
+         }
+      }
+   }
+
+
    destroyMarkedForDeletion(ctxt->world);
 }
 
 void updatePhysics(BulletHellContext* ctxt)
 {
    updatePlayerVelocity(ctxt);
+
+   //apply acceleration (crappy euler, todo: RK4 or whatever)
+   for (auto ent : ctxt->world->system->entitiesWithComponent<AccelerationComponent>())
+   {
+      auto vel = ent.get<VelocityComponent>();
+      if (!vel) vel = ent.create<VelocityComponent>();
+      vel->vel += ent.get<AccelerationComponent>()->accel;
+   }
+
+   //cap speed, for everything 
+   for (auto ent : ctxt->world->system->entitiesWithComponent<MaxSpeedComponent>())
+   {
+      auto vel = ent.get<VelocityComponent>();
+      if (!vel) continue;
+      auto maxSpeed = ent.get<MaxSpeedComponent>()->maxSpeed;
+      auto curSpeed = length(vel->vel);
+      if (curSpeed > maxSpeed)
+      {
+         vel->vel *= (maxSpeed / curSpeed);
+      }
+   }
 
    for (auto ePair : ctxt->world->system->componentsOfType<VelocityComponent>())
    {
@@ -186,6 +228,7 @@ void drawSpritesHacked(BulletHellContext* ctxt)
    //doing this gives us a rough z-order.  Might want a dedicated Z-order component, though.
    drawSpritesWithComponent<EnemyComponent>(ctxt);
    drawSpritesWithComponent<PlayerComponent>(ctxt);
+   drawSpritesWithComponent<EnemyBulletComponent>(ctxt);
    drawSpritesWithComponent<PlayerBulletComponent>(ctxt);
 }
 
@@ -237,21 +280,33 @@ public:
       }
 
       //TODO: move this somewhere nicer?
-      for (auto&& player : players)
+
+   }
+
+   void fireWeapons()
+   {
+      for (auto&& player : ctxt->world->system->entitiesWithComponent<PlayerComponent>())
       {
          auto pc = player.get<PlayerComponent>();
-         if (pc->firing) playerFire(ctxt, player);
+         if (pc->firing) fireAllWeapons(ctxt, player);
+      }
+      for (auto&& enemy : ctxt->world->system->entitiesWithComponent<EnemyComponent>())
+      {
+         fireAllWeapons(ctxt, enemy);
       }
    }
 
-   void drawLevel()
+   //todo - this should probably be in a nicer, shared spot... hack it in here for now.
+   void gameTick()
    {
       updateInput();
-
+      fireWeapons();
       updatePhysics(ctxt);
-
-      //todo - this should probably be in a nicer, shared spot... hack it in here for now.
+            
       ctxt->audio->update();
+   }
+   void drawLevel()
+   {      
       ctxt->window->startDraw();
 
       drawSpritesHacked(ctxt);
@@ -270,6 +325,7 @@ public:
             section->onUpdate();
             if (!section->finished())
             {
+               gameTick();
                drawLevel();
                return;  //more to do laterererer
             }
