@@ -87,3 +87,5 @@ struct ShotComponent
    ShotComponent(std::vector<Shot> shots_in) : shots(std::move(shots_in)) {}
    std::vector<Shot> shots;
 };
+
+struct MarkedForDeletionComponent {};

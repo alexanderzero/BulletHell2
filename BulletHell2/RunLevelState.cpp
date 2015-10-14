@@ -102,6 +102,51 @@ void enforceWorldBoundaries(BulletHellContext* ctxt)
    for (auto&& ent : offscreenEntities) ent.destroy();
 }
 
+bool entitiesCollide(Entity e1, Entity e2)
+{
+   //just do simple, centered box collision for now....
+   auto p1 = e1.get<PositionComponent>();
+   auto p2 = e2.get<PositionComponent>();
+   auto s1 = e1.get<SizeComponent>();
+   auto s2 = e2.get<SizeComponent>();
+
+   if (!p1 || !p2 || !s1 || !s2) return false;  //unhandled case?
+
+   auto b1 = Box::fromCenterExtents(p1->pos, s1->sz);
+   auto b2 = Box::fromCenterExtents(p2->pos, s2->sz);
+
+   return isColliding(b1, b2);
+}
+
+void destroyMarkedForDeletion(EntitySystemView* systemView)
+{
+   auto vec = systemView->system->entitiesWithComponent<MarkedForDeletionComponent>();
+   for (auto&& ent : vec) ent.destroy();  //note: if this destroy can do callbacks this might have issues with a child and a parent being marked for deletion, so this algorithm might have to be "smarter" about recursively deleting.  This isn't an issue as of writing
+}
+
+void handleCollisions(BulletHellContext* ctxt)
+{
+   //get enemies that collide with bullets
+   auto enemies = ctxt->world->system->entitiesWithComponent<EnemyComponent>();
+   auto bullets = ctxt->world->system->entitiesWithComponent<PlayerBulletComponent>();
+    
+   //just do a really stupid brute force n x m implementation right
+   
+   for (auto&& enemy : enemies)
+   {
+      for (auto&& bullet : bullets)
+      {
+         if (entitiesCollide(enemy, bullet))
+         {
+            enemy.create<MarkedForDeletionComponent>();
+            bullet.create<MarkedForDeletionComponent>();
+         }
+      }
+   }
+
+   destroyMarkedForDeletion(ctxt->world);
+}
+
 void updatePhysics(BulletHellContext* ctxt)
 {
    updatePlayerVelocity(ctxt);
@@ -120,7 +165,7 @@ void updatePhysics(BulletHellContext* ctxt)
    
    enforceWorldBoundaries(ctxt);
    
-   //todo - handle collision cases here.
+   handleCollisions(ctxt);
 }
 
 template <typename T>
