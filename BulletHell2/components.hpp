@@ -30,6 +30,21 @@ struct VelocityComponent
    Vec2 vel;
 };
 
+struct AccelerationComponent
+{
+   AccelerationComponent() {}
+   AccelerationComponent(Vec2 accel_in) : accel(accel_in) {}
+   AccelerationComponent(float x, float y) : accel(Vec2(x, y)) {}
+   Vec2 accel;
+};
+
+struct MaxSpeedComponent
+{
+   MaxSpeedComponent() {}
+   MaxSpeedComponent(float speed) : maxSpeed(speed) {}
+   float maxSpeed;
+};
+
 struct SizeComponent
 {
 	SizeComponent() {}
@@ -52,7 +67,10 @@ struct PlayerComponent {
 
 }; //is-a player
 
+
+struct EnemyBulletComponent {};
 struct PlayerBulletComponent {};
+
 struct EnemyComponent {}; //is-a enemy 
 struct CameraComponent {}; //makes is-a camera.
 
@@ -69,6 +87,14 @@ struct CooldownComponent
    CooldownComponent(int ticks_in) : ticks(ticks_in) {}
 
    int ticks;  //todo - partial ticks are legit for some weapons, be a bit nicer here
+};
+
+struct CooldownRangeComponent
+{
+   CooldownRangeComponent() : ticksMin(0), ticksMax(0) {}
+   CooldownRangeComponent(int ticksMin_in, int ticksMax_in) : ticksMin(ticksMin_in), ticksMax(ticksMax_in) {}
+
+   int ticksMin, ticksMax;  //min to max, inclusive
 };
 
 

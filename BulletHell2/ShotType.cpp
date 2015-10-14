@@ -5,12 +5,12 @@
 #include "NameIndex.hpp"
 #include "components.hpp"
 #include "BulletHell2.hpp"
+#include "random.hpp"
 
 
 ShotType buildPlayerShotType(EntitySystemView* shotTypes)
 {
    ShotType playerShot(shotTypes);
-
 
    entitySetName(shotTypes, playerShot, "PlayerShot");
    playerShot.create<CooldownComponent>(10);
@@ -20,6 +20,22 @@ ShotType buildPlayerShotType(EntitySystemView* shotTypes)
    return playerShot;
 }
 
+ShotType buildEnemyShotType(EntitySystemView* shotTypes)
+{
+   ShotType playerShot(shotTypes);
+
+   entitySetName(shotTypes, playerShot, "EnemyShot");
+   playerShot.create<CooldownRangeComponent>(10, 30);
+   playerShot.create<VelocityComponent>(0.0f, 0.0f);
+   playerShot.create<AccelerationComponent>(0.0f, -0.2f);
+   playerShot.create<MaxSpeedComponent>(8.0f);
+   playerShot.update();
+
+   return playerShot;
+}
+
+
+
 void hackBuildTestShotTypes(EntitySystemView*& shotTypes)
 {
    shotTypes = new EntitySystemView;
@@ -28,6 +44,7 @@ void hackBuildTestShotTypes(EntitySystemView*& shotTypes)
 
 
    buildPlayerShotType(shotTypes);
+   buildEnemyShotType(shotTypes);
 }
 
 
@@ -43,14 +60,20 @@ public:
       //centered on player for now.  more fire types later based on the shot type
       bullet.create<PositionComponent>(*ent.get<PositionComponent>());
 
-      bullet.create<SizeComponent>(4.0f, 32.0f); //hacked, add graphical/collision data to shot type later.
+      if (ent.get<PlayerComponent>())
+         bullet.create<SizeComponent>(4.0f, 32.0f); //hacked, add graphical/collision data to shot type later.
+      else 
+         bullet.create<SizeComponent>(4.0f, 4.0f);
 
       bullet.create<DieOffscreenComponent>(); //don't leak!  note that some shots of enemies might not have this and be simply timed, or may have bounds expanded to allow for slight offscreen action
 
                                               //copy velocity component from shot type, if it exists
       if (auto vel = shotType.get<VelocityComponent>()) bullet.create<VelocityComponent>(*vel);
+      if (auto spd = shotType.get<MaxSpeedComponent>()) bullet.create<MaxSpeedComponent>(*spd);
+      if (auto acc = shotType.get<AccelerationComponent>()) bullet.create<AccelerationComponent>(*acc);
 
-      bullet.create<PlayerBulletComponent>(); //for indexing
+      if (ent.get<PlayerComponent>()) bullet.create<PlayerBulletComponent>(); //for indexing
+      if (ent.get<EnemyComponent>()) bullet.create<EnemyBulletComponent>(); //for indexing
 
       bullet.update();
    }
@@ -63,6 +86,14 @@ public:
 std::unordered_map<EntityID, IShotType*> g_shotType;
 
 //TODO: this assumes only one context.
+int getShotCooldown(ShotType shot)
+{
+   if (auto cooldown = shot.get<CooldownComponent>()) return cooldown->ticks;
+   if (auto cooldown = shot.get<CooldownRangeComponent>()) return randomInt(cooldown->ticksMin, cooldown->ticksMax);   
+
+   return 0;
+}
+
 IShotType* getShotType(BulletHellContext* context, ShotType shotType)
 {
    auto shotID = shotType.getID();

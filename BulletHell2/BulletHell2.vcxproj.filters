@@ -228,6 +228,9 @@
     <ClCompile Include="ShotType.cpp">
       <Filter>Source Files\Game Engine\Application</Filter>
     </ClCompile>
+    <ClCompile Include="random.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="component.hpp">
@@ -325,6 +328,9 @@
     </ClInclude>
     <ClInclude Include="ShotType.hpp">
       <Filter>Header Files\Game Engine\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="random.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

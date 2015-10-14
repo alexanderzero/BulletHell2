@@ -25,4 +25,5 @@ public:
    virtual void fire(Entity ent) = 0;
 };
 
+int getShotCooldown(ShotType shot);
 IShotType* getShotType(BulletHellContext* context, ShotType shotType);
