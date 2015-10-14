@@ -28,6 +28,8 @@ struct Circle
 
 struct Box
 {
+   static Box fromCenterExtents(Vec2 const& center, Vec2 const& extents);
+   static Box fromCenterHalfExtents(Vec2 const& center, Vec2 const& halfExtents);
 	Vec2 min, max;
 };
 
@@ -72,6 +74,8 @@ float distance(Vec2 const& lhs, Circle const& rhs);
 float distance(Circle const& lhs, Circle const& rhs);
 float distance(Circle const& lhs, Box const& rhs);
 
+
+//box math
 
 //angles 
 

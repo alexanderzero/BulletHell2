@@ -196,3 +196,19 @@ Radian vectorAngleOffset(Vec2 const& first, Vec2 const& second)
 	}
 	return rawAngle;
 }
+
+
+Box Box::fromCenterExtents(Vec2 const& center, Vec2 const& extents)
+{
+   Vec2 halved = extents;
+   halved *= 0.5f;
+   return fromCenterHalfExtents(center, halved);
+}
+Box Box::fromCenterHalfExtents(Vec2 const& center, Vec2 const& halfExtents)
+{
+   Box out;
+   out.min = out.max = center;
+   out.min -= halfExtents;
+   out.max += halfExtents;
+   return out;
+}
