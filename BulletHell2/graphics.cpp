@@ -59,6 +59,7 @@ GLuint background_texture;
 
 //Sprites :D
 std::unordered_map<std::string, Sprite> sprite_map;
+Sprite* bg1; //put this somewhere better eventually...
 
 //Sprite properties
 GLint uniform_xpos;
@@ -154,7 +155,7 @@ void init()
    glVertexAttribPointer(TEX_ATTRIB, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
    int size = 64;
-   background_texture = png_texture_load("png\\test1.png", &size, &size);
+   background_texture = png_texture_load("png\\bg1.png", &size, &size);
 
    GLuint vert;
    GLuint frag;
@@ -222,6 +223,8 @@ void init()
 
    glEnable(GL_BLEND);
    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+   bg1 = GetSprite("png/bg1.png");
 }
 
 void render(GLFWwindow* window)
@@ -255,6 +258,8 @@ void render(GLFWwindow* window)
    glUniform1f(uniform_ysize, 1080.0);
    glUniform2fv(uniform_rotation, 1, (const GLfloat*)&rotation_vector);
    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+   //window.drawSprite(960, 540, 0, 0, 0, bg1);
 
    //glfwSwapBuffers(window);
 
