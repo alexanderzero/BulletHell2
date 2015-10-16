@@ -50,20 +50,23 @@ std::unordered_map<std::string, IShotType*> g_rawNonSpells; //simply implemented
 
 static const int RAN_NON1_BULLET_COUNT = 48; 
 
+float angleToPlayer(BulletHellContext* context, Entity ent)
+{
+   Vec2 playerPosition;
+   if (auto player = entityGetByName(context->world, "player"))
+   {
+      if (auto pos = player.get<PositionComponent>()) playerPosition = pos->pos;
+   }
+
+   return rectToPolar(playerPosition -= ent.get<PositionComponent>()->pos);
+}
 
 class RanNonSpell1 : public IShotType
 {
 
    virtual void fire(BulletHellContext* context, Entity ent, Shot* shot) override
    {
-      //try to get the player position
-      Vec2 playerPosition;
-      if (auto player = entityGetByName(context->world, "player"))
-      {
-         if (auto pos = player.get<PositionComponent>()) playerPosition = pos->pos;
-      }
-
-      float attackAngle = rectToPolar(playerPosition -= ent.get<PositionComponent>()->pos);
+      float attackAngle = angleToPlayer(context, ent);
       float angleStep = TAU / (RAN_NON1_BULLET_COUNT - 1);
 
       
@@ -208,12 +211,61 @@ public:
    }
    virtual int getCooldown()
    {
-      return 2;
+      return 3;
    }
 };
 
 
-//Stage 3 - garbage fall.
+//Stage 3 - aimed bubbles.
+//3 bubbles aimed around the player every once in a while
+
+class DevilsRecitationAimedBubble : public IShotType
+{
+public:
+
+   virtual void fire(BulletHellContext* context, Entity ent, Shot* shot) override
+   {
+      Vec2 pos = ent.get<PositionComponent>()->pos;
+      float attackAngle = angleToPlayer(context, ent);
+
+      float angles[] =
+      {
+         -35.0f, 0.0f, 35.0f
+      };
+
+      for (auto&& angle : angles)
+      {
+
+         Entity bullet(context->world);
+
+         pos += shot->offset;
+
+         bullet.create<PositionComponent>(pos);
+         bullet.create<SizeComponent>(6.0f, 6.0f);
+
+         bullet.create<DieOffscreenComponent>();
+         bullet.create<VelocityComponent>(polarToRect(attackAngle + degToRad(angle), 5.0f));
+
+         bullet.create<SpriteComponent>("png/babble_red.png"); //todo - different color
+
+         //always an enemy bullet
+         bullet.create<EnemyBulletComponent>();
+
+         bullet.update();
+
+      }
+
+
+   }
+   virtual int getCooldown()
+   {
+      return 50;
+   }
+};
+
+
+
+//Stage 4 - garbage fall.
 //randomly falling garbage.  falls slower than bubbles, can have a random slight x direciton.
 
 class DevilsRecitationGarbageFall : public IShotType
@@ -227,6 +279,7 @@ public:
       pos.y += randomFloat(-20.0f, 20.0f);
 
       Entity bullet(context->world);
+
 
       pos += shot->offset;
 
@@ -248,9 +301,105 @@ public:
    }
    virtual int getCooldown()
    {
-      return 1;
+      return 2;
    }
 };
+
+
+//Stage 5 - angle spew
+//fires back and forth at an angle.
+
+static const float devilsRecitationAngleSpewAngle = 75.0f; //difference from straight-down.  so the full fan is this * 2
+static const int devilsRecitationSpewTicksPerLoop = 100;  //this should be at odds with the firing rate
+static const float devilsRecitationSpewBulletSpeed = 5.0f;
+
+class DevilsRecitationAngleSpew : public IShotType
+{
+public:
+
+   virtual void fire(BulletHellContext* context, Entity ent, Shot* shot) override
+   {
+      Vec2 pos = ent.get<PositionComponent>()->pos;
+
+
+      //time offset
+      auto tick = context->currentTick;
+      bool mirrored = (tick / devilsRecitationSpewTicksPerLoop) % 2 == 0;
+      float t = (tick % devilsRecitationSpewTicksPerLoop) / (float)(devilsRecitationSpewTicksPerLoop);
+      if (mirrored) t = 1.0f - t;
+      float timeAngle = (-0.5f + t) * (devilsRecitationAngleSpewAngle * 2);
+
+      Entity bullet(context->world);
+
+      bullet.create<PositionComponent>(pos);
+      bullet.create<SizeComponent>(4.0f, 4.0f);
+
+      bullet.create<DieOffscreenComponent>();
+      bullet.create<AccelerationComponent>(polarToRect(degToRad(270 + timeAngle), 0.8f));
+      bullet.create<MaxSpeedComponent>(devilsRecitationSpewBulletSpeed);
+
+      bullet.create<SpriteComponent>("png/fireball_1.png");
+
+      //always an enemy bullet
+      bullet.create<EnemyBulletComponent>();
+
+      bullet.update();
+   }
+   virtual int getCooldown()
+   {
+      return 3;
+   }
+};
+
+
+
+
+//Stage 6 - quick aimed bubbles.
+
+class DevilsRecitationQuickAimedBubble : public IShotType
+{
+public:
+
+   virtual void fire(BulletHellContext* context, Entity ent, Shot* shot) override
+   {
+      Vec2 pos = ent.get<PositionComponent>()->pos;
+      float attackAngle = angleToPlayer(context, ent);
+
+      float angles[] =
+      {
+         -100.0, -80.0, -60.0, -40.0, -20.0f, 0.0f, 20.0f, 40.0f, 60.0, 80.0, 100.0
+      };
+
+      for (auto&& angle : angles)
+      {
+
+         Entity bullet(context->world);
+
+         pos += shot->offset;
+
+         bullet.create<PositionComponent>(pos);
+         bullet.create<SizeComponent>(6.0f, 6.0f);
+
+         bullet.create<DieOffscreenComponent>();
+         bullet.create<VelocityComponent>(polarToRect(attackAngle + degToRad(angle), 16.0f));
+
+         bullet.create<SpriteComponent>("png/babble_red.png"); //todo - different color again
+
+                                                               //always an enemy bullet
+         bullet.create<EnemyBulletComponent>();
+
+         bullet.update();
+
+      }
+
+
+   }
+   virtual int getCooldown()
+   {
+      return 75;
+   }
+};
+
 
 void hackBuildTestShotTypes(EntitySystemView*& shotTypes)
 {
@@ -265,8 +414,10 @@ void hackBuildTestShotTypes(EntitySystemView*& shotTypes)
    g_rawNonSpells.insert(std::make_pair("RanNonspell1", new RanNonSpell1));
    g_rawNonSpells.insert(std::make_pair("DevilsRecitationBulletWave", new DevilsRecitationBulletWave));   
    g_rawNonSpells.insert(std::make_pair("DevilsRecitationBubbleFall", new DevilsRecitationBubbleFall));
+   g_rawNonSpells.insert(std::make_pair("DevilsRecitationAimedBubble", new DevilsRecitationAimedBubble));   
    g_rawNonSpells.insert(std::make_pair("DevilsRecitationGarbageFall", new DevilsRecitationGarbageFall));
-   
+   g_rawNonSpells.insert(std::make_pair("DevilsRecitationAngleSpew", new DevilsRecitationAngleSpew));
+   g_rawNonSpells.insert(std::make_pair("DevilsRecitationQuickAimedBubble", new DevilsRecitationQuickAimedBubble));   
    
 }
 

@@ -49,7 +49,7 @@ public:
 		{
 			indirectionPool.resize(id + 1, 0);
 		}
-		return indirectionPool[id];
+		return indirectionPool.data()[id];
 	}
 	void* add(EntityID id)
 	{
@@ -108,7 +108,7 @@ public:
 	{
 		auto idx = vtable->componentType;
 		if (idx >= (int)componentPools.size()) componentPools.resize(idx + 1, nullptr);
-		auto& out = componentPools[idx];
+		auto& out = componentPools.data()[idx];
 		if (!out)
 		{
 			out = new ComponentPool;

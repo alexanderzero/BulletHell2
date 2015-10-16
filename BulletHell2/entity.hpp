@@ -113,7 +113,9 @@ public:
    std::vector<Entity> entitiesWithComponent()
    {
       std::vector<Entity> out;
-      for (auto&& ePair : componentsOfType<T>())
+      auto search = componentsOfType<T>();
+      out.reserve(search.last - search.first);
+      for (auto&& ePair : search)
       {
          out.push_back(Entity(ePair.entity, this));
       }

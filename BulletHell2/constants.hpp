@@ -21,4 +21,7 @@ namespace constants
    //PLAYER STATS
    extern const float playerSpeed;
    extern const float playerFocusedSpeed;
+
+   //physics
+   extern const int physicsTicksPerTick;
 }

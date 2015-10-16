@@ -59,7 +59,7 @@ public:
 		if (!pool || !idx) return nullptr;
 		--idx;
 		auto& p = getPool(pool);
-		return &p[idx].component;
+		return &p.data()[idx].component;
 	}
 	virtual void* addToPool(void*& pool, EntityID id, int& idxOut)
 	{
@@ -74,12 +74,12 @@ public:
 		if (!pool || !idx) return;
 		--idx;
 		auto& p = getPool(pool);
-		indirection[p[idx].entity] = 0; //kill this indirection.
+		indirection.data()[p[idx].entity] = 0; //kill this indirection.
 		if (idx != p.size() - 1)
 		{
 			p[idx] = std::move(p.back());
 			//update indirection...
-			indirection[p[idx].entity] = idx+1;
+			indirection.data()[p[idx].entity] = idx+1;
 		}
 		p.pop_back();
 	}
@@ -88,14 +88,14 @@ public:
 		if (!pool || !idx) return;
 		--idx;
 		auto& p = getPool(pool);
-		p[idx].entity = entity;
+		p.data()[idx].entity = entity;
 	}
 	virtual EntityID getEntity(void*& pool, int idx)
 	{
 		if (!pool || !idx) return 0;
 		--idx;
 		auto& p = getPool(pool);
-		return p[idx].entity;
+		return p.data()[idx].entity;
 	}
 	virtual void* rawData(void*& pool) //return as std::pair<EntityID, T>
 	{

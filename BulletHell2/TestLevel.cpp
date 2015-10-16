@@ -346,7 +346,10 @@ public:
       {
          int STARTING_HEALTH = 300;
          int BUBBLE_HEALTH = 280;
+         int AIMED_BUBBLE_HEALTH = 240;
          int GARBAGE_HEALTH = 200;
+         int SPEW_HEALTH = 125;
+         int FAST_HEALTH = 50;
 
          int stage = 0;
          stateQueue.push([=](bool isFirstRun) mutable -> e_SubsectionState
@@ -387,16 +390,37 @@ public:
 
             if (stage == 0 && ran.get<HealthComponent>()->hp < BUBBLE_HEALTH)
             {
-               stage = 1;
+               ++stage;
                //add a new shot type!
                ran.get<ShotComponent>()->shots.push_back(Shot("DevilsRecitationBubbleFall")); //start bubbles falling after she's been shot a few times.
             }
 
-            if (stage == 1 && ran.get<HealthComponent>()->hp < GARBAGE_HEALTH)
+            if (stage == 1 && ran.get<HealthComponent>()->hp < AIMED_BUBBLE_HEALTH)
             {
-               stage = 2;
+               ++stage;
+               ran.get<ShotComponent>()->shots.push_back(Shot("DevilsRecitationAimedBubble"));
+            }
+
+            if (stage == 2 && ran.get<HealthComponent>()->hp < GARBAGE_HEALTH)
+            {
+               ++stage;
                ran.get<ShotComponent>()->shots.push_back(Shot("DevilsRecitationGarbageFall"));                
             }
+
+
+            if (stage == 3 && ran.get<HealthComponent>()->hp < SPEW_HEALTH)
+            {
+               ++stage;
+               ran.get<ShotComponent>()->shots.push_back(Shot("DevilsRecitationAngleSpew"));
+            }
+
+            if (stage == 4 && ran.get<HealthComponent>()->hp < FAST_HEALTH)
+            {
+               ++stage;
+               ran.get<ShotComponent>()->shots.push_back(Shot("DevilsRecitationQuickAimedBubble"));
+            }
+
+            
 
             if (isAlive(ran))
             {

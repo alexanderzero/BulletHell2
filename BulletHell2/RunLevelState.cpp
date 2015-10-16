@@ -184,46 +184,56 @@ void handleCollisions(BulletHellContext* ctxt)
    destroyMarkedForDeletion(ctxt->world);
 }
 
+
 void updatePhysics(BulletHellContext* ctxt)
 {
    updatePlayerVelocity(ctxt);
 
-   //apply acceleration (crappy euler, todo: RK4 or whatever)
-   for (auto ent : ctxt->world->system->entitiesWithComponent<AccelerationComponent>())
-   {
-      auto vel = ent.get<VelocityComponent>();
-      if (!vel) vel = ent.create<VelocityComponent>();
-      vel->vel += ent.get<AccelerationComponent>()->accel;
-   }
+   float physTime = 1.0f / constants::physicsTicksPerTick;
 
-   //cap speed, for everything 
-   for (auto ent : ctxt->world->system->entitiesWithComponent<MaxSpeedComponent>())
+   for (int i = 0; i < constants::physicsTicksPerTick; ++i)
    {
-      auto vel = ent.get<VelocityComponent>();
-      if (!vel) continue;
-      auto maxSpeed = ent.get<MaxSpeedComponent>()->maxSpeed;
-      auto curSpeed = length(vel->vel);
-      if (curSpeed > maxSpeed)
+      //apply acceleration (crappy euler, todo: RK4 or whatever)
+      for (auto ent : ctxt->world->system->entitiesWithComponent<AccelerationComponent>())
       {
-         vel->vel *= (maxSpeed / curSpeed);
+         auto vel = ent.get<VelocityComponent>();
+         if (!vel) vel = ent.create<VelocityComponent>();
+         auto acc = ent.get<AccelerationComponent>()->accel;
+         acc *= physTime;
+         vel->vel += acc;
       }
+
+      //cap speed, for everything 
+      for (auto ent : ctxt->world->system->entitiesWithComponent<MaxSpeedComponent>())
+      {
+         auto vel = ent.get<VelocityComponent>();
+         if (!vel) continue;
+         auto maxSpeed = ent.get<MaxSpeedComponent>()->maxSpeed;
+         auto curSpeed = length(vel->vel);
+         if (curSpeed > maxSpeed)
+         {
+            vel->vel *= (maxSpeed / curSpeed);
+         }
+      }
+
+      for (auto ePair : ctxt->world->system->componentsOfType<VelocityComponent>())
+      {
+         Entity e(ePair.entity, ctxt->world->system);
+
+         auto pos = e.get<PositionComponent>();
+         auto vel = e.get<VelocityComponent>();
+
+         if (!pos) continue;
+         auto velT = vel->vel;
+         velT *= physTime;
+
+         pos->pos += velT;
+      }
+
+      enforceWorldBoundaries(ctxt);
+
+      handleCollisions(ctxt);
    }
-
-   for (auto ePair : ctxt->world->system->componentsOfType<VelocityComponent>())
-   {
-      Entity e(ePair.entity, ctxt->world->system);
-
-      auto pos = e.get<PositionComponent>();
-      auto vel = e.get<VelocityComponent>();
-      
-      if (!pos) continue;
-
-      pos->pos += vel->vel;
-   }
-   
-   enforceWorldBoundaries(ctxt);
-   
-   handleCollisions(ctxt);
 }
 
 template <typename T>
