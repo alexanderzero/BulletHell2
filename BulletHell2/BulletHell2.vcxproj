@@ -86,6 +86,7 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>glew;glfw_include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -113,11 +114,14 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>glew;glfw_include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>glfw3dll.lib;glew/glew32.lib;opengl32.lib;fmodL64_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -220,6 +224,7 @@
     <Image Include="png\fireball_1.png" />
     <Image Include="png\needle.png" />
     <Image Include="png\player_temp.png" />
+    <Image Include="png\stolenRan.png" />
     <Image Include="png\test1.png" />
   </ItemGroup>
   <ItemGroup>
@@ -230,6 +235,7 @@
     <ResourceCompile Include="BulletHell2.rc" />
   </ItemGroup>
   <ItemGroup>
+    <Media Include="music\boss.mp3" />
     <Media Include="music\test.mp3" />
     <Media Include="sfx\blast.wav" />
   </ItemGroup>

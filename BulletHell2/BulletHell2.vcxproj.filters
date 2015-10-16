@@ -380,6 +380,9 @@
     <Image Include="png\needle.png">
       <Filter>Resource Files\png</Filter>
     </Image>
+    <Image Include="png\stolenRan.png">
+      <Filter>Resource Files\png</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Text Include="shaders\fragment_shader_1.txt">
@@ -400,6 +403,9 @@
     </Media>
     <Media Include="sfx\blast.wav">
       <Filter>Resource Files\sfx</Filter>
+    </Media>
+    <Media Include="music\boss.mp3">
+      <Filter>Resource Files\music</Filter>
     </Media>
   </ItemGroup>
 </Project>

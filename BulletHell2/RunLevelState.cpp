@@ -17,22 +17,16 @@
 
 void fireShot(BulletHellContext* ctxt, Entity player, Shot& shot)
 {
-   //get the actual shot from the context.
-   auto shotType = entityGetByName(ctxt->shotTypes, shot.type);
-   if (!shotType) return; //not a valid shot type?
-
+   auto iface = getShotType(ctxt, shot.type);
+   if (!iface) return; //uhhhh
+   
+                       
    //manage cooldowns.
    shot.nextFireTime = ctxt->currentTick;
-   shot.nextFireTime += getShotCooldown(shotType);
-   if (auto cooldown = shotType.get<CooldownComponent>()) shot.nextFireTime += cooldown->ticks;
+   shot.nextFireTime += iface->getCooldown();
 
    //fire!
-   if (auto shotInterface = getShotType(ctxt, shotType))
-   {
-      shotInterface->fire(player, &shot);
-   }
-   
-
+   iface->fire(ctxt, player, &shot);
 }
 void fireAllWeapons(BulletHellContext* ctxt, Entity player)
 {
@@ -143,8 +137,26 @@ void handleCollisions(BulletHellContext* ctxt)
       {
          if (entitiesCollide(enemy, bullet))
          {
-            enemy.create<MarkedForDeletionComponent>();
             bullet.create<MarkedForDeletionComponent>();
+
+            if (enemy.get<InvinciblityComponent>()) continue; //ignore getting shot if invicible.
+
+            if (auto hp = enemy.get<HealthComponent>())
+            {
+               if ((hp->hp -= 1) <= 0)
+               {
+                  //ENEMY IS DEAD
+                  if (!enemy.get<LivesWithNoHPComponent>())
+                  {
+                     enemy.create<MarkedForDeletionComponent>();
+                  }                  
+               }
+            }
+            else //single-shot baddie got shot
+            {
+               enemy.create<MarkedForDeletionComponent>();
+            }          
+            
          }
       }
    }

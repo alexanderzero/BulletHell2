@@ -8,6 +8,7 @@
 struct EntitySystemView;
 class Window;
 class Audio;
+class Sound;
 
 class BulletHellState
 {
@@ -28,6 +29,7 @@ struct BulletHellContext
 
    //audio-related
    Audio* audio;
+   Sound* playingBGM;
 
    //constant databases
    EntitySystemView* shotTypes;

@@ -111,6 +111,13 @@ struct Shot
    Shot(std::string name) : type(std::move(name)), nextFireTime(0) {}
    std::string type;
    Vec2 offset; //physical offset on the character to fire this from.
+   float angleOffset = 0.0f; //kind of a hack... sometimes used.
+
+   //HACK - 
+   //this should probably be data created with the shot, or something.
+   //I'm not sure where to put it so I'm putting it here for now
+   uint64_t tickOffset = 0;
+
    uint64_t nextFireTime;
 };
 
@@ -123,3 +130,15 @@ struct ShotComponent
 };
 
 struct MarkedForDeletionComponent {};
+
+
+//health/enemy related
+
+struct InvinciblityComponent {};
+struct LivesWithNoHPComponent {};
+
+struct HealthComponent {
+   HealthComponent() : hp(1) {}
+   HealthComponent(int hp_in) : hp(hp_in) {}
+   int hp; //currently just number of hits required to die.  TODO: add an actual damage system, when we have multiple player shottypes.
+};

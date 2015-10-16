@@ -24,7 +24,7 @@ Entity createPlayer(BulletHellContext* ctxt)
 	Entity out(ctxt->world);
 	entitySetName(ctxt->world, out, "player");
 	out.create<PositionComponent>(constants::cameraSize.x/2, 0.0f);
-   out.create<SizeComponent>(32.0f, 32.0f);
+   out.create<SizeComponent>(8.0f, 8.0f);
    out.create<PlayerComponent>();
    out.create<WorldBoundedComponent>();
 
@@ -111,17 +111,10 @@ void BulletHell2::startup()
 void BulletHell2::run()
 {
    auto prevTime = timeCurrentMicroseconds();
+      
+   context->playingBGM = new Sound(Sound::createSong(*context->audio, "music/test.mp3"));
+   context->playingBGM->play();
 
-   /*
-   auto song = Sound::createSong(*context->audio, "music/test.mp3");
-   song.play();
-   song.detach();
-
-   auto sfx = Sound::createSample(*context->audio, "sfx/blast.wav");
-   sfx.play();
-   sfx.detach();
-   */
-   
 	//run game "main loop" here.
 	while(context->window->isOpen() && context->gameRunning)
 	{
