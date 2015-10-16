@@ -68,6 +68,8 @@ bool isColliding(Vec2 const& lhs, Circle const& rhs);
 
 //distance checks
 
+float distanceSquared(Vec2 const& lhs, Box const& rhs);
+
 float distance(Vec2 const& lhs, Vec2 const& rhs);
 float distance(Vec2 const& lhs, Box const& rhs);
 float distance(Vec2 const& lhs, Circle const& rhs);

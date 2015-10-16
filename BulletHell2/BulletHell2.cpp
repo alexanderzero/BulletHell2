@@ -24,7 +24,7 @@ Entity createPlayer(BulletHellContext* ctxt)
 	Entity out(ctxt->world);
 	entitySetName(ctxt->world, out, "player");
 	out.create<PositionComponent>(constants::cameraSize.x/2, 0.0f);
-   out.create<SizeComponent>(8.0f, 8.0f);
+   out.create<RadiusComponent>(6.0f);
    out.create<PlayerComponent>();
    out.create<WorldBoundedComponent>();
 

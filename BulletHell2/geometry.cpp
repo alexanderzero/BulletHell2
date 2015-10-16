@@ -94,7 +94,7 @@ bool isColliding(Box const& lhs, Box const& rhs)
 }
 bool isColliding(Box const& lhs, Circle const& rhs)
 {
-	return distance(rhs, lhs) == 0.0f;
+	return distanceSquared(rhs.center, lhs) <= rhs.radius * rhs.radius;
 }
 bool isColliding(Circle const& lhs, Circle const& rhs)
 {
@@ -115,7 +115,7 @@ float distance(Vec2 const& lhs, Vec2 const& rhs)
 	temp -= rhs;
 	return length(temp);
 }
-float distance(Vec2 const& lhs, Box const& rhs)
+float distanceSquared(Vec2 const& lhs, Box const& rhs)
 {
 	float xDist = 0.0f;
 	float yDist = 0.0f;
@@ -138,7 +138,11 @@ float distance(Vec2 const& lhs, Box const& rhs)
 		yDist = rhs.max.y - lhs.y;
 	}
 
-	return sqrtf(xDist *xDist + yDist * yDist);
+	return xDist *xDist + yDist * yDist;
+}
+float distance(Vec2 const& lhs, Box const& rhs)
+{
+   return sqrtf(distanceSquared(lhs, rhs));
 }
 float distance(Vec2 const& lhs, Circle const& rhs)
 {

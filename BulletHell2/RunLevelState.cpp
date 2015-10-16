@@ -107,15 +107,59 @@ bool entitiesCollide(Entity e1, Entity e2)
    //just do simple, centered box collision for now....
    auto p1 = e1.get<PositionComponent>();
    auto p2 = e2.get<PositionComponent>();
+
+   if (!p1 || !p2) return false;  //unhandled case?
+
+
    auto s1 = e1.get<SizeComponent>();
    auto s2 = e2.get<SizeComponent>();
+   auto r1 = e1.get<RadiusComponent>();
+   auto r2 = e2.get<RadiusComponent>();
 
-   if (!p1 || !p2 || !s1 || !s2) return false;  //unhandled case?
+   //do all combinations of checks (circles, boxes, points.)
+   if (r1)
+   {
+      auto c1 = Circle{ p1->pos, r1->radius };
+      if (r2) 
+      {
+         auto c2 = Circle{ p2->pos, r2->radius };
 
-   auto b1 = Box::fromCenterExtents(p1->pos, s1->sz);
-   auto b2 = Box::fromCenterExtents(p2->pos, s2->sz);
+         return isColliding(c1, c2);
+      }
+      else if (s2)
+      {
+         auto b2 = Box::fromCenterExtents(p2->pos, s2->sz);
 
-   return isColliding(b1, b2);
+         return isColliding(b2, c1);
+      }
+      else //just a point
+      {
+         return isColliding(p2->pos, c1);
+      }
+   }
+   else if (s1)
+   {
+      auto b1 = Box::fromCenterExtents(p1->pos, s1->sz);
+      if (r2)
+      {
+         auto c2 = Circle{ p2->pos, r2->radius };
+
+         return isColliding(b1, c2);
+      }
+      else if (s2)
+      {
+         auto b2 = Box::fromCenterExtents(p2->pos, s2->sz);
+
+         return isColliding(b1, b2);
+      }
+      else //just a point
+      {
+         return isColliding(p2->pos, b1);
+      }
+   }
+   
+   
+   return false;
 }
 
 void destroyMarkedForDeletion(EntitySystemView* systemView)
@@ -242,9 +286,8 @@ void drawSpritesWithComponent(BulletHellContext* ctxt)
    for (auto enemy : ctxt->world->system->entitiesWithComponent<T>())
    {
       auto pos = enemy.get<PositionComponent>();
-      auto sz = enemy.get<SizeComponent>();
 
-      if (!pos || !sz) continue;
+      if (!pos) continue;
 
       Sprite* sprite = nullptr;
       if (auto sprComp = enemy.get<SpriteComponent>())

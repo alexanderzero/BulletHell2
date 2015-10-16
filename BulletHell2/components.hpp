@@ -53,6 +53,13 @@ struct SizeComponent
 	Vec2 sz;
 };
 
+struct RadiusComponent
+{
+   RadiusComponent() {}
+   RadiusComponent(float r) : radius(r) {}
+   float radius;
+};
+
 
 struct PlayerComponent {
 
