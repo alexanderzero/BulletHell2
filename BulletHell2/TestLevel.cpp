@@ -172,19 +172,6 @@ private:
    std::vector<LevelSubsection> subsections;
 };
 
-//todo: lift this function somerwhere sane
-void playBGM(BulletHellContext* ctxt, std::string const& path)
-{
-   if (ctxt->playingBGM) delete ctxt->playingBGM;
-   ctxt->playingBGM = new Sound(Sound::createSong(*ctxt->audio, path));
-   ctxt->playingBGM->play();
-}
-void playSFX(BulletHellContext* ctxt, std::string const& path)
-{
-   auto sfx = Sound::createSample(*ctxt->audio, path.c_str());
-   sfx.play();
-   sfx.detach();
-}
 bool isAlive(Entity ent)
 {
    auto hp = ent.get<HealthComponent>();
@@ -275,7 +262,7 @@ public:
       auto ran = createRanYakumo(ctxt);
 
       //ROCKING TUNES OR GTFO
-      playBGM(ctxt, "music/boss.mp3");
+      playBGM("music/boss.mp3");
 
 
       //okay, we have to do a bunch of ordered things.  This state queue lets us pause and resume code, in an easy fashion.  we use pointers to capture state from this section into subsections.
@@ -445,7 +432,7 @@ public:
          stateQueue.push([=](bool isFirstRun) mutable -> e_SubsectionState
          {
             //TODO: BIGASS SUPER EXPLOSION
-            playSFX(ctxt, "sfx/blast.wav");
+            playSFX("sfx/blast.wav");
             ran.create<MarkedForDeletionComponent>();
 
             return SubsectionState::Done;

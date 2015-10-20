@@ -43,6 +43,6 @@ public:
 	void run();
 	void shutdown();
 	void update();
-
-	BulletHellContext* context;
 };
+
+extern BulletHellContext g_context;

@@ -61,6 +61,15 @@ struct RadiusComponent
 };
 
 
+//infinite-length laser
+struct LaserComponent
+{
+   LaserComponent() {}
+   LaserComponent(Vec2 direction_in, float width_in) : direction(direction_in), width(width_in) {}
+   Vec2 direction;
+   float width;
+};
+
 struct PlayerComponent {
 
    PlayerComponent()

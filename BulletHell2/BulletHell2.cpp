@@ -18,6 +18,9 @@
 
 #include "ShotType.hpp"
 
+//GLOBAL DECL
+BulletHellContext g_context;
+
 
 Entity createPlayer(BulletHellContext* ctxt)
 {
@@ -56,17 +59,15 @@ Entity createCamera(BulletHellContext* ctxt)
 	out.update();
 	return out;
 }
-
-
-void startGame(BulletHellContext* ctxt)
+ 
+void startGame()
 {
    //for now, let's jump straight into a test level.
-   Level level = testLevelCreate(ctxt);
-   ctxt->currentState = runLevelStateCreate(ctxt, std::move(level));
+   Level level = testLevelCreate(&g_context);
+   g_context.currentState = runLevelStateCreate(&g_context, std::move(level));
 
    //we need a player to control in the level.
-
-   createPlayer(ctxt);
+   createPlayer(&g_context);
 }
 
 void BulletHell2::startup()
@@ -76,10 +77,7 @@ void BulletHell2::startup()
    //global systems
    timeStart();
   
-
-   //context stuff
-	context = new BulletHellContext;   
-
+   auto context = &g_context;
 
    //static data
    hackBuildTestShotTypes(context->shotTypes);
@@ -111,6 +109,8 @@ void BulletHell2::startup()
 void BulletHell2::run()
 {
    auto prevTime = timeCurrentMicroseconds();
+
+   auto context = &g_context;
       
    context->playingBGM = new Sound(Sound::createSong(*context->audio, "music/test.mp3"));
    context->playingBGM->play();
@@ -139,6 +139,9 @@ void BulletHell2::shutdown()
 {
 	//final thing called, do cleanup here.
 	//kill esys before managers...
+
+   auto context = &g_context;
+
 	delete context->world->system;
 	delete context->world->nameIndex;
 	delete context->world;
@@ -146,21 +149,20 @@ void BulletHell2::shutdown()
    delete context->window;
 
    delete context->audio;
-
-	delete context;
+    
 }
 
 void BulletHell2::update()
 {
 	//update.
-   ++context->currentTick;
+   ++g_context.currentTick;
 
 
    //update the input...
-   context->window->updateInput();
+   g_context.window->updateInput();
 
    //update the simulation state.
-   if (!context->currentState) startGame(context);
-   context->currentState->update();
+   if (!g_context.currentState) startGame();
+   g_context.currentState->update();
 
 }

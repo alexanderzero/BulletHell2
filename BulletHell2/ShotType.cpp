@@ -168,7 +168,6 @@ public:
 
          bullet.update();
       }
-
    }
    virtual int getCooldown()
    {

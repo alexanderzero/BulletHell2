@@ -579,26 +579,34 @@ void Window::endDraw()
    glfwSwapBuffers(pImpl->window);
 }
 
+void Window::drawSpriteStretched(float x, float y, float width, float height, int flip_horizontal, int flip_vertical, float rotation, Sprite* sprite)
+{
+
+   if (!sprite) sprite = &test_sprite;
+   //int flip_horizontal = 0;
+   //int flip_vertical = 1;
+   float radians = degToRad(rotation);
+   Vec2 rotation_vector(cos(radians), sin(radians));
+   glBindTexture(GL_TEXTURE_2D, sprite->texture_handle);
+   glUniform1f(uniform_xpos, x);
+   glUniform1f(uniform_ypos, y);
+   glUniform1f(uniform_xsize, width);
+   glUniform1f(uniform_ysize, height);
+   glUniform1i(uniform_flip_horz, flip_horizontal);
+   glUniform1i(uniform_flip_vert, flip_vertical);
+   glUniform2fv(uniform_rotation, 1, (const GLfloat*)&rotation_vector);
+   glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+}
+
 void Window::drawSprite(float x, float y, int flip_horizontal, int flip_vertical, float rotation)
 {
-	drawSprite(x, y, flip_horizontal, flip_vertical, rotation, &test_sprite);
+	drawSprite(x, y, flip_horizontal, flip_vertical, rotation, nullptr);
 }
 
 void Window::drawSprite(float x, float y, int flip_horizontal, int flip_vertical, float rotation, Sprite* sprite)
 {
-	//int flip_horizontal = 0;
-	//int flip_vertical = 1;
-	float radians = degToRad(rotation);
-	Vec2 rotation_vector(cos(radians), sin(radians));
-	glBindTexture(GL_TEXTURE_2D, sprite->texture_handle);
-	glUniform1f(uniform_xpos, x);
-	glUniform1f(uniform_ypos, y);
-	glUniform1f(uniform_xsize, sprite->width);
-	glUniform1f(uniform_ysize, sprite->height);
-	glUniform1i(uniform_flip_horz, flip_horizontal);
-	glUniform1i(uniform_flip_vert, flip_vertical);
-	glUniform2fv(uniform_rotation, 1, (const GLfloat*)&rotation_vector);
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+   if (!sprite) sprite = &test_sprite;
+   drawSpriteStretched(x, y, sprite->width, sprite->height, flip_horizontal, flip_vertical, rotation, sprite);
 }
 
 Sprite* GetSprite(std::string file_path)

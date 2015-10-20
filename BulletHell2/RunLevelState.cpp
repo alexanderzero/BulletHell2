@@ -216,10 +216,7 @@ void handleCollisions(BulletHellContext* ctxt)
          if (entitiesCollide(player, bullet))
          {
             //YOU GOT HIT YOU SUCK
-            auto sfx = Sound::createSample(*ctxt->audio, "sfx/blast.wav");
-            sfx.play();
-            sfx.detach();
-
+            Sound::createSample("sfx/blast.wav").play().detach();
             bullet.create<MarkedForDeletionComponent>();
          }
       }
@@ -283,6 +280,7 @@ void updatePhysics(BulletHellContext* ctxt)
 template <typename T>
 void drawSpritesWithComponent(BulletHellContext* ctxt)
 {
+   auto window = ctxt->window;
    for (auto enemy : ctxt->world->system->entitiesWithComponent<T>())
    {
       auto pos = enemy.get<PositionComponent>();
@@ -295,15 +293,22 @@ void drawSpritesWithComponent(BulletHellContext* ctxt)
          sprite = GetSprite(sprComp->sprite);
       }
 
-      if (sprite)
+      if (auto laser = enemy.get<LaserComponent>())
       {
-         ctxt->window->drawSprite(pos->pos.x, pos->pos.y, 0, 0, 0, sprite);
+         float rotation = radToDeg(rectToPolar(laser->direction));
+         float length = 2300; //longer than sqrtf(1920*1920 + 1080*1080);
+         float width = laser->width;
+
+         Vec2 center = laser->direction;
+         center *= length / 2;
+         center += pos->pos;
+
+         window->drawSpriteStretched(center.x, center.y, length, width, 0, 0, rotation, sprite);
       }
       else
       {
-         ctxt->window->drawSprite(pos->pos.x, pos->pos.y, 0, 0, 0);
+         window->drawSprite(pos->pos.x, pos->pos.y, 0, 0, 0, sprite);
       }
-      
    }
 }
 
