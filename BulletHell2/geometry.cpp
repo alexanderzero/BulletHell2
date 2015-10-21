@@ -159,7 +159,24 @@ float distance(Circle const& lhs, Box const& rhs)
 	float dist = distance(lhs.center, rhs) - lhs.radius;
 	return (dist < 0.0f) ? 0.0f : dist;
 }
+float distance(Line const& seg, Vec2 const& point)
+{
+   //project the point on the line to find T.  < 0 compare with start, else compare with end.
+   Vec2 v1 = point;
+   Vec2 v2 = seg.end;
+   v1 -= seg.start;
+   v2 -= seg.start;
+   float len2 = lengthSquared(v2);
+   float t = dot(v1, v2) / len2;
+   
+   if (t < 0) return distance(seg.start, point);
+   if (t > 1) return distance(seg.end, point);
 
+   //move v2 to the nearest point on the line
+   v2 *= t;
+   v2 += seg.start;
+   return distance(v2, point);
+}
 
 //angles
 

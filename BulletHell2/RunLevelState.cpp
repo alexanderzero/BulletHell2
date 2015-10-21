@@ -91,14 +91,17 @@ void updateLasers()
       if (tick >= rc->startFadeTick)
       {
          t = 1.0f-((tick - rc->startFadeTick) / ((float)rc->endTick - rc->startFadeTick));
+         ent.create<NoDamageComponent>();
       }
       else if (tick >= rc->fullWidthTick)
       {
          //... manage components to deal damage?
+         ent.remove<NoDamageComponent>();
       }
       else
       {
          t = (tick - rc->startTick) / ((float)rc->fullWidthTick- rc->startTick);
+         ent.create<NoDamageComponent>();
       }
       if (auto laser = ent.get<LaserComponent>())
       {
@@ -154,6 +157,8 @@ bool entitiesCollide(Entity e1, Entity e2)
    auto s2 = e2.get<SizeComponent>();
    auto r1 = e1.get<RadiusComponent>();
    auto r2 = e2.get<RadiusComponent>();
+   auto l1 = e1.get<LaserComponent>();
+   auto l2 = e2.get<LaserComponent>();
 
    //do all combinations of checks (circles, boxes, points.)
    if (r1)
@@ -171,6 +176,15 @@ bool entitiesCollide(Entity e1, Entity e2)
 
          return isColliding(b2, c1);
       }
+      else if (l2)
+      {
+         Line laserLine;
+         laserLine.start = p2->pos;
+         laserLine.end = l2->direction;
+         laserLine.end *= 2300;
+         laserLine.end += laserLine.start;
+         return distance(laserLine, p1->pos) < r1->radius;
+      }
       else //just a point
       {
          return isColliding(p2->pos, c1);
@@ -178,6 +192,7 @@ bool entitiesCollide(Entity e1, Entity e2)
    }
    else if (s1)
    {
+      if (l2) return false;
       auto b1 = Box::fromCenterExtents(p1->pos, s1->sz);
       if (r2)
       {
@@ -195,6 +210,17 @@ bool entitiesCollide(Entity e1, Entity e2)
       {
          return isColliding(p2->pos, b1);
       }
+   }
+   else if (l1)
+   {
+      //only laser vs. radius handled for now...
+      if (!r2) return false;
+      Line laserLine;
+      laserLine.start = p1->pos;
+      laserLine.end = l1->direction;
+      laserLine.end *= 2300;
+      laserLine.end += laserLine.start;
+      return distance(laserLine, p2->pos) < r2->radius;
    }
    
    
@@ -246,11 +272,18 @@ void handleCollisions(BulletHellContext* ctxt)
    {
       for (auto&& bullet : enemyBullets)
       {
+         if (bullet.get<NoDamageComponent>()) continue;
          if (entitiesCollide(player, bullet))
          {
             //YOU GOT HIT YOU SUCK
             Sound::createSample("sfx/blast.wav").play().detach();
-            bullet.create<MarkedForDeletionComponent>();
+
+            //delete, but only if not a laser.
+            //if (!bullet.get<LaserComponent>())
+            {
+               bullet.create<MarkedForDeletionComponent>();
+            }
+            // global bullet cancel will happen later....
          }
       }
    }

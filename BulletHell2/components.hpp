@@ -103,6 +103,8 @@ struct SpriteComponent
    std::string sprite;
 };
 
+struct NoDamageComponent {}; //bullets that don't deal damage yet.  for example, laser startup.
+
 struct EnemyBulletComponent {};
 struct PlayerBulletComponent {};
 

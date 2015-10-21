@@ -75,7 +75,7 @@ float distance(Vec2 const& lhs, Box const& rhs);
 float distance(Vec2 const& lhs, Circle const& rhs);
 float distance(Circle const& lhs, Circle const& rhs);
 float distance(Circle const& lhs, Box const& rhs);
-
+float distance(Line const& seg, Vec2 const& point);
 
 //box math
 

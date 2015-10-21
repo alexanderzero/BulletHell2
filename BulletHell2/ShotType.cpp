@@ -110,9 +110,9 @@ class RanNonSpell1 : public IShotType
         bullet.create<LaserComponent>(polarToRect(attackAngle), 0.0f);
         ResizingLaserComponent laser;
         laser.startTick = g_context.currentTick;
-        laser.fullWidthTick = laser.startTick + 15;
-        laser.startFadeTick = laser.fullWidthTick + 30;
-        laser.endTick = laser.startFadeTick + 15;
+        laser.fullWidthTick = laser.startTick + 30;
+        laser.startFadeTick = laser.fullWidthTick + 20;
+        laser.endTick = laser.startFadeTick + 10;
         laser.maxWidth = 12.0f;
         bullet.set(std::move(laser));
 
