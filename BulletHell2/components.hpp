@@ -70,6 +70,18 @@ struct LaserComponent
    float width;
 };
 
+//typical laser with a startup - full width - ending cycle.
+//useless without a laser component.
+//auto-deletes if after end tick.
+struct ResizingLaserComponent
+{
+	uint64_t startTick;
+	uint64_t fullWidthTick;
+	uint64_t startFadeTick;
+	uint64_t endTick;
+	float maxWidth;
+};
+
 struct PlayerComponent {
 
    PlayerComponent()

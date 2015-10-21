@@ -65,8 +65,9 @@ class RanNonSpell1 : public IShotType
 {
 
    virtual void fire(BulletHellContext* context, Entity ent, Shot* shot) override
-   {
-      float attackAngle = angleToPlayer(context, ent);
+   { 
+	  float playerAngle = angleToPlayer(context, ent);
+	  float attackAngle = playerAngle;
       float angleStep = TAU / (RAN_NON1_BULLET_COUNT - 1);
 
       
@@ -99,6 +100,33 @@ class RanNonSpell1 : public IShotType
 
          attackAngle += angleStep;
       }
+	  //create some lasers, just for fun.
+	  attackAngle = playerAngle;
+	  for (int i = 0; i < 16; ++i)
+	  {
+        Entity bullet(context->world);
+
+        bullet.create<PositionComponent>(pos);
+        bullet.create<LaserComponent>(polarToRect(attackAngle), 0.0f);
+        ResizingLaserComponent laser;
+        laser.startTick = g_context.currentTick;
+        laser.fullWidthTick = laser.startTick + 15;
+        laser.startFadeTick = laser.fullWidthTick + 30;
+        laser.endTick = laser.startFadeTick + 15;
+        laser.maxWidth = 12.0f;
+        bullet.set(std::move(laser));
+
+        bullet.create<SpriteComponent>("png/babble_red.png");
+
+        //always an enemy bullet
+        bullet.create<EnemyBulletComponent>();
+
+        bullet.update();
+
+        attackAngle += TAU / 16;
+	  }
+
+
       //aaand we fired!
    }
    virtual int getCooldown()

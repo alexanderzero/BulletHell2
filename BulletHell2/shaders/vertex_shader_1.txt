@@ -38,8 +38,8 @@ void main(void) {
 	temp_pos.y *= height;
 
 	//rotation
-	float x_rotated = dot(rotation_vector, temp_pos.xy);
-	float y_rotated = dot(vec2(-rotation_vector.y, rotation_vector.x),temp_pos.xy);
+	float x_rotated = dot(vec2(rotation_vector.x, -rotation_vector.y), temp_pos.xy);
+	float y_rotated = dot(rotation_vector.yx,temp_pos.xy);
 	temp_pos.xy = vec2(x_rotated, y_rotated);
 
 	//position

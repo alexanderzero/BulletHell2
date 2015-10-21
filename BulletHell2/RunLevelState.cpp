@@ -15,6 +15,13 @@
 #include "ShotType.hpp"
 #include "sprite.h"
 
+
+void destroyMarkedForDeletion(EntitySystemView* systemView)
+{
+   auto vec = systemView->system->entitiesWithComponent<MarkedForDeletionComponent>();
+   for (auto&& ent : vec) ent.destroy();  //note: if this destroy can do callbacks this might have issues with a child and a parent being marked for deletion, so this algorithm might have to be "smarter" about recursively deleting.  This isn't an issue as of writing
+}
+
 void fireShot(BulletHellContext* ctxt, Entity player, Shot& shot)
 {
    auto iface = getShotType(ctxt, shot.type);
@@ -68,6 +75,38 @@ void updatePlayerVelocity(BulletHellContext* ctxt)
 
       player.create<VelocityComponent>(velocity); //overwrites the old velocity value.
    }
+}
+void updateLasers()
+{
+   auto tick = g_context.currentTick;
+   for (auto ent : g_context.world->system->entitiesWithComponent<ResizingLaserComponent>())
+   {
+      auto rc = ent.get<ResizingLaserComponent>();
+      if (tick >= rc->endTick)
+      {
+         ent.create<MarkedForDeletionComponent>();
+         continue;
+      }
+      float t = 1.0f;
+      if (tick >= rc->startFadeTick)
+      {
+         t = 1.0f-((tick - rc->startFadeTick) / ((float)rc->endTick - rc->startFadeTick));
+      }
+      else if (tick >= rc->fullWidthTick)
+      {
+         //... manage components to deal damage?
+      }
+      else
+      {
+         t = (tick - rc->startTick) / ((float)rc->fullWidthTick- rc->startTick);
+      }
+      if (auto laser = ent.get<LaserComponent>())
+      {
+         laser->width = t * rc->maxWidth;
+      }
+   }
+
+   destroyMarkedForDeletion(g_context.world);
 }
 
 
@@ -160,12 +199,6 @@ bool entitiesCollide(Entity e1, Entity e2)
    
    
    return false;
-}
-
-void destroyMarkedForDeletion(EntitySystemView* systemView)
-{
-   auto vec = systemView->system->entitiesWithComponent<MarkedForDeletionComponent>();
-   for (auto&& ent : vec) ent.destroy();  //note: if this destroy can do callbacks this might have issues with a child and a parent being marked for deletion, so this algorithm might have to be "smarter" about recursively deleting.  This isn't an issue as of writing
 }
 
 void handleCollisions(BulletHellContext* ctxt)
@@ -390,6 +423,7 @@ public:
    {
       updateInput();
       fireWeapons();
+      updateLasers();
       updatePhysics(ctxt);
             
       ctxt->audio->update();
