@@ -48,7 +48,12 @@ std::unordered_map<std::string, IShotType*> g_rawNonSpells; //simply implemented
 //3. mid-speed, aimed, with an angle offset from the player position.
 //all of these fire at the same cooldown so this is a single "shot", which is nice for our purposes :)
 
-static const int RAN_NON1_BULLET_COUNT = 48; 
+static const int RAN_NON1_BULLET_COUNT = 48;
+
+Entity getPlayer(BulletHellContext* context)
+{
+   return entityGetByName(context->world, "player");
+}
 
 float angleToPlayer(BulletHellContext* context, Entity ent)
 {
@@ -485,6 +490,39 @@ public:
    }
 };
 
+class SkullShot2 : public IShotType
+{
+public:
+   virtual void fire(BulletHellContext* context, Entity ent, Shot* shot)
+   {
+      Vec2 start = polarToRect(randomFloat(0,TAU),randomFloat(0, 128));
+      Vec2 end = polarToRect(randomFloat(0, TAU), randomFloat(0, 8));
+
+      start += ent.get<PositionComponent>()->pos;
+      end += getPlayer(context).get<PositionComponent>()->pos;
+
+      Entity laser(context->world);
+
+      laser.create<PositionComponent>(start);
+      laser.create<LaserComponent>(polarToRect(angleBetween(start, end)), 0);
+      ResizingLaserComponent rescomp;
+      rescomp.startTick = context->currentTick;
+      rescomp.fullWidthTick = context->currentTick + 30;
+      rescomp.maxWidth = 8;
+      rescomp.startFadeTick = context->currentTick + 60;
+      rescomp.endTick = context->currentTick + 90;
+      laser.set(std::move(rescomp));
+      laser.create<SpriteComponent>("png/babble_red.png");
+      laser.create<EnemyBulletComponent>();
+
+      laser.update();
+   }
+   virtual int getCooldown()
+   {
+      return 20;
+   }
+};
+
 void hackBuildTestShotTypes(EntitySystemView*& shotTypes)
 {
    shotTypes = new EntitySystemView;
@@ -504,6 +542,7 @@ void hackBuildTestShotTypes(EntitySystemView*& shotTypes)
    g_rawNonSpells.insert(std::make_pair("DevilsRecitationQuickAimedBubble", new DevilsRecitationQuickAimedBubble));   
    
    g_rawNonSpells.insert(std::make_pair("skullshot1", new SkullShot1));
+   g_rawNonSpells.insert(std::make_pair("skullshot2", new SkullShot2));
 }
 
 

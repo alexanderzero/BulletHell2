@@ -464,7 +464,7 @@ public:
 
    virtual void onEnter() override
    {
-      Entity skull(ctxt->world);
+      skull = Entity(ctxt->world);
 
 
       //spawn her a bit to the left from center and off the screen.  She "flies in" as the first thing before she starts attacking.
@@ -481,20 +481,31 @@ public:
       playBGM("music/bsong1.mp3");
 
       skull.create<ShotComponent>(Shot("skullshot1"));
-      skull.create<HealthComponent>(50);
+      skull.create<HealthComponent>(100);
    }
 
    virtual void onUpdate() override
    {
+      if (finished())
+         return;
 
+      if (phase == 0 && skull.get<HealthComponent>()->hp <= 50)
+      {
+         for (auto shot : ctxt->world->system->entitiesWithComponent<EnemyBulletComponent>()) shot.destroy();
+         phase = 1;
+         //skull.get<ShotComponent>()->shots.push_back(Shot("skullshot2"));
+         skull.create<ShotComponent>(Shot("skullshot2"));
+      }
    }
 
    virtual bool finished() override
    {
-      return false;
+      return ctxt->world->system->entitiesWithComponent<EnemyComponent>().empty();
    }
 
    BulletHellContext* ctxt;
+   int phase = 0;
+   Entity skull;
 };
 
 Level testLevelCreate(BulletHellContext* context)
