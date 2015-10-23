@@ -222,6 +222,7 @@
     <Image Include="png\babble_red.png" />
     <Image Include="png\bg1.png" />
     <Image Include="png\fireball_1.png" />
+    <Image Include="png\flamingskull.png" />
     <Image Include="png\needle.png" />
     <Image Include="png\player_temp.png" />
     <Image Include="png\stolenRan.png" />
@@ -236,6 +237,7 @@
   </ItemGroup>
   <ItemGroup>
     <Media Include="music\boss.mp3" />
+    <Media Include="music\bsong1.mp3" />
     <Media Include="music\test.mp3" />
     <Media Include="sfx\blast.wav" />
   </ItemGroup>

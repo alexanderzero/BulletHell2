@@ -453,10 +453,55 @@ public:
    LevelStateQueue stateQueue;
 };
 
+class TrevorSection : public LevelSection
+{
+public:
+   TrevorSection(BulletHellContext* in_ctxt)
+      : ctxt(in_ctxt)
+   {
+
+   }
+
+   virtual void onEnter() override
+   {
+      Entity skull(ctxt->world);
+
+
+      //spawn her a bit to the left from center and off the screen.  She "flies in" as the first thing before she starts attacking.
+      Vec2 pos(constants::cameraSize.x / 2, 900);
+
+      skull.create<PositionComponent>(pos);
+
+      skull.create<EnemyComponent>();
+      skull.create<SizeComponent>(128.0f, 128.0f);
+
+      //most importantly....
+      skull.create<SpriteComponent>("png/flamingskull.png");
+
+      playBGM("music/bsong1.mp3");
+
+      skull.create<ShotComponent>(Shot("skullshot1"));
+      skull.create<HealthComponent>(50);
+   }
+
+   virtual void onUpdate() override
+   {
+
+   }
+
+   virtual bool finished() override
+   {
+      return false;
+   }
+
+   BulletHellContext* ctxt;
+};
+
 Level testLevelCreate(BulletHellContext* context)
 {
    Level out;
 
+   out.sections.push_back(std::make_unique<TrevorSection>(context));
    out.sections.push_back(std::make_unique<CreateSomeTestEnemies>(context));
    out.sections.push_back(std::make_unique<RanYakumoFromTouhouYouyoumuSection>(context));
    out.sections.push_back(std::make_unique<WaitSection>(context, 60 * 60)); //1 minute of waiting

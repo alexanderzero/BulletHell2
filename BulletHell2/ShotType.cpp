@@ -427,6 +427,63 @@ public:
    }
 };
 
+//skullshot1
+
+class SkullShot1 : public IShotType
+{
+public:
+   float angle;
+   SkullShot1()
+   {
+      angle = 0.0;
+   }
+   virtual void fire(BulletHellContext* context, Entity ent, Shot* shot)
+   {
+      for (size_t i = 0; i < 4; i++)
+      {
+         Entity bullet(context->world);
+         Vec2 position = ent.get<PositionComponent>()->pos;
+
+         float shot_angle = angle;
+         
+         shot_angle += 90.0*i;
+       
+
+         bullet.create<PositionComponent>(position);
+         bullet.create<VelocityComponent>(polarToRect(degToRad(shot_angle), 4.0));
+         bullet.create<RadiusComponent>(4.0);
+         bullet.create<SpriteComponent>("png/fireball_1.png");
+         bullet.create<EnemyBulletComponent>();
+
+         bullet.update();
+      }
+      for (size_t i = 0; i < 4; i++)
+      {
+         Entity bullet(context->world);
+         Vec2 position = ent.get<PositionComponent>()->pos;
+
+         float shot_angle = angle;
+
+         shot_angle += 90.0*i;
+
+
+         bullet.create<PositionComponent>(position);
+         bullet.create<VelocityComponent>(polarToRect(degToRad(-shot_angle), 2.0));
+         bullet.create<RadiusComponent>(4.0);
+         bullet.create<SpriteComponent>("png/fireball_1.png");
+         bullet.create<EnemyBulletComponent>();
+
+         bullet.update();
+      }
+
+
+      angle += 7;
+   }
+   virtual int getCooldown()
+   {
+      return 3;
+   }
+};
 
 void hackBuildTestShotTypes(EntitySystemView*& shotTypes)
 {
@@ -446,6 +503,7 @@ void hackBuildTestShotTypes(EntitySystemView*& shotTypes)
    g_rawNonSpells.insert(std::make_pair("DevilsRecitationAngleSpew", new DevilsRecitationAngleSpew));
    g_rawNonSpells.insert(std::make_pair("DevilsRecitationQuickAimedBubble", new DevilsRecitationQuickAimedBubble));   
    
+   g_rawNonSpells.insert(std::make_pair("skullshot1", new SkullShot1));
 }
 
 
