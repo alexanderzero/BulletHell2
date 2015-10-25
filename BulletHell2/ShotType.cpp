@@ -656,10 +656,10 @@ void buildNueLaserBullets()
 
             bullet.create<PositionComponent>(pos);
             bullet.create<VelocityComponent>(vel);
-            bullet.create<RadiusComponent>(8.0);
+            bullet.create<RadiusComponent>(4.0);
             bullet.create<SpriteComponent>("png/fireball_1.png");
             bullet.create<EnemyBulletComponent>();
-            //bullet.create<DieOffscreenComponent>();
+            bullet.create<DiePaddedOffscreenComponent>();
 
             if (!(j % 2)) bullet.create<LaserBulletRotateLeftComponent>();
 

@@ -340,7 +340,7 @@ public:
                   ArcInterpolationComponent arc;
                   arc.center = ran.get<PositionComponent>()->pos;
                   arc.startDistance = arc.endDistance = distance(bullet.get<PositionComponent>()->pos, arc.center);
-                  arc.startAngle = angleBetween(bullet.get<PositionComponent>()->pos, arc.center);
+                  arc.startAngle = angleBetween(arc.center, bullet.get<PositionComponent>()->pos);
                   arc.endAngle = arc.startAngle + angleDiff;
                   arc.startTick = tick + 15;
                   arc.endTick = tick + interpFrames;
@@ -376,6 +376,9 @@ public:
 
             //no more shoots
             ran.remove<ShotComponent>();
+
+            //clear bullets, too...
+            for (auto&& bullet : ctxt->world->system->entitiesWithComponent<EnemyBulletComponent>()) bullet.destroy();
 
             return  SubsectionState::Done;
          });

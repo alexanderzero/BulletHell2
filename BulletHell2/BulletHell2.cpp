@@ -112,8 +112,9 @@ void BulletHell2::run()
 
    auto context = &g_context;
       
-   context->playingBGM = new Sound(Sound::createSong(*context->audio, "music/test.mp3"));
-   context->playingBGM->play();
+   context->playingBGM = nullptr;
+   //context->playingBGM = new Sound(Sound::createSong(*context->audio, "music/test.mp3"));
+   //context->playingBGM->play();
 
 	//run game "main loop" here.
 	while(context->window->isOpen() && context->gameRunning)

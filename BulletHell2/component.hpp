@@ -26,7 +26,7 @@ public:
 	virtual void destroyPool(void* pool) = 0;
 	virtual void* indexIntoPool(void*& pool, int idx) = 0;
 	virtual void* addToPool(void*& pool, EntityID id, int& out) = 0;
-	virtual void  removeFromPool(void*& pool, int idx, std::vector<int>& indirection) = 0;
+	virtual void  removeFromPool(void*& pool, int idx, int* indirection) = 0;
 	virtual void setEntity(void*& pool, int idx, EntityID entity) = 0;
 	virtual EntityID getEntity(void*& pool, int idx) = 0;
 	virtual void* rawData(void*& pool) = 0;
@@ -69,17 +69,17 @@ public:
 		idxOut = (int)p.size();
 		return &p.back().component;
 	}
-	virtual void removeFromPool(void*& pool, int idx, std::vector<int>& indirection)
+	virtual void removeFromPool(void*& pool, int idx, int* indirection)
 	{
 		if (!pool || !idx) return;
 		--idx;
 		auto& p = getPool(pool);
-		indirection.data()[p[idx].entity] = 0; //kill this indirection.
+		indirection[p[idx].entity] = 0; //kill this indirection.
 		if (idx != p.size() - 1)
 		{
 			p[idx] = std::move(p.back());
 			//update indirection...
-			indirection.data()[p[idx].entity] = idx+1;
+			indirection[p[idx].entity] = idx+1;
 		}
 		p.pop_back();
 	}

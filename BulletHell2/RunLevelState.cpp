@@ -128,7 +128,6 @@ void enforceWorldBoundaries(BulletHellContext* ctxt)
       else if (pos->pos.y > constants::cameraSize.y) pos->pos.y = constants::cameraSize.y;
    }
 
-   std::vector<Entity> offscreenEntities;
    for (auto ent : ctxt->world->system->entitiesWithComponent<DieOffscreenComponent>())
    {
       auto pos = ent.get<PositionComponent>();
@@ -138,10 +137,27 @@ void enforceWorldBoundaries(BulletHellContext* ctxt)
       if (pos->pos.x < 0 || pos->pos.x > constants::cameraSize.x ||
          pos->pos.y < 0 || pos->pos.y > constants::cameraSize.y)
       {
-         offscreenEntities.push_back(ent); //do this in two passes to be nice with iteration
+         ent.create<MarkedForDeletionComponent>();
       }
    }
-   for (auto&& ent : offscreenEntities) ent.destroy();
+
+
+   float padX = constants::cameraSize.x * 0.25f;
+   float padY = constants::cameraSize.y * 0.25f;
+   for (auto ent : ctxt->world->system->entitiesWithComponent<DiePaddedOffscreenComponent>())
+   {
+      auto pos = ent.get<PositionComponent>();
+      if (!pos) continue;
+
+
+      if (pos->pos.x < -padX || pos->pos.x > constants::cameraSize.x + padX ||
+          pos->pos.y < -padY || pos->pos.y > constants::cameraSize.y + padY)
+      {
+         ent.create<MarkedForDeletionComponent>();
+      }
+   }
+   
+   destroyMarkedForDeletion(ctxt->world);
 }
 
 bool entitiesCollide(Entity e1, Entity e2)

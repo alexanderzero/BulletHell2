@@ -36,8 +36,30 @@ void Entity::update()
 class ComponentPool
 {
 public:
-	std::vector<int> indirectionPool;
+
+   int* indirection=nullptr;
+   size_t indSize=0, capacity = 0;
 	void* pool;
+
+
+   void resize(size_t newSize)
+   {
+      if (newSize < capacity)
+      {
+         indSize = newSize;
+      }
+      auto oldCap = capacity;
+      if (!capacity) capacity = 16;
+      while (capacity < newSize)
+      {
+         capacity += (capacity >> 1);
+      }
+
+      indirection = (int*)realloc(indirection, sizeof(int) * capacity);
+      memset(indirection + oldCap, 0, sizeof(int) * (capacity - oldCap));
+   }
+
+
 	ComponentVTable* vtable;
 	~ComponentPool()
 	{
@@ -45,11 +67,11 @@ public:
 	}
 	int& indirect(EntityID id)
 	{
-		if (id >= (EntityID)indirectionPool.size())
+		if (id >= indSize)
 		{
-			indirectionPool.resize(id + 1, 0);
+         resize(id + 1);
 		}
-		return indirectionPool.data()[id];
+		return indirection[id];
 	}
 	void* add(EntityID id)
 	{
@@ -73,7 +95,7 @@ public:
 	{
 		auto& idx = indirect(id);
 		if (!idx) return;
-		vtable->removeFromPool(pool, idx, indirectionPool);
+		vtable->removeFromPool(pool, idx, indirection);
 	}
 	size_t size()
 	{

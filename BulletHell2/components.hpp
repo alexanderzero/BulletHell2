@@ -123,6 +123,7 @@ struct CameraComponent {}; //makes is-a camera.
 
 struct WorldBoundedComponent {}; //forced to always be in the world bounds.
 struct DieOffscreenComponent {}; //delete this entity if it's offscreen
+struct DiePaddedOffscreenComponent {}; //delete this entity if it's offscreen, with a pad zone so it can go just a bit off and still stay alive.
 
 
 //weapon-specific
