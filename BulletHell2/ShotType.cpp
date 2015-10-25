@@ -140,7 +140,8 @@ class RanNonSpell1 : public IShotType
 //----------------------DEVIL'S RECITATION----------------------
 
 //this is a famous attack in the touhou/seihou circles.
-//it's an attack that adds more and more shots, the lower HP you have.
+//it's an attack that adds more and more shots, the lower HP the enemy has.
+//this has some of the major elements of the attack and tries to capture its spirit.
 
 //Stage 1 - bullet waves.
 //four ocillating waves of 3 streams on each.
