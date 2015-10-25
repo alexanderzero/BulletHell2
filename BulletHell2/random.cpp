@@ -1,6 +1,8 @@
 #include "random.hpp"
 #include <random>
 
+//this commend was made by le epic troll brandon
+
 static auto& prng_engine()
 {
    static std::random_device rd{};

@@ -38,6 +38,15 @@ struct AccelerationComponent
    Vec2 accel;
 };
 
+struct ArcInterpolationComponent
+{
+   uint64_t startTick, endTick;
+   Radian startAngle, endAngle;
+   float startDistance, endDistance;
+   Vec2 center;
+   //currently does an eased interpolation...  TODO: control interpolation type???
+};
+
 struct MaxSpeedComponent
 {
    MaxSpeedComponent() {}
@@ -172,3 +181,21 @@ struct HealthComponent {
    HealthComponent(int hp_in) : hp(hp_in) {}
    int hp; //currently just number of hits required to die.  TODO: add an actual damage system, when we have multiple player shottypes.
 };
+
+
+//timing related
+
+struct SpawnTimeComponent 
+{ 
+   SpawnTimeComponent() : spawnTick(0) {}
+   SpawnTimeComponent(uint64_t spawnTick_in) : spawnTick(spawnTick_in) {}
+   uint64_t spawnTick; 
+};
+
+//speciality components for attacks and such
+
+//MESH OF LIGHT AND DARK
+struct MeshOfLightAndDarkSpawnComponent {};
+
+//LASERBULLETS
+struct LaserBulletRotateLeftComponent {};

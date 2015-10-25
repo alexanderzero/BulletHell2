@@ -93,3 +93,9 @@ Radian degToRad(Degree degrees);
 Degree radToDeg(Radian radians);
 
 
+//interpolation
+
+float lerp(float v1, float v2, float t);
+float cosInterp(float v1, float v2, float t);
+Vec2 lerp(Vec2 const& v1, Vec2 const& v2, float t);
+Vec2 cosInterp(Vec2 const& v1, Vec2 const& v2, float t);

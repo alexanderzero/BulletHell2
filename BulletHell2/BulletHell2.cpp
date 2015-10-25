@@ -156,8 +156,7 @@ void BulletHell2::update()
 {
 	//update.
    ++g_context.currentTick;
-
-
+    
    //update the input...
    g_context.window->updateInput();
 

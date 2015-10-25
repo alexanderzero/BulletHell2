@@ -14,7 +14,7 @@
 
 #include "ShotType.hpp"
 #include "sprite.h"
-
+#include "random.hpp"
 
 void destroyMarkedForDeletion(EntitySystemView* systemView)
 {
@@ -291,10 +291,86 @@ void handleCollisions(BulletHellContext* ctxt)
    destroyMarkedForDeletion(ctxt->world);
 }
 
+/* some speciality updates...*/
+
+void updateMeshOfLightAndDark(BulletHellContext* ctxt)
+{
+   for (auto ent : ctxt->world->system->entitiesWithComponent<MeshOfLightAndDarkSpawnComponent>())
+   {
+      auto spawnTime = ent.get<SpawnTimeComponent>();
+      if (!spawnTime)
+      {
+         ent.create<SpawnTimeComponent>(ctxt->currentTick);
+         return;
+      }
+      auto time = ctxt->currentTick - spawnTime->spawnTick;
+
+      if (!(time % 6))
+      {
+         bool mirrored = (time / 6) % 2 == 1;
+         auto angle = rectToPolar(ent.get<VelocityComponent>()->vel);
+         float offset = randomFloat(75, 105);
+         if (mirrored)
+         {
+            offset = -offset;
+         }
+         angle += degToRad(offset);
+
+         //fire a laser from this bullet in this direction.
+         Entity laser(ctxt->world);
+
+         laser.create<PositionComponent>(ent.get<PositionComponent>()->pos);
+         laser.create<LaserComponent>(polarToRect(angle), 0);
+
+         ResizingLaserComponent rescomp;
+         rescomp.startTick = ctxt->currentTick;
+         rescomp.fullWidthTick = ctxt->currentTick + 40;
+         rescomp.startFadeTick = ctxt->currentTick + 120;
+         rescomp.endTick = ctxt->currentTick + 135;
+
+         rescomp.maxWidth = 16;
+
+         laser.set(std::move(rescomp));
+         laser.create<SpriteComponent>("png/babble_red.png");
+         laser.create<EnemyBulletComponent>();
+      }
+   }
+}
+
+
+void setInterpolationVelocities(BulletHellContext* ctxt)
+{
+   for (auto ent : ctxt->world->system->entitiesWithComponent<ArcInterpolationComponent>())
+   {
+      //find the prev position, and the new position, subtract and set as velocity.
+      auto interp = ent.get<ArcInterpolationComponent>();
+      auto tick = ctxt->currentTick;
+      if (tick < interp->startTick || tick > interp->endTick)
+      {
+         ent.remove<VelocityComponent>(); //invalid!
+         continue;
+      }
+      //auto prevTick = tick-1;
+      //float t1 = ((prevTick - (interp->startTick - 1)))/(float)(interp->endTick - interp->startTick + 1);
+      float t=  ((tick - (interp->startTick - 1)))/(float)(interp->endTick - interp->startTick + 1);
+
+      //auto p1 = polarToRect(cosInterp(interp->startAngle, interp->endAngle, t1), lerp(interp->startDistance, interp->endDistance, t1));
+      auto p = polarToRect(cosInterp(interp->startAngle, interp->endAngle, t), lerp(interp->startDistance, interp->endDistance, t));
+      p += interp->center;
+
+      auto vel = p;
+      vel -= ent.get<PositionComponent>()->pos;
+
+      ent.create<VelocityComponent>(vel); //ez!
+   }
+}
 
 void updatePhysics(BulletHellContext* ctxt)
 {
+   updateMeshOfLightAndDark(ctxt);
    updatePlayerVelocity(ctxt);
+
+   setInterpolationVelocities(ctxt);
 
    float physTime = 1.0f / constants::physicsTicksPerTick;
 
@@ -357,6 +433,10 @@ void drawSpritesWithComponent(BulletHellContext* ctxt)
       if (auto sprComp = enemy.get<SpriteComponent>())
       {
          sprite = GetSprite(sprComp->sprite);
+      }
+      else
+      {
+         continue; //sprite is required now
       }
 
       if (auto laser = enemy.get<LaserComponent>())

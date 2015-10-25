@@ -286,6 +286,149 @@ public:
       //--------RAN FLIES IN----------
       stateQueue.push(moveToSubsection(ctxt, ran, RAN_START, 8.0f));
 
+
+      //-----LASER BULLETS-----
+      {
+         int HEALTH = 200;
+         int startTick;
+         int firstSwitchTick;
+         int switchTickTime;
+         int interpFrames;
+         int lastSwitch;
+         stateQueue.push([=](bool isFirstRun) mutable -> e_SubsectionState
+         {
+            if (isFirstRun)
+            {
+               startTick = ctxt->currentTick;
+               firstSwitchTick = startTick + 210;
+               interpFrames = 240;
+               switchTickTime = 210 + interpFrames;
+               lastSwitch = 0;
+               ran.create<LivesWithNoHPComponent>();  //don't kill her when she dies
+               ran.create<HealthComponent>(HEALTH);
+
+               std::vector<Shot> shots;
+               shots.push_back(Shot("NueLaserBulletRing"));
+               shots.push_back(Shot("NueLaserBulletRing"));
+               shots.back().angleOffset = 360 / 60.0f;
+               shots.back().nextFireTime = ctxt->currentTick + 15;
+
+               ran.create<ShotComponent>(std::move(shots));
+            }
+            
+            auto tick = ctxt->currentTick;
+            if (tick == firstSwitchTick || (tick > firstSwitchTick && (tick - firstSwitchTick) % switchTickTime == 0))
+            {
+               lastSwitch = tick;
+               ran.get<ShotComponent>()->shots.clear();
+               for (auto&& bullet : ctxt->world->system->entitiesWithComponent<EnemyBulletComponent>())
+               {
+                  bool rotatesLeft = bullet.get<LaserBulletRotateLeftComponent>() != nullptr;
+
+                  float angleDiff = (TAU / 30) * 2;
+                  if (rotatesLeft) angleDiff = -angleDiff;
+
+                  //bullet.get<VelocityComponent>()->vel = Vec2(); //STOP!
+                  bullet.remove<VelocityComponent>();
+
+                  //ok, so the bullets now need to rotate.  we need to circularly interpolate.
+                  //each bullet will go two whole sides over.
+                  //so interpolation angle = (TAU / count) * 2;
+                  //interpolation distance = (distance from enemy)
+                  
+                  //arc interpolation component!
+                  ArcInterpolationComponent arc;
+                  arc.center = ran.get<PositionComponent>()->pos;
+                  arc.startDistance = arc.endDistance = distance(bullet.get<PositionComponent>()->pos, arc.center);
+                  arc.startAngle = angleBetween(bullet.get<PositionComponent>()->pos, arc.center);
+                  arc.endAngle = arc.startAngle + angleDiff;
+                  arc.startTick = tick + 15;
+                  arc.endTick = tick + interpFrames;
+                  bullet.set(arc);
+               }
+            }
+            if (tick > firstSwitchTick && (tick == lastSwitch + interpFrames))
+            {
+               std::vector<Shot> shots;
+               shots.push_back(Shot("NueLaserBulletRing"));
+               shots.push_back(Shot("NueLaserBulletRing"));
+               shots.back().angleOffset = 360 / 60.0f;
+               shots.back().nextFireTime = ctxt->currentTick + 15;
+
+               ran.create<ShotComponent>(std::move(shots));
+
+               for (auto&& bullet : ctxt->world->system->entitiesWithComponent<EnemyBulletComponent>())
+               {
+                  bullet.remove<ArcInterpolationComponent>();
+                  bullet.create<VelocityComponent>(polarToRect(angleBetween(ran.get<PositionComponent>()->pos, bullet.get<PositionComponent>()->pos), 5.0f));
+               }
+            }
+
+            if (isAlive(ran))
+            {
+               return SubsectionState::StillProcessing;
+            }
+
+            //clean-up movement when dead.
+            ran.remove<MaxSpeedComponent>();
+            ran.remove<VelocityComponent>();
+            ran.remove<AccelerationComponent>();
+
+            //no more shoots
+            ran.remove<ShotComponent>();
+
+            return  SubsectionState::Done;
+         });
+      }
+
+      //-----MESH OF LIGHT AND DARK-----
+      {
+         int HEALTH = 300;
+         int chaseCooldown = 300;
+         int chaseFrames = 20;
+         uint64_t nextChaseTime = ctxt->currentTick + chaseCooldown;
+         uint64_t doneChasingFrame = 0;
+         stateQueue.push([=](bool isFirstRun) mutable -> e_SubsectionState
+         {
+            if (isFirstRun)
+            {
+               ran.create<LivesWithNoHPComponent>();  //don't kill her when she dies
+               ran.create<HealthComponent>(HEALTH); //todo: tweak, show a healthbar somehow....
+
+               std::vector<Shot> shots;
+               shots.push_back(Shot("MeshOfLightAndDarkLaser"));
+               shots.push_back(Shot("MeshOfLightAndDarkLaser"));
+               shots[0].angleOffset = 35;
+               shots[1].angleOffset = -35;
+               shots.push_back(Shot("MeshOfLightAndDarkSpew"));
+               shots.back().nextFireTime = ctxt->currentTick + 55; //offset this a bit to be annoying.
+               ran.create<ShotComponent>(std::move(shots));
+
+               //aaaand now we're playing!
+            }
+
+            if (isAlive(ran))
+            {
+               chasePlayerHorizontally(ctxt, ran, nextChaseTime, doneChasingFrame, chaseFrames, chaseCooldown);
+               return SubsectionState::StillProcessing;
+            }
+
+            //clean-up movement when dead.
+            ran.remove<MaxSpeedComponent>();
+            ran.remove<VelocityComponent>();
+            ran.remove<AccelerationComponent>();
+
+            //no more shoots
+            ran.remove<ShotComponent>();
+
+            return  SubsectionState::Done;
+         });
+      }
+
+
+      //-----RECENTER-------
+      stateQueue.push(moveToSubsection(ctxt, ran, RAN_START, 8.0f));
+
       //------RAN STARTS SHOOTING-----
       {
          int HEALTH = 100;
@@ -453,11 +596,67 @@ public:
    LevelStateQueue stateQueue;
 };
 
+class TrevorSection : public LevelSection
+{
+public:
+   TrevorSection(BulletHellContext* in_ctxt)
+      : ctxt(in_ctxt)
+   {
+
+   }
+
+   virtual void onEnter() override
+   {
+      skull = Entity(ctxt->world);
+
+
+      //spawn her a bit to the left from center and off the screen.  She "flies in" as the first thing before she starts attacking.
+      Vec2 pos(constants::cameraSize.x / 2, 900);
+
+      skull.create<PositionComponent>(pos);
+
+      skull.create<EnemyComponent>();
+      skull.create<SizeComponent>(128.0f, 128.0f);
+
+      //most importantly....
+      skull.create<SpriteComponent>("png/flamingskull.png");
+
+      playBGM("music/bsong1.mp3");
+
+      skull.create<ShotComponent>(Shot("skullshot1"));
+      skull.create<HealthComponent>(100);
+   }
+
+   virtual void onUpdate() override
+   {
+      if (finished())
+         return;
+
+      if (phase == 0 && skull.get<HealthComponent>()->hp <= 50)
+      {
+         for (auto shot : ctxt->world->system->entitiesWithComponent<EnemyBulletComponent>()) shot.destroy();
+         phase = 1;
+         //skull.get<ShotComponent>()->shots.push_back(Shot("skullshot2"));
+         skull.create<ShotComponent>(Shot("skullshot2"));
+      }
+   }
+
+   virtual bool finished() override
+   {
+      return ctxt->world->system->entitiesWithComponent<EnemyComponent>().empty();
+   }
+
+   BulletHellContext* ctxt;
+   int phase = 0;
+   Entity skull;
+};
+
 Level testLevelCreate(BulletHellContext* context)
 {
    Level out;
 
-   out.sections.push_back(std::make_unique<CreateSomeTestEnemies>(context));
+   //out.sections.push_back(std::make_unique<TrevorSection>(context));
+   //out.sections.push_back(std::make_unique<CreateSomeTestEnemies>(context));
    out.sections.push_back(std::make_unique<RanYakumoFromTouhouYouyoumuSection>(context));
    out.sections.push_back(std::make_unique<WaitSection>(context, 60 * 60)); //1 minute of waiting
 
