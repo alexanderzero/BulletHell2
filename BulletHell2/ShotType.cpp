@@ -523,6 +523,110 @@ public:
    }
 };
 
+
+template <typename ShotFn, typename CooldownFn>
+void buildShotType(std::string name, ShotFn&& fn, CooldownFn&& cdFn)
+{
+   class ShotTypeImpl : public IShotType
+   {
+   public:
+      ShotTypeImpl(ShotFn&& fn, CooldownFn&& cdFn)
+         : s(std::forward<ShotFn>(fn)), c(std::forward<CooldownFn>(cdFn))
+      {
+
+      }
+
+      virtual void fire(BulletHellContext* context, Entity ent, Shot* shot)
+      {
+         s(ent, shot);
+      }
+      virtual int getCooldown()
+      {
+         return c();
+      }
+
+      typename std::decay<ShotFn>::type s;
+      typename std::decay<CooldownFn>::type c;
+   };
+
+
+   g_rawNonSpells.insert(std::make_pair(std::move(name), new ShotTypeImpl(std::forward<ShotFn>(fn), std::forward<CooldownFn>(cdFn))));  
+}
+
+void buildMeshOfLightAndDark()
+{
+
+   int meshOfLightAndDarkShotTime = 150;
+
+   auto ctxt = &g_context;
+   buildShotType("MeshOfLightAndDarkLaser",
+   [=](Entity ent, Shot* shot)
+   {
+      float angle = angleToPlayer(ctxt, ent) + degToRad(shot->angleOffset);
+
+      Entity laser(ctxt->world);
+
+      laser.create<PositionComponent>(ent.get<PositionComponent>()->pos);
+      laser.create<LaserComponent>(polarToRect(angle), 0);
+
+      ResizingLaserComponent rescomp;
+      rescomp.startTick = ctxt->currentTick;
+      rescomp.fullWidthTick = ctxt->currentTick + 30;
+      rescomp.startFadeTick = ctxt->currentTick + 150;
+      rescomp.endTick = ctxt->currentTick + 165;
+
+      rescomp.maxWidth = 32;
+
+      laser.set(std::move(rescomp));
+      laser.create<SpriteComponent>("png/babble_red.png");
+      laser.create<EnemyBulletComponent>();
+
+      //we also create bullets that fly down this path as well.  These bullets are INVISIBLE!
+
+      Entity spawner(ctxt->world);
+
+      //no need for a size or a sprite.
+      spawner.create<PositionComponent>(ent.get<PositionComponent>()->pos);
+      spawner.create<VelocityComponent>(polarToRect(angle, 12.0f));
+      spawner.create<EnemyBulletComponent>();
+      spawner.create<DieOffscreenComponent>();
+      //create a component to handle the mesh of light and dark spawning. 
+      spawner.create<MeshOfLightAndDarkSpawnComponent>();
+      
+   },
+   [=]()
+   {
+      return meshOfLightAndDarkShotTime;
+   });
+
+
+   
+   buildShotType("MeshOfLightAndDarkSpew",
+      [=](Entity ent, Shot* shot)
+   {
+
+      int shotCount = randomInt(48, 65);
+      for (int i = 0; i < shotCount; ++i)
+      { 
+         //shot in the general area of the player
+         //basically a "shotgun"
+         float angle = angleToPlayer(ctxt, ent) + degToRad(randomFloat(-35.0f, 35.0f));
+
+         Entity bullet(ctxt->world);
+
+         bullet.create<PositionComponent>(ent.get<PositionComponent>()->pos);
+         bullet.create<VelocityComponent>(polarToRect(angle, randomFloat(3.0f, 8.0f)));
+         bullet.create<RadiusComponent>(4.0f);
+         bullet.create<SpriteComponent>("png/fireball_1.png");
+         bullet.create<EnemyBulletComponent>();
+      }
+   },
+      [=]()
+   {
+      return meshOfLightAndDarkShotTime;
+   });
+}
+
 void hackBuildTestShotTypes(EntitySystemView*& shotTypes)
 {
    shotTypes = new EntitySystemView;
@@ -543,6 +647,8 @@ void hackBuildTestShotTypes(EntitySystemView*& shotTypes)
    
    g_rawNonSpells.insert(std::make_pair("skullshot1", new SkullShot1));
    g_rawNonSpells.insert(std::make_pair("skullshot2", new SkullShot2));
+
+   buildMeshOfLightAndDark();
 }
 
 

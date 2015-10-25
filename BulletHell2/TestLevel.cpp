@@ -286,6 +286,54 @@ public:
       //--------RAN FLIES IN----------
       stateQueue.push(moveToSubsection(ctxt, ran, RAN_START, 8.0f));
 
+      //-----MESH OF LIGHT AND DARK-----
+      {
+         int HEALTH = 300;
+         int chaseCooldown = 300;
+         int chaseFrames = 20;
+         uint64_t nextChaseTime = ctxt->currentTick + chaseCooldown;
+         uint64_t doneChasingFrame = 0;
+         stateQueue.push([=](bool isFirstRun) mutable -> e_SubsectionState
+         {
+            if (isFirstRun)
+            {
+               ran.create<LivesWithNoHPComponent>();  //don't kill her when she dies
+               ran.create<HealthComponent>(HEALTH); //todo: tweak, show a healthbar somehow....
+
+               std::vector<Shot> shots;
+               shots.push_back(Shot("MeshOfLightAndDarkLaser"));
+               shots.push_back(Shot("MeshOfLightAndDarkLaser"));
+               shots[0].angleOffset = 35;
+               shots[1].angleOffset = -35;
+               shots.push_back(Shot("MeshOfLightAndDarkSpew"));
+               shots.back().nextFireTime = ctxt->currentTick + 55; //offset this a bit to be annoying.
+               ran.create<ShotComponent>(std::move(shots));
+
+               //aaaand now we're playing!
+            }
+
+            if (isAlive(ran))
+            {
+               chasePlayerHorizontally(ctxt, ran, nextChaseTime, doneChasingFrame, chaseFrames, chaseCooldown);
+               return SubsectionState::StillProcessing;
+            }
+
+            //clean-up movement when dead.
+            ran.remove<MaxSpeedComponent>();
+            ran.remove<VelocityComponent>();
+            ran.remove<AccelerationComponent>();
+
+            //no more shoots
+            ran.remove<ShotComponent>();
+
+            return  SubsectionState::Done;
+         });
+      }
+
+
+      //-----RECENTER-------
+      stateQueue.push(moveToSubsection(ctxt, ran, RAN_START, 8.0f));
+
       //------RAN STARTS SHOOTING-----
       {
          int HEALTH = 100;
@@ -512,8 +560,8 @@ Level testLevelCreate(BulletHellContext* context)
 {
    Level out;
 
-   out.sections.push_back(std::make_unique<TrevorSection>(context));
-   out.sections.push_back(std::make_unique<CreateSomeTestEnemies>(context));
+   //out.sections.push_back(std::make_unique<TrevorSection>(context));
+   //out.sections.push_back(std::make_unique<CreateSomeTestEnemies>(context));
    out.sections.push_back(std::make_unique<RanYakumoFromTouhouYouyoumuSection>(context));
    out.sections.push_back(std::make_unique<WaitSection>(context, 60 * 60)); //1 minute of waiting
 
