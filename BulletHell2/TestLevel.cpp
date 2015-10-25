@@ -286,6 +286,101 @@ public:
       //--------RAN FLIES IN----------
       stateQueue.push(moveToSubsection(ctxt, ran, RAN_START, 8.0f));
 
+
+      //-----LASER BULLETS-----
+      {
+         int HEALTH = 200;
+         int startTick;
+         int firstSwitchTick;
+         int switchTickTime;
+         int interpFrames;
+         int lastSwitch;
+         stateQueue.push([=](bool isFirstRun) mutable -> e_SubsectionState
+         {
+            if (isFirstRun)
+            {
+               startTick = ctxt->currentTick;
+               firstSwitchTick = startTick + 210;
+               interpFrames = 240;
+               switchTickTime = 210 + interpFrames;
+               lastSwitch = 0;
+               ran.create<LivesWithNoHPComponent>();  //don't kill her when she dies
+               ran.create<HealthComponent>(HEALTH);
+
+               std::vector<Shot> shots;
+               shots.push_back(Shot("NueLaserBulletRing"));
+               shots.push_back(Shot("NueLaserBulletRing"));
+               shots.back().angleOffset = 360 / 60.0f;
+               shots.back().nextFireTime = ctxt->currentTick + 15;
+
+               ran.create<ShotComponent>(std::move(shots));
+            }
+            
+            auto tick = ctxt->currentTick;
+            if (tick == firstSwitchTick || (tick > firstSwitchTick && (tick - firstSwitchTick) % switchTickTime == 0))
+            {
+               lastSwitch = tick;
+               ran.get<ShotComponent>()->shots.clear();
+               for (auto&& bullet : ctxt->world->system->entitiesWithComponent<EnemyBulletComponent>())
+               {
+                  bool rotatesLeft = bullet.get<LaserBulletRotateLeftComponent>() != nullptr;
+
+                  float angleDiff = (TAU / 30) * 2;
+                  if (rotatesLeft) angleDiff = -angleDiff;
+
+                  //bullet.get<VelocityComponent>()->vel = Vec2(); //STOP!
+                  bullet.remove<VelocityComponent>();
+
+                  //ok, so the bullets now need to rotate.  we need to circularly interpolate.
+                  //each bullet will go two whole sides over.
+                  //so interpolation angle = (TAU / count) * 2;
+                  //interpolation distance = (distance from enemy)
+                  
+                  //arc interpolation component!
+                  ArcInterpolationComponent arc;
+                  arc.center = ran.get<PositionComponent>()->pos;
+                  arc.startDistance = arc.endDistance = distance(bullet.get<PositionComponent>()->pos, arc.center);
+                  arc.startAngle = angleBetween(bullet.get<PositionComponent>()->pos, arc.center);
+                  arc.endAngle = arc.startAngle + angleDiff;
+                  arc.startTick = tick + 15;
+                  arc.endTick = tick + interpFrames;
+                  bullet.set(arc);
+               }
+            }
+            if (tick > firstSwitchTick && (tick == lastSwitch + interpFrames))
+            {
+               std::vector<Shot> shots;
+               shots.push_back(Shot("NueLaserBulletRing"));
+               shots.push_back(Shot("NueLaserBulletRing"));
+               shots.back().angleOffset = 360 / 60.0f;
+               shots.back().nextFireTime = ctxt->currentTick + 15;
+
+               ran.create<ShotComponent>(std::move(shots));
+
+               for (auto&& bullet : ctxt->world->system->entitiesWithComponent<EnemyBulletComponent>())
+               {
+                  bullet.remove<ArcInterpolationComponent>();
+                  bullet.create<VelocityComponent>(polarToRect(angleBetween(ran.get<PositionComponent>()->pos, bullet.get<PositionComponent>()->pos), 5.0f));
+               }
+            }
+
+            if (isAlive(ran))
+            {
+               return SubsectionState::StillProcessing;
+            }
+
+            //clean-up movement when dead.
+            ran.remove<MaxSpeedComponent>();
+            ran.remove<VelocityComponent>();
+            ran.remove<AccelerationComponent>();
+
+            //no more shoots
+            ran.remove<ShotComponent>();
+
+            return  SubsectionState::Done;
+         });
+      }
+
       //-----MESH OF LIGHT AND DARK-----
       {
          int HEALTH = 300;

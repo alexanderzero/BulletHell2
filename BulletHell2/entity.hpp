@@ -26,8 +26,9 @@ public:
 	template <typename T>
 	void set(T&& component)
 	{
+      typedef typename std::decay<T>::type BaseType;
 		if (!parent) return;
-		*(T*)parent->addComponent(ClassComponentVTable<typename std::decay<T>::type>::get(), id) = std::forward<T>(component);
+		*(BaseType*)parent->addComponent(ClassComponentVTable<BaseType>::get(), id) = std::forward<T>(component);
 	}
 
 	template <typename T, typename... Args>

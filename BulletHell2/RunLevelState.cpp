@@ -338,10 +338,39 @@ void updateMeshOfLightAndDark(BulletHellContext* ctxt)
 }
 
 
+void setInterpolationVelocities(BulletHellContext* ctxt)
+{
+   for (auto ent : ctxt->world->system->entitiesWithComponent<ArcInterpolationComponent>())
+   {
+      //find the prev position, and the new position, subtract and set as velocity.
+      auto interp = ent.get<ArcInterpolationComponent>();
+      auto tick = ctxt->currentTick;
+      if (tick < interp->startTick || tick > interp->endTick)
+      {
+         ent.remove<VelocityComponent>(); //invalid!
+         continue;
+      }
+      //auto prevTick = tick-1;
+      //float t1 = ((prevTick - (interp->startTick - 1)))/(float)(interp->endTick - interp->startTick + 1);
+      float t=  ((tick - (interp->startTick - 1)))/(float)(interp->endTick - interp->startTick + 1);
+
+      //auto p1 = polarToRect(cosInterp(interp->startAngle, interp->endAngle, t1), lerp(interp->startDistance, interp->endDistance, t1));
+      auto p = polarToRect(cosInterp(interp->startAngle, interp->endAngle, t), lerp(interp->startDistance, interp->endDistance, t));
+      p += interp->center;
+
+      auto vel = p;
+      vel -= ent.get<PositionComponent>()->pos;
+
+      ent.create<VelocityComponent>(vel); //ez!
+   }
+}
+
 void updatePhysics(BulletHellContext* ctxt)
 {
    updateMeshOfLightAndDark(ctxt);
    updatePlayerVelocity(ctxt);
+
+   setInterpolationVelocities(ctxt);
 
    float physTime = 1.0f / constants::physicsTicksPerTick;
 

@@ -233,3 +233,21 @@ Box Box::fromCenterHalfExtents(Vec2 const& center, Vec2 const& halfExtents)
    out.max += halfExtents;
    return out;
 }
+
+
+float lerp(float v1, float v2, float t)
+{
+   return v1 * (1.0f - t) + v2 * t;
+}
+float cosInterp(float v1, float v2, float t)
+{
+   return lerp(v1, v2, -cos(PI * t) * 0.5f + 0.5f);
+}
+Vec2 lerp(Vec2 const& v1, Vec2 const& v2, float t)
+{
+   return Vec2(lerp(v1.x, v2.x, t), lerp(v1.y, v2.y, t));
+}
+Vec2 cosInterp(Vec2 const& v1, Vec2 const& v2, float t)
+{
+   return lerp(v1, v2, -cos(PI * t) * 0.5f + 0.5f);
+}

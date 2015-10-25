@@ -555,7 +555,6 @@ void buildShotType(std::string name, ShotFn&& fn, CooldownFn&& cdFn)
 
 void buildMeshOfLightAndDark()
 {
-
    int meshOfLightAndDarkShotTime = 150;
 
    auto ctxt = &g_context;
@@ -619,11 +618,57 @@ void buildMeshOfLightAndDark()
          bullet.create<RadiusComponent>(4.0f);
          bullet.create<SpriteComponent>("png/fireball_1.png");
          bullet.create<EnemyBulletComponent>();
+         bullet.create<DieOffscreenComponent>();
       }
    },
       [=]()
    {
       return meshOfLightAndDarkShotTime;
+   });
+}
+
+void buildNueLaserBullets()
+{
+   int cooldown = 30;
+   int count = 30;
+   int trainCount = 5;
+
+   auto ctxt = &g_context;
+   buildShotType("NueLaserBulletRing",
+      [=](Entity ent, Shot* shot)
+   {
+      
+      for (int i = 0; i < count; ++i)
+      {
+         float angle = (TAU / count) * i + degToRad(shot->angleOffset);
+
+         for (int j = 0; j < trainCount; ++j)
+         {
+            auto vel = polarToRect(angle, 5.0f);
+            auto pos = ent.get<PositionComponent>()->pos;
+            auto offset = vel;
+            offset *= -j * 3.0f;
+            pos += offset;
+
+
+            Entity bullet(ctxt->world);
+
+            bullet.create<PositionComponent>(pos);
+            bullet.create<VelocityComponent>(vel);
+            bullet.create<RadiusComponent>(8.0);
+            bullet.create<SpriteComponent>("png/fireball_1.png");
+            bullet.create<EnemyBulletComponent>();
+            //bullet.create<DieOffscreenComponent>();
+
+            if (!(j % 2)) bullet.create<LaserBulletRotateLeftComponent>();
+
+            bullet.update();
+         }
+      }
+   },
+      [=]()
+   {
+      return cooldown;
    });
 }
 
@@ -649,6 +694,7 @@ void hackBuildTestShotTypes(EntitySystemView*& shotTypes)
    g_rawNonSpells.insert(std::make_pair("skullshot2", new SkullShot2));
 
    buildMeshOfLightAndDark();
+   buildNueLaserBullets();
 }
 
 

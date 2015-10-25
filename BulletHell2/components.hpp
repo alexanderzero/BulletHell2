@@ -38,6 +38,15 @@ struct AccelerationComponent
    Vec2 accel;
 };
 
+struct ArcInterpolationComponent
+{
+   uint64_t startTick, endTick;
+   Radian startAngle, endAngle;
+   float startDistance, endDistance;
+   Vec2 center;
+   //currently does an eased interpolation...  TODO: control interpolation type???
+};
+
 struct MaxSpeedComponent
 {
    MaxSpeedComponent() {}
@@ -187,3 +196,6 @@ struct SpawnTimeComponent
 
 //MESH OF LIGHT AND DARK
 struct MeshOfLightAndDarkSpawnComponent {};
+
+//LASERBULLETS
+struct LaserBulletRotateLeftComponent {};
