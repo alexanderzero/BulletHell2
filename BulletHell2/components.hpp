@@ -44,7 +44,7 @@ struct ArcInterpolationComponent
    Radian startAngle, endAngle;
    float startDistance, endDistance;
    Vec2 center;
-   //currently does an eased interpolation...  TODO: control interpolation type???
+   bool cosineInterp = true;
 };
 
 struct MaxSpeedComponent
@@ -182,6 +182,16 @@ struct ShotComponent
    std::vector<Shot> shots;
 };
 
+
+//on timeout only currently
+struct ShotComponentOnDeathComponent
+{
+   ShotComponentOnDeathComponent() {}
+   ShotComponentOnDeathComponent(Shot shot) { shots.push_back(shot); }
+   ShotComponentOnDeathComponent(std::vector<Shot> shots_in) : shots(std::move(shots_in)) {}
+   std::vector<Shot> shots;
+};
+
 struct MarkedForDeletionComponent {};
 
 
@@ -211,5 +221,8 @@ struct SpawnTimeComponent
 //MESH OF LIGHT AND DARK
 struct MeshOfLightAndDarkSpawnComponent {};
 
-//LASERBULLETS
-struct LaserBulletRotateLeftComponent {};
+
+//semi-generic
+struct RotateLeftComponent {};
+
+struct CurvyRingTagComponent {};

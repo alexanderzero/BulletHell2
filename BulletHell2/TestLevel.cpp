@@ -262,7 +262,8 @@ public:
       auto ran = createRanYakumo(ctxt);
 
       //ROCKING TUNES OR GTFO
-      playBGM("music/boss.mp3");
+      //playBGM("music/boss.mp3");
+      playBGM("music/bsong1.mp3");
 
 
       //okay, we have to do a bunch of ordered things.  This state queue lets us pause and resume code, in an easy fashion.  we use pointers to capture state from this section into subsections.
@@ -287,6 +288,176 @@ public:
       stateQueue.push(moveToSubsection(ctxt, ran, RAN_START, 8.0f));
 
 
+
+      //-----STREAMING CAGE-----
+      {
+         int HEALTH = 160;
+         int chaseCooldown = 100;
+         int chaseFrames = 10;
+         uint64_t nextChaseTime = ctxt->currentTick + chaseCooldown;
+         uint64_t doneChasingFrame = 0;
+         uint64_t freezeFamilarTick = 80;
+         stateQueue.push([=](bool isFirstRun) mutable -> e_SubsectionState
+         {
+            if (isFirstRun)
+            {
+               freezeFamilarTick += ctxt->currentTick;
+               ran.create<LivesWithNoHPComponent>();  //don't kill her when she dies
+               ran.create<HealthComponent>(HEALTH); //todo: tweak, show a healthbar somehow....
+
+               std::vector<Shot> shots;
+               shots.push_back(Shot("StreamingCageFamiliar"));
+               shots.push_back(Shot("StreamingCageCage"));
+               shots.back().nextFireTime = ctxt->currentTick + 100;
+               shots.push_back(Shot("StreamingCageStream"));
+               shots.back().nextFireTime = ctxt->currentTick + 81;
+               ran.create<ShotComponent>(std::move(shots));
+            }
+
+            if (ctxt->currentTick == freezeFamilarTick)
+            {
+               for (auto shot : ctxt->world->system->entitiesWithComponent<EnemyBulletComponent>()) shot.remove<VelocityComponent>();
+            }
+
+            if (isAlive(ran))
+            {
+               chasePlayerHorizontally(ctxt, ran, nextChaseTime, doneChasingFrame, chaseFrames, chaseCooldown);
+               return SubsectionState::StillProcessing;
+            }
+
+
+            for (auto shot : ctxt->world->system->entitiesWithComponent<EnemyBulletComponent>()) shot.destroy();
+
+            //clean-up movement when dead.
+            ran.remove<MaxSpeedComponent>();
+            ran.remove<VelocityComponent>();
+            ran.remove<AccelerationComponent>();
+
+            //no more shoots
+            ran.remove<ShotComponent>();
+
+            return  SubsectionState::Done;
+         });
+      }
+
+
+      //-----RECENTER-------
+      stateQueue.push(moveToSubsection(ctxt, ran, RAN_START, 8.0f));
+
+      //-----BOMBS AWAY-----
+      {
+         int HEALTH = 150;
+         int chaseCooldown = 300;
+         int chaseFrames = 45;
+         uint64_t nextChaseTime = ctxt->currentTick + chaseCooldown;
+         uint64_t doneChasingFrame = 0;
+         stateQueue.push([=](bool isFirstRun) mutable -> e_SubsectionState
+         {
+            if (isFirstRun)
+            {
+               ran.create<LivesWithNoHPComponent>();  //don't kill her when she dies
+               ran.create<HealthComponent>(HEALTH); //todo: tweak, show a healthbar somehow....
+
+               std::vector<Shot> shots;
+               shots.push_back(Shot("BombsAway"));
+               ran.create<ShotComponent>(std::move(shots));
+
+               //aaaand now we're playing!
+            }
+
+            if (isAlive(ran))
+            {
+               chasePlayerHorizontally(ctxt, ran, nextChaseTime, doneChasingFrame, chaseFrames, chaseCooldown);
+               return SubsectionState::StillProcessing;
+            }
+
+
+            for (auto shot : ctxt->world->system->entitiesWithComponent<EnemyBulletComponent>()) shot.destroy();
+
+            //clean-up movement when dead.
+            ran.remove<MaxSpeedComponent>();
+            ran.remove<VelocityComponent>();
+            ran.remove<AccelerationComponent>();
+
+            //no more shoots
+            ran.remove<ShotComponent>();
+
+            return  SubsectionState::Done;
+         });
+      }
+      
+
+      //-----RECENTER-------
+      stateQueue.push(moveToSubsection(ctxt, ran, RAN_START, 8.0f));
+
+
+      //-----CURVY HELL-----
+      {
+         int HEALTH = 300;  //high health because you get LOTS of free hits
+         int chaseCooldown = 300;
+         int chaseFrames = 20;
+         int startRotateTick = 120;
+         float anglePerFrame = degToRad(0.1f);
+         stateQueue.push([=](bool isFirstRun) mutable -> e_SubsectionState
+         {
+            if (isFirstRun)
+            {
+               ran.create<LivesWithNoHPComponent>();  //don't kill her when she dies
+               ran.create<HealthComponent>(HEALTH); //todo: tweak, show a healthbar somehow....
+
+               std::vector<Shot> shots;
+               shots.push_back(Shot("CurvyBulletRing"));
+               shots.push_back(Shot("CurvyBulletBottomFire"));
+               shots.back().nextFireTime = ctxt->currentTick + 200;
+               ran.create<ShotComponent>(std::move(shots));
+
+               //aaaand now we're playing!
+            }
+
+            auto tick = ctxt->currentTick;
+            for (auto&& bullet : ctxt->world->system->entitiesWithComponent<CurvyRingTagComponent>())
+            {
+               if (tick == bullet.get<SpawnTimeComponent>()->spawnTick + startRotateTick)
+               {
+                  //use linear arc interpolation here...
+                  auto vel = bullet.get<VelocityComponent>()->vel;
+                  bullet.remove<VelocityComponent>();
+                  ArcInterpolationComponent arc;
+                  arc.startTick = tick;
+                  int maxTicks = 1000;
+                  arc.endTick = tick + maxTicks;
+                  float speed;
+                  arc.startAngle = rectToPolar(vel, &speed);
+                  float offset = anglePerFrame;
+                  if (bullet.get<RotateLeftComponent>()) offset = -offset;
+                  arc.center = ran.get<PositionComponent>()->pos;
+                  arc.endAngle = arc.startAngle + offset * maxTicks;
+                  arc.startDistance = distance(bullet.get<PositionComponent>()->pos, arc.center);
+                  arc.endDistance = arc.startDistance + speed * maxTicks;
+                  arc.cosineInterp = false;
+                  bullet.set(arc);
+               }
+            }
+
+            if (isAlive(ran))
+            {
+               return SubsectionState::StillProcessing;
+            }
+
+            for (auto shot : ctxt->world->system->entitiesWithComponent<EnemyBulletComponent>()) shot.destroy();
+
+            //clean-up movement when dead.
+            ran.remove<MaxSpeedComponent>();
+            ran.remove<VelocityComponent>();
+            ran.remove<AccelerationComponent>();
+
+            //no more shoots
+            ran.remove<ShotComponent>();
+
+            return  SubsectionState::Done;
+         });
+      }
+
       //-----LASER BULLETS-----
       {
          int HEALTH = 200;
@@ -295,14 +466,16 @@ public:
          int switchTickTime;
          int interpFrames;
          int lastSwitch;
+         int bulletCount = 20;
+         int startTickFrames = 240;
          stateQueue.push([=](bool isFirstRun) mutable -> e_SubsectionState
          {
             if (isFirstRun)
             {
                startTick = ctxt->currentTick;
-               firstSwitchTick = startTick + 210;
-               interpFrames = 240;
-               switchTickTime = 210 + interpFrames;
+               firstSwitchTick = startTick + startTickFrames;
+               interpFrames = 320;
+               switchTickTime = startTickFrames + interpFrames;
                lastSwitch = 0;
                ran.create<LivesWithNoHPComponent>();  //don't kill her when she dies
                ran.create<HealthComponent>(HEALTH);
@@ -310,7 +483,7 @@ public:
                std::vector<Shot> shots;
                shots.push_back(Shot("NueLaserBulletRing"));
                shots.push_back(Shot("NueLaserBulletRing"));
-               shots.back().angleOffset = 360 / 60.0f;
+               shots.back().angleOffset = 360.0f / (bulletCount * 2);
                shots.back().nextFireTime = ctxt->currentTick + 15;
 
                ran.create<ShotComponent>(std::move(shots));
@@ -323,9 +496,9 @@ public:
                ran.get<ShotComponent>()->shots.clear();
                for (auto&& bullet : ctxt->world->system->entitiesWithComponent<EnemyBulletComponent>())
                {
-                  bool rotatesLeft = bullet.get<LaserBulletRotateLeftComponent>() != nullptr;
+                  bool rotatesLeft = bullet.get<RotateLeftComponent>() != nullptr;
 
-                  float angleDiff = (TAU / 30) * 2;
+                  float angleDiff = (TAU / bulletCount) * 2;
                   if (rotatesLeft) angleDiff = -angleDiff;
 
                   //STOP!
@@ -356,7 +529,7 @@ public:
                std::vector<Shot> shots;
                shots.push_back(Shot("NueLaserBulletRing"));
                shots.push_back(Shot("NueLaserBulletRing"));
-               shots.back().angleOffset = 360 / 60.0f;
+               shots.back().angleOffset = 360.0f / (bulletCount * 2);
                shots.back().nextFireTime = ctxt->currentTick + 15;
 
                ran.create<ShotComponent>(std::move(shots));
@@ -392,7 +565,7 @@ public:
 
       //-----MESH OF LIGHT AND DARK-----
       {
-         int HEALTH = 300;
+         int HEALTH = 200;
          int chaseCooldown = 300;
          int chaseFrames = 20;
          uint64_t nextChaseTime = ctxt->currentTick + chaseCooldown;
@@ -421,6 +594,9 @@ public:
                chasePlayerHorizontally(ctxt, ran, nextChaseTime, doneChasingFrame, chaseFrames, chaseCooldown);
                return SubsectionState::StillProcessing;
             }
+
+
+            for (auto shot : ctxt->world->system->entitiesWithComponent<EnemyBulletComponent>()) shot.destroy();
 
             //clean-up movement when dead.
             ran.remove<MaxSpeedComponent>();
@@ -465,6 +641,8 @@ public:
                chasePlayerHorizontally(ctxt, ran, nextChaseTime, doneChasingFrame, chaseFrames, chaseCooldown);
                return SubsectionState::StillProcessing;
             }
+
+            for (auto shot : ctxt->world->system->entitiesWithComponent<EnemyBulletComponent>()) shot.destroy();
 
             //clean-up movement when dead.
             ran.remove<MaxSpeedComponent>();

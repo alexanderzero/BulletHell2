@@ -17,8 +17,8 @@ const microseconds constants::microsecondsPerFrame = 1000000 / constants::target
 const Vec2 constants::cameraSize(1920.0f, 1080.0f);
 
 //PLAYER STATS
-const float constants::playerSpeed = 8.0f;
-const float constants::playerFocusedSpeed = 4.0f;
+const float constants::playerSpeed = 6.0f;
+const float constants::playerFocusedSpeed = 3.0f;
 
 
 const int constants::physicsTicksPerTick = 4;

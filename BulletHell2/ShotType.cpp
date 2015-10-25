@@ -630,9 +630,9 @@ void buildMeshOfLightAndDark()
 
 void buildNueLaserBullets()
 {
-   int cooldown = 30;
-   int count = 30;
-   int trainCount = 5;
+   int cooldown = 40;
+   int count = 20;
+   int trainCount = 8;
 
    auto ctxt = &g_context;
    buildShotType("NueLaserBulletRing",
@@ -648,7 +648,7 @@ void buildNueLaserBullets()
             auto vel = polarToRect(angle, 5.0f);
             auto pos = ent.get<PositionComponent>()->pos;
             auto offset = vel;
-            offset *= -j * 3.0f;
+            offset *= -j * 4.0f;
             pos += offset;
 
 
@@ -662,7 +662,7 @@ void buildNueLaserBullets()
             bullet.create<AlignToVelocityComponent>();
             bullet.create<DiePaddedOffscreenComponent>();
 
-            if (!(j % 2)) bullet.create<LaserBulletRotateLeftComponent>();
+            if (!(j % 2)) bullet.create<RotateLeftComponent>();
 
             bullet.update();
          }
@@ -671,6 +671,298 @@ void buildNueLaserBullets()
       [=]()
    {
       return cooldown;
+   });
+}
+
+
+//time to try and be clever and come up with some of my own attacks rather than just copy 2hu
+
+void buildCurvyBulletHell()
+{
+   //this one does curvy bullets which you'll want to dodge at the screen bottom....
+   int cooldown = 50;
+   int count = 125;
+
+   auto ctxt = &g_context;
+   buildShotType("CurvyBulletRing",
+      [=](Entity ent, Shot* shot)
+   {
+      float offset = randomFloat(0, TAU);
+      for (int i = 0; i < count; ++i)
+      {
+         float angle = (TAU / count) * i + degToRad(shot->angleOffset) + offset;
+
+         auto vel = polarToRect(angle, 1.5f);
+         auto pos = ent.get<PositionComponent>()->pos;
+         
+         Entity bullet(ctxt->world);
+
+         bullet.create<PositionComponent>(pos);
+         bullet.create<VelocityComponent>(vel);
+         bullet.create<RadiusComponent>(4.0);
+         bullet.create<SpriteComponent>("png/fireball_1.png");
+         bullet.create<EnemyBulletComponent>();
+         bullet.create<AlignToVelocityComponent>();
+         bullet.create<DiePaddedOffscreenComponent>();
+         bullet.create<CurvyRingTagComponent>();
+
+         if (!(i % 2)) bullet.create<RotateLeftComponent>();
+
+         //apply effect using this...  TODO: link this less awkwardly?  manager-ize?
+         bullet.create<SpawnTimeComponent>(ctxt->currentTick);
+         
+
+         bullet.update();
+         
+      }
+   },
+      [=]()
+   {
+      return cooldown;
+   });
+
+
+   //so to mess with you, we randomly spawn bullets at the buttom of the screen which slowly move up :)
+   cooldown = 12;
+   
+   buildShotType("CurvyBulletBottomFire",
+      [=](Entity ent, Shot* shot)
+   {
+      auto pos = Vec2(randomFloat(0.0f, constants::cameraSize.x), 0.0f);
+
+      Entity bullet(ctxt->world);
+
+      bullet.create<PositionComponent>(pos);
+      bullet.create<AccelerationComponent>(Vec2(0.0f, randomFloat(0.08f, 0.16f)));
+      bullet.create<MaxSpeedComponent>(randomFloat(4.0f, 6.0f));
+      bullet.create<RadiusComponent>(6.0);
+      bullet.create<SpriteComponent>("png/babble_red.png");
+      bullet.create<EnemyBulletComponent>();
+      bullet.create<AlignToVelocityComponent>();
+      bullet.create<DieOffscreenComponent>();
+         
+      bullet.update();
+   },
+      [=]()
+   {
+      return cooldown;
+   });
+}
+
+void buildBombsAway()
+{
+   //this one does curvy bullets which you'll want to dodge at the screen bottom....
+   int cooldown = 140;
+   int lifeTime = 190;
+   int count = 16;
+   int startDistance = 400;
+   float anglePerFrame = degToRad(0.6f);
+   
+   auto ctxt = &g_context;
+   buildShotType("BombsAway",
+      [=](Entity ent, Shot* shot)
+   {
+      float offset = randomFloat(0, TAU);
+
+      Circle spawnCircle;
+      spawnCircle.center = getPlayer(ctxt).get<PositionComponent>()->pos;
+      spawnCircle.radius = 275.0f;
+
+      auto center = randomPointInCircle(spawnCircle);
+
+      int direction = randomInt(0, 2);
+
+      for (int i = 0; i < count; ++i)
+      {
+         float angle = (TAU / count) * i + degToRad(shot->angleOffset) + offset;
+
+         auto vel = polarToRect(angle, 1.5f);
+         
+         Entity bullet(ctxt->world);
+         
+         bullet.create<RadiusComponent>(4.0);
+         bullet.create<SpriteComponent>("png/fireball_1.png");
+         bullet.create<EnemyBulletComponent>();
+         bullet.create<AlignToVelocityComponent>();
+         bullet.create<TimedDeathComponent>(ctxt->currentTick + lifeTime);
+
+
+         if (!i) //create just one...
+         {
+            bullet.create<ShotComponentOnDeathComponent>(Shot("BombsAwayBomb"));
+         }
+
+         ArcInterpolationComponent arc;
+
+         arc.startTick = ctxt->currentTick;
+         arc.endTick = ctxt->currentTick + lifeTime;
+
+         arc.center = center;
+
+         arc.startDistance = startDistance;
+         arc.endDistance = 0;
+         
+         float angleOffset = anglePerFrame;
+         if (direction == 1)
+         {
+            angleOffset = -angleOffset;
+         }
+         else if (direction == 2)
+         {
+            if (i % 2)
+            {
+               angleOffset = -angleOffset;
+            }
+         }
+
+         arc.startAngle = angle;
+         arc.endAngle = angle + angleOffset * lifeTime;
+         
+         arc.cosineInterp = false;
+
+         bullet.set(arc);
+
+         auto pos = arc.center;
+         pos += polarToRect(arc.startAngle, arc.startDistance);
+         bullet.create<PositionComponent>(pos);
+
+         bullet.update();
+      }
+   },
+      [=]()
+   {
+      return cooldown;
+   });
+
+
+   buildShotType("BombsAwayBomb",
+      [=](Entity ent, Shot* shot)
+   {
+      for (int i = 0; i < count; ++i)
+      {
+         float angle = randomFloat(0, TAU);
+
+         Entity bullet(ctxt->world);
+
+         bullet.create<PositionComponent>(ent.get<PositionComponent>()->pos);
+         bullet.create<VelocityComponent>(polarToRect(angle, randomFloat(1.0f, 5.0f)));
+         bullet.create<RadiusComponent>(4.0);
+         bullet.create<SpriteComponent>("png/fireball_2.png");
+         bullet.create<EnemyBulletComponent>();
+         bullet.create<AlignToVelocityComponent>();
+         bullet.create<DiePaddedOffscreenComponent>();
+         
+
+         bullet.update();
+      }
+   },
+      [=]()
+   {
+      return 0; //unused
+   });
+}
+
+
+
+void buildStreamingCage()
+{
+   int buildEveryX = 65;
+   int count = constants::cameraSize.x / buildEveryX;
+   float speed = 5.0f;
+   int cooldown = 25;
+   int familiarTicks = 80;
+
+   auto ctxt = &g_context;
+
+   buildShotType("StreamingCageFamiliar",
+      [=](Entity ent, Shot* shot)
+   {
+
+      for (int i = 0; i < count; ++i)
+      {
+         float x = i * buildEveryX;
+         bool top = (i % 2) == 0;
+         //bool top = true;
+         float y = top ? constants::cameraSize.y : 0;
+
+
+         
+         Vec2 pos = ent.get<PositionComponent>()->pos;
+         Vec2 target(x, y);
+         
+         Vec2 vel = target;
+         vel -= pos;
+         vel *= 1.0f/familiarTicks;
+
+         Entity bullet(ctxt->world);
+
+         bullet.create<PositionComponent>(pos);
+         bullet.create<VelocityComponent>(vel);
+         bullet.create<RadiusComponent>(4.0);
+         bullet.create<SpriteComponent>("png/babble_red.png");
+         bullet.create<EnemyBulletComponent>();
+         bullet.create<DiePaddedOffscreenComponent>();
+
+         bullet.update();
+      }
+   },
+      [=]()
+   {
+      return 1000000000;
+   });
+
+   buildShotType("StreamingCageCage",
+      [=](Entity ent, Shot* shot)
+   {
+
+      for (int i = 0; i < count; ++i)
+      {
+         float x = i * buildEveryX;
+         bool top = (i % 2) == 0;
+         //bool top = true;
+         float y = top ? constants::cameraSize.y : 0;
+
+         Vec2 pos(x, y);
+         Vec2 vel(0.0f, top ? -speed : speed);
+
+         Entity bullet(ctxt->world);
+         
+         bullet.create<PositionComponent>(pos);
+         bullet.create<VelocityComponent>(vel);
+         bullet.create<RadiusComponent>(4.0);
+         bullet.create<SpriteComponent>("png/fireball_2.png");
+         bullet.create<EnemyBulletComponent>();
+         bullet.create<AlignToVelocityComponent>();
+         bullet.create<DieOffscreenComponent>();
+
+         bullet.update();
+      }
+   },
+      [=]()
+   {
+      return cooldown;
+   });
+
+   buildShotType("StreamingCageStream",
+      [=](Entity ent, Shot* shot)
+   {
+
+      Entity bullet(ctxt->world);
+
+      bullet.create<PositionComponent>(ent.get<PositionComponent>()->pos);
+      bullet.create<VelocityComponent>(polarToRect(angleToPlayer(ctxt, ent), 8.0f));
+      bullet.create<RadiusComponent>(4.0);
+      bullet.create<SpriteComponent>("png/fireball_1.png");
+      bullet.create<EnemyBulletComponent>();
+      bullet.create<AlignToVelocityComponent>();
+      bullet.create<DieOffscreenComponent>();
+
+      bullet.update();
+      
+   },
+      [=]()
+   {
+      return 12;
    });
 }
 
@@ -697,6 +989,9 @@ void hackBuildTestShotTypes(EntitySystemView*& shotTypes)
 
    buildMeshOfLightAndDark();
    buildNueLaserBullets();
+   buildCurvyBulletHell();
+   buildBombsAway();
+   buildStreamingCage();
 }
 
 

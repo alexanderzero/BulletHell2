@@ -141,7 +141,6 @@ void enforceWorldBoundaries(BulletHellContext* ctxt)
       }
    }
 
-
    float padX = constants::cameraSize.x * 0.25f;
    float padY = constants::cameraSize.y * 0.25f;
    for (auto ent : ctxt->world->system->entitiesWithComponent<DiePaddedOffscreenComponent>())
@@ -161,6 +160,10 @@ void enforceWorldBoundaries(BulletHellContext* ctxt)
    {
       if (ctxt->currentTick == ent.get<TimedDeathComponent>()->deleteTick)
       {
+         if (auto deathBullets = ent.get<ShotComponentOnDeathComponent>())
+         {
+            for (auto&& shot : deathBullets->shots) fireShot(ctxt, ent, shot);            
+         }
          ent.create<MarkedForDeletionComponent>();
       }
    }
@@ -297,6 +300,10 @@ void handleCollisions(BulletHellContext* ctxt)
       for (auto&& bullet : enemyBullets)
       {
          if (bullet.get<NoDamageComponent>()) continue;
+         if (auto rl = bullet.get<ResizingLaserComponent>())
+         {
+            if (ctxt->currentTick <= rl->startTick) continue;
+         }
          if (entitiesCollide(player, bullet))
          {
             //YOU GOT HIT YOU SUCK
@@ -378,8 +385,18 @@ void setInterpolationVelocities(BulletHellContext* ctxt)
       //float t1 = ((prevTick - (interp->startTick - 1)))/(float)(interp->endTick - interp->startTick + 1);
       float t=  ((tick - (interp->startTick - 1)))/(float)(interp->endTick - interp->startTick + 1);
 
+      float interpAngle;
+      if (interp->cosineInterp)
+      {
+         interpAngle = cosInterp(interp->startAngle, interp->endAngle, t);
+      }
+      else
+      {
+         interpAngle = lerp(interp->startAngle, interp->endAngle, t);
+      }
+
       //auto p1 = polarToRect(cosInterp(interp->startAngle, interp->endAngle, t1), lerp(interp->startDistance, interp->endDistance, t1));
-      auto p = polarToRect(cosInterp(interp->startAngle, interp->endAngle, t), lerp(interp->startDistance, interp->endDistance, t));
+      auto p = polarToRect(interpAngle, lerp(interp->startDistance, interp->endDistance, t));
       p += interp->center;
 
       auto vel = p;
