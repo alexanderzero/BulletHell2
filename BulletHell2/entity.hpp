@@ -45,6 +45,21 @@ public:
 		parent->removeComponent(ClassComponentVTable<T>::get(), id);
 	}
 
+   bool operator==(Entity const& rhs) const
+   {
+      return parent == rhs.parent && id == rhs.id;
+   }
+   bool operator!=(Entity const& rhs) const
+   {
+      return !(*this == rhs);
+   }
+   bool operator<(Entity const& rhs) const
+   {
+      if (parent < rhs.parent) return true;
+      if (parent > rhs.parent) return false;
+      return id < rhs.id;
+   }
+
 	explicit operator bool() const {
 
 		return parent != nullptr;
