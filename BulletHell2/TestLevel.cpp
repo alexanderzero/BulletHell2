@@ -328,8 +328,12 @@ public:
                   float angleDiff = (TAU / 30) * 2;
                   if (rotatesLeft) angleDiff = -angleDiff;
 
-                  //bullet.get<VelocityComponent>()->vel = Vec2(); //STOP!
+                  //STOP!
                   bullet.remove<VelocityComponent>();
+
+                  //graphical update.
+                  bullet.create<SpriteComponent>("png/fireball_1.png");
+                  bullet.remove<AlignToVelocityComponent>();
 
                   //ok, so the bullets now need to rotate.  we need to circularly interpolate.
                   //each bullet will go two whole sides over.
@@ -361,6 +365,8 @@ public:
                {
                   bullet.remove<ArcInterpolationComponent>();
                   bullet.create<VelocityComponent>(polarToRect(angleBetween(ran.get<PositionComponent>()->pos, bullet.get<PositionComponent>()->pos), 5.0f));
+                  //bullet.create<SpriteComponent>("png/lozange.png");
+                  bullet.create<AlignToVelocityComponent>();
                }
             }
 

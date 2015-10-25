@@ -156,6 +156,14 @@ void enforceWorldBoundaries(BulletHellContext* ctxt)
          ent.create<MarkedForDeletionComponent>();
       }
    }
+
+   for (auto ent : ctxt->world->system->entitiesWithComponent<TimedDeathComponent>())
+   {
+      if (ctxt->currentTick == ent.get<TimedDeathComponent>()->deleteTick)
+      {
+         ent.create<MarkedForDeletionComponent>();
+      }
+   }
    
    destroyMarkedForDeletion(ctxt->world);
 }
@@ -469,7 +477,16 @@ void drawSpritesWithComponent(BulletHellContext* ctxt)
       }
       else
       {
-         window->drawSprite(pos->pos.x, pos->pos.y, 0, 0, 0, sprite);
+         float angle = 0.0f;
+
+         if (enemy.get<AlignToVelocityComponent>())
+         {
+            if (auto vel = enemy.get<VelocityComponent>())
+            {
+               angle = radToDeg(rectToPolar(vel->vel));
+            }            
+         }
+         window->drawSprite(pos->pos.x, pos->pos.y, 0, 0, angle, sprite);
       }
    }
 }

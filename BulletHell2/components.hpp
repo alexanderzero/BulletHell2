@@ -112,6 +112,8 @@ struct SpriteComponent
    std::string sprite;
 };
 
+struct AlignToVelocityComponent {}; //rotate entity on draw to face its velocity vector.
+
 struct NoDamageComponent {}; //bullets that don't deal damage yet.  for example, laser startup.
 
 struct EnemyBulletComponent {};
@@ -122,8 +124,19 @@ struct CameraComponent {}; //makes is-a camera.
 
 
 struct WorldBoundedComponent {}; //forced to always be in the world bounds.
+
+//death handling 
+
+
 struct DieOffscreenComponent {}; //delete this entity if it's offscreen
 struct DiePaddedOffscreenComponent {}; //delete this entity if it's offscreen, with a pad zone so it can go just a bit off and still stay alive.
+
+struct TimedDeathComponent
+{
+   TimedDeathComponent() : deleteTick(0) {}
+   TimedDeathComponent(uint64_t tick) : deleteTick(tick) {}
+   uint64_t deleteTick; //delete me on this tick.
+};
 
 
 //weapon-specific

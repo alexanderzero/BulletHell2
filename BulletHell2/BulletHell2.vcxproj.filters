@@ -386,6 +386,9 @@
     <Image Include="png\flamingskull.png">
       <Filter>Resource Files\png</Filter>
     </Image>
+    <Image Include="png\lozange.png">
+      <Filter>Resource Files\png</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Text Include="shaders\fragment_shader_1.txt">
