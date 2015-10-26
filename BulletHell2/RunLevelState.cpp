@@ -591,11 +591,27 @@ public:
             
       ctxt->audio->update();
    }
+
+   void drawUI()
+   {
+      //target the UI...
+      ctxt->window->targetViewport(Vec2(constants::cameraSize.x, 0.0f), constants::UICameraSize);
+
+      //camera is  0 - UIPanelSize, co
+      Vec2 uiSize(constants::UIPanelWidth, constants::cameraSize.y);
+
+      //ctxt->window->clear();
+      ctxt->window->drawSpriteStretched(uiSize.x / 2, uiSize.y / 2, uiSize.x, uiSize.y, 0, 0, 0, GetSprite("png/ui.png"));
+
+
+   }
+
    void drawLevel()
    {      
       ctxt->window->startDraw();
 
       drawSpritesHacked(ctxt);
+      drawUI();
 
       ctxt->window->endDraw();
    }

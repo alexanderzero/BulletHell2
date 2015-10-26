@@ -14,7 +14,10 @@ const int constants::targetFPS = 60;
 const microseconds constants::microsecondsPerFrame = 1000000 / constants::targetFPS;
 
 //UI
-const Vec2 constants::cameraSize(1920.0f, 1080.0f);
+const Vec2 constants::UICameraSize(1920.0f, 1080.0f);
+const float constants::UIPanelWidth = 450; 
+const Vec2 constants::cameraSize(UICameraSize.x-UIPanelWidth, UICameraSize.y);
+
 
 //PLAYER STATS
 const float constants::playerSpeed = 6.0f;

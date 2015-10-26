@@ -227,18 +227,31 @@ void init()
    bg1 = GetSprite("png/bg1.png");
 }
 
-void render(GLFWwindow* window)
+//set viewport in virtual camera coordinates
+void setVirtualViewport(GLFWwindow* window, Vec2 min, Vec2 max)
 {
    int width, height;
    glfwGetFramebufferSize(window, &width, &height);
 
+   float xRatio = width / constants::UICameraSize.x;
+   float yRatio = height / constants::UICameraSize.y;
+
+   glViewport(
+      xRatio * min.x,
+      yRatio * min.y,
+      xRatio * max.x,
+      yRatio * max.y);
+}
+
+void render(GLFWwindow* window)
+{ 
 
    //unused currently.
    //float ratio;
    //ratio = width / (float)height;
 
-
-   glViewport(0, 0, width, height);
+   setVirtualViewport(window, Vec2(0.0f, 0.0f), constants::cameraSize);
+   //glViewport(0, 0, width- UIPixels, height);
    glClear(GL_COLOR_BUFFER_BIT);
 
 //this does nothing, we're using shaders, derp
@@ -252,10 +265,10 @@ void render(GLFWwindow* window)
    //Draw the background
    Vec2 rotation_vector(cos(0), sin(0));
    glBindTexture(GL_TEXTURE_2D, background_texture);
-   glUniform1f(uniform_xpos, 960.0);
-   glUniform1f(uniform_ypos, 540.0);
-   glUniform1f(uniform_xsize, 1920.0);
-   glUniform1f(uniform_ysize, 1080.0);
+   glUniform1f(uniform_xpos, constants::cameraSize.x/2);
+   glUniform1f(uniform_ypos, constants::cameraSize.y/2);
+   glUniform1f(uniform_xsize, constants::cameraSize.x);
+   glUniform1f(uniform_ysize, constants::cameraSize.y);
    glUniform2fv(uniform_rotation, 1, (const GLfloat*)&rotation_vector);
    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
@@ -577,6 +590,14 @@ void Window::endDraw()
 {
    if (!isOpen()) return;
    glfwSwapBuffers(pImpl->window);
+}
+void Window::targetViewport(Vec2 min, Vec2 max)
+{
+   setVirtualViewport(pImpl->window, min, max);
+}
+void Window::clear()
+{
+   glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 }
 
 void Window::drawSpriteStretched(float x, float y, float width, float height, int flip_horizontal, int flip_vertical, float rotation, Sprite* sprite)

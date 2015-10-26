@@ -229,6 +229,7 @@
     <Image Include="png\player_temp.png" />
     <Image Include="png\stolenRan.png" />
     <Image Include="png\test1.png" />
+    <Image Include="png\ui.png" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="shaders\fragment_shader_1.txt" />

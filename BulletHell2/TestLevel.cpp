@@ -41,7 +41,7 @@ public:
          float xVel = 16.0f;
 
          //todo: better constant handling...
-         e.create<PositionComponent>(left ? -xOffset : 1920 + xOffset, 800.0f);
+         e.create<PositionComponent>(left ? -xOffset : constants::cameraSize.x + xOffset, constants::cameraSize.y - 200);
          e.create<VelocityComponent>(left ? xVel : -xVel, xVel / -8);
 
          e.create<EnemyComponent>();

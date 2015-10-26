@@ -22,6 +22,9 @@ public:
    void startDraw();
    void endDraw();
 
+   void clear();
+
+   void targetViewport(Vec2 min, Vec2 max);
 
    void drawSpriteStretched(float x, float y, float width, float height, int flip_horizontal, int flip_vertical, float rotation, Sprite* sprite);
    void drawSprite(float x, float y, int flip_horizontal, int flip_vertical, float rotation);
