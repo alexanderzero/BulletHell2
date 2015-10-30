@@ -403,6 +403,12 @@
     <Text Include="shaders\vertex_shader_1.txt">
       <Filter>Resource Files\shaders</Filter>
     </Text>
+    <Text Include="shaders\fragment_shader_2.txt">
+      <Filter>Resource Files\shaders</Filter>
+    </Text>
+    <Text Include="shaders\vertex_shader_2.txt">
+      <Filter>Resource Files\shaders</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BulletHell2.rc">

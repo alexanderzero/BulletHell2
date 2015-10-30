@@ -611,6 +611,9 @@ public:
       ctxt->window->startDraw();
 
       drawSpritesHacked(ctxt);
+
+      ctxt->window->drawSprite3D(GetSprite("png/flamingskull.png"));
+
       drawUI();
 
       ctxt->window->endDraw();

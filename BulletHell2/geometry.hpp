@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <math.h>
+
 typedef float Degree;
 typedef float Radian;
 
@@ -19,6 +21,65 @@ struct Vec2
 	//base data
 	float x, y;
 };
+
+struct Vec3
+{
+   Vec3() {}
+
+   Vec3(float x, float y, float z)
+   {
+      this->x = x;
+      this->y = y;
+      this->z = z;
+   }
+
+   Vec3& operator-=(const Vec3& right)
+   {
+      x -= right.x;
+      y -= right.y;
+      z -= right.z;
+      return *this;
+   }
+
+   Vec3& operator*=(float scalar)
+   {
+      x *= scalar;
+      y *= scalar;
+      z *= scalar;
+      return *this;
+   }
+
+   //base data
+   float x, y, z;
+};
+
+//Vec3 functions
+inline float dot(const Vec3& a, const Vec3& b)
+{
+   return a.x*b.x + a.y*b.y + a.z*b.z;
+}
+
+inline float length(const Vec3& vec)
+{
+   return sqrtf(dot(vec, vec));
+}
+
+inline Vec3 normalized(const Vec3& in)
+{
+   Vec3 out;
+   out = in;
+   out *= 1.0 / length(in);
+   return out;
+}
+
+inline Vec3 cross(const Vec3& a, const Vec3& b)
+{
+   Vec3 out;
+   out.x = a.y*b.z - a.z*b.y;
+   out.y = a.z*b.x - a.x*b.z;
+   out.z = a.x*b.y - a.y*b.x;
+   return out;
+}
 
 struct Circle
 {
@@ -42,6 +103,70 @@ struct OrientedBox
 {
 	Line center;
 	float width;
+};
+
+struct Mat4
+{
+   float data[16];
+   float& operator[](int i)
+   {
+      return data[i];
+   }
+
+   static Mat4 identity()
+   {
+      Mat4 out;
+      for (size_t i = 0; i < 16; i++)
+         out[i] = 0.0;
+      out[0] = 1.0;
+      out[5] = 1.0;
+      out[10] = 1.0;
+      out[15] = 1.0;
+      return out;
+   }
+
+   static Mat4 ortho(float left, float right, float bottom, float top, float near, float far)
+   {
+      Mat4 out;
+      float tx = -(right + left) / (right - left);
+      float ty = -(top + bottom) / (top - bottom);
+      float tz = -(far + near) / (far - near);
+      out[0] = 2 / (right - left);
+      out[1] = 0.0;
+      out[2] = 0.0;
+      out[3] = 0.0;
+      out[4] = 0.0;
+      out[5] = 2 / (top - bottom);
+      out[6] = 0.0;
+      out[7] = 0.0;
+      out[8] = 0.0;
+      out[9] = 0.0;
+      out[10] = -2 / (far - near);
+      out[11] = 0.0;
+      out[12] = tx;
+      out[13] = ty;
+      out[14] = tz;
+      out[15] = 1.0;
+      return out;
+   }
+
+   static Mat4 camera(Vec3 position, Vec3 target, Vec3 up)
+   {
+      Vec3 lookdir = target;
+      lookdir -= position;
+      lookdir = normalized(lookdir);
+
+      Vec3 right = normalized(cross(lookdir, up));
+
+      Vec3 rotated_up = normalized(cross(right, lookdir));
+
+      Mat4 out;
+      out[0] = right.x; out[1] = right.y; out[2] = right.z; out[3] = 0.0;
+      out[4] = rotated_up.x; out[5] = rotated_up.y; out[6] = rotated_up.z; out[7] = 0.0;
+      out[8] = -lookdir.x; out[9] = -lookdir.y; out[10] = -lookdir.z; out[11] = 0.0;
+      out[12] = -position.x; out[13] = -position.y; out[14] = -position.z; out[15] = 1.0;
+      return out;
+   }
 };
 
 //vector math

@@ -233,7 +233,9 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="shaders\fragment_shader_1.txt" />
+    <Text Include="shaders\fragment_shader_2.txt" />
     <Text Include="shaders\vertex_shader_1.txt" />
+    <Text Include="shaders\vertex_shader_2.txt" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BulletHell2.rc" />

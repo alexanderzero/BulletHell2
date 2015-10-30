@@ -54,7 +54,9 @@ GLfloat tex_data[] = {
 };
 
 
-GLuint prog;
+GLuint prog2D;
+GLuint prog3D;
+GLuint progActive;
 GLuint background_texture;
 
 //Sprites :D
@@ -69,6 +71,10 @@ GLint uniform_ysize;
 GLint uniform_flip_horz; //flip horizontal
 GLint uniform_flip_vert; //flip vertical
 GLint uniform_rotation;  //first line of the rotation matrix as a 2D vector
+
+//3D sprite properties
+GLint uniform_projection;
+GLint uniform_view;
 
 
 static KeyPressType translateGLFWKeyEvent(int action)
@@ -115,8 +121,6 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
    inputPushEvent(ev);
 }
 
-
-
 void init()
 {
    char* buffer;
@@ -157,17 +161,53 @@ void init()
    int size = 64;
    background_texture = png_texture_load("png\\bg1.png", &size, &size);
 
+   prog2D = LoadShader("shaders/vertex_shader_1.txt", "shaders/fragment_shader_1.txt");
+
+   glUniform2f(glGetUniformLocation(prog2D, "uCameraSize"), constants::cameraSize.x, constants::cameraSize.y);
+   glUniform1i(glGetUniformLocation(prog2D, "tex"), 0);
+
+   uniform_xpos  = glGetUniformLocation(prog2D, "x_position");
+   uniform_ypos  = glGetUniformLocation(prog2D, "y_position");
+   uniform_xsize = glGetUniformLocation(prog2D, "width");
+   uniform_ysize = glGetUniformLocation(prog2D, "height");
+   uniform_flip_horz = glGetUniformLocation(prog2D, "flip_horizontal");
+   uniform_flip_vert = glGetUniformLocation(prog2D, "flip_vertical");
+   uniform_rotation = glGetUniformLocation(prog2D, "rotation_vector");
+
+   prog3D = LoadShader("shaders/vertex_shader_2.txt", "shaders/fragment_shader_2.txt");
+
+   glUniform1i(glGetUniformLocation(prog3D, "tex"), 0);
+
+   uniform_view = glGetUniformLocation(prog3D, "view_matrix");
+   uniform_projection = glGetUniformLocation(prog3D, "projection_matrix");
+
+   glEnable(GL_BLEND);
+   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+   bg1 = GetSprite("png/bg1.png");
+}
+
+void SetShader(GLuint shader)
+{
+   if (progActive == shader)
+      return;
+
+   progActive = shader;
+   glUseProgram(progActive);
+}
+
+GLuint LoadShader(std::string vertex_path, std::string fragment_path)
+{
    GLuint vert;
    GLuint frag;
+   GLuint prog;
 
    prog = glCreateProgram();
    vert = glCreateShader(GL_VERTEX_SHADER);
    frag = glCreateShader(GL_FRAGMENT_SHADER);
 
-   std::string vert_shader;
-   std::string frag_shader;
-
-   read_shaders(vert_shader, frag_shader);
+   std::string vert_shader = read_shader(vertex_path);
+   std::string frag_shader = read_shader(fragment_path);
 
    const char *vert_char = vert_shader.c_str();
    const char *frag_char = frag_shader.c_str();
@@ -182,19 +222,19 @@ void init()
    glGetShaderiv(vert, GL_COMPILE_STATUS, &status_vert);
    if (status_vert == GL_FALSE)
    {
-	   shader_failed = true;
+      shader_failed = true;
    }
    int status_frag;
    glGetShaderiv(frag, GL_COMPILE_STATUS, &status_frag);
    if (status_frag == GL_FALSE)
    {
-	   shader_failed = true;
+      shader_failed = true;
    }
 
    if (shader_failed)
    {
-		std::cout << "Shader confirmed garbage. Learn how to program idiot" << std::endl;
-		std::cin.get();
+      std::cout << "Shader confirmed garbage. Learn how to program idiot" << std::endl;
+      std::cin.get();
    }
 
    glAttachShader(prog, vert);
@@ -203,28 +243,13 @@ void init()
    glBindAttribLocation(prog, POSITION_ATTRIB, "position");
    glBindAttribLocation(prog, COLOR_ATTRIB, "color");
    glBindAttribLocation(prog, TEX_ATTRIB, "tex_in");
-   
+
    glLinkProgram(prog);
    glUseProgram(prog);
 
    glValidateProgram(prog);
 
-   glUniform2f(glGetUniformLocation(prog, "uCameraSize"), constants::cameraSize.x, constants::cameraSize.y);
-
-   glUniform1i(glGetUniformLocation(prog, "tex"), 0);
-
-   uniform_xpos  = glGetUniformLocation(prog, "x_position");
-   uniform_ypos  = glGetUniformLocation(prog, "y_position");
-   uniform_xsize = glGetUniformLocation(prog, "width");
-   uniform_ysize = glGetUniformLocation(prog, "height");
-   uniform_flip_horz = glGetUniformLocation(prog, "flip_horizontal");
-   uniform_flip_vert = glGetUniformLocation(prog, "flip_vertical");
-   uniform_rotation = glGetUniformLocation(prog, "rotation_vector");
-
-   glEnable(GL_BLEND);
-   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-   bg1 = GetSprite("png/bg1.png");
+   return prog;
 }
 
 //set viewport in virtual camera coordinates
@@ -245,22 +270,9 @@ void setVirtualViewport(GLFWwindow* window, Vec2 min, Vec2 max)
 
 void render(GLFWwindow* window)
 { 
-
-   //unused currently.
-   //float ratio;
-   //ratio = width / (float)height;
-
    setVirtualViewport(window, Vec2(0.0f, 0.0f), constants::cameraSize);
    //glViewport(0, 0, width- UIPixels, height);
    glClear(GL_COLOR_BUFFER_BIT);
-
-//this does nothing, we're using shaders, derp
-
-//    glMatrixMode(GL_PROJECTION);
-//    glLoadIdentity();
-//    glOrtho(0, constants::cameraSize.x, 0, constants::cameraSize.y, 1.f, -1.f);
-//    glMatrixMode(GL_MODELVIEW);
-//    glLoadIdentity();
 
    //Draw the background
    Vec2 rotation_vector(cos(0), sin(0));
@@ -271,27 +283,6 @@ void render(GLFWwindow* window)
    glUniform1f(uniform_ysize, constants::cameraSize.y);
    glUniform2fv(uniform_rotation, 1, (const GLfloat*)&rotation_vector);
    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-   //window.drawSprite(960, 540, 0, 0, 0, bg1);
-
-   //glfwSwapBuffers(window);
-
-
-
-   //////
-   //glClear(GL_COLOR_BUFFER_BIT);
-
-   //glRotatef((float)glfwGetTime() * 50.f, 0.f, 0.f, 1.f);
-   //glBegin(GL_TRIANGLES);
-   //glColor3f(1.f, 0.f, 0.f);
-   //glVertex3f(-0.6f, -0.4f, 0.f);
-   //glColor3f(0.f, 1.f, 0.f);
-   //glVertex3f(0.6f, -0.4f, 0.f);
-   //glColor3f(0.f, 0.f, 1.f);
-   //glVertex3f(0.f, 0.6f, 0.f);
-   //glEnd();
-   //glfwSwapBuffers(window);
-   //glfwPollEvents();
 }
 
 void getOpenGLVersion(int& major, int& minor)
@@ -318,6 +309,26 @@ void getOpenGLVersion(int& major, int& minor)
 
    major = atoi(majorStr.c_str());
    minor = atoi(minorStr.c_str());
+}
+
+std::string read_shader(std::string file_path)
+{
+   std::string line;
+
+   std::string shader;
+
+   std::ifstream shaderfile(file_path);
+   if (shaderfile.is_open())
+   {
+      while (getline(shaderfile, line))
+      {
+         shader += line;
+         shader += "\n";
+      }
+      shaderfile.close();
+   }
+
+   return shader;
 }
 
 void read_shaders(std::string& vert_shader, std::string& frag_shader)
@@ -602,6 +613,7 @@ void Window::clear()
 
 void Window::drawSpriteStretched(float x, float y, float width, float height, int flip_horizontal, int flip_vertical, float rotation, Sprite* sprite)
 {
+   SetShader(prog2D);
 
    if (!sprite) sprite = &test_sprite;
    //int flip_horizontal = 0;
@@ -628,6 +640,40 @@ void Window::drawSprite(float x, float y, int flip_horizontal, int flip_vertical
 {
    if (!sprite) sprite = &test_sprite;
    drawSpriteStretched(x, y, sprite->width, sprite->height, flip_horizontal, flip_vertical, rotation, sprite);
+}
+
+void Window::drawSprite3D(Sprite* sprite)
+{
+   SetShader(prog3D);
+
+   if (!sprite) sprite = &test_sprite;
+
+   Vec3 position = Vec3(0.0, -0.5, 0.5);
+   Vec3 target = Vec3(0.0, 0.5, 0.0);
+   Vec3 up = Vec3(0.0, 0.0, 1.0);
+
+   Mat4 camera = Mat4::camera(position, target, up);
+
+   Mat4 project = Mat4::ortho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
+
+   glUniformMatrix4fv(uniform_view, 1, false, camera.data);
+   glUniformMatrix4fv(uniform_projection, 1, false, project.data);
+
+   glBindTexture(GL_TEXTURE_2D, sprite->texture_handle);
+   
+   
+   glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+   //float radians = degToRad(rotation);
+   //Vec2 rotation_vector(cos(radians), sin(radians));
+   //glBindTexture(GL_TEXTURE_2D, sprite->texture_handle);
+   //glUniform1f(uniform_xpos, x);
+   //glUniform1f(uniform_ypos, y);
+   //glUniform1f(uniform_xsize, width);
+   //glUniform1f(uniform_ysize, height);
+   //glUniform1i(uniform_flip_horz, flip_horizontal);
+   //glUniform1i(uniform_flip_vert, flip_vertical);
+   //glUniform2fv(uniform_rotation, 1, (const GLfloat*)&rotation_vector);
+   //glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }
 
 Sprite* GetSprite(std::string file_path)

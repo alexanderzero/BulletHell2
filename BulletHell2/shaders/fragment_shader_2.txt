@@ -1,0 +1,13 @@
+#version 150
+
+in vec3 vcol;
+in vec2 tex_out;
+
+out vec4 fcol;
+
+uniform sampler2D tex;
+
+void main(void) {
+    //fcol = vec4(vcol,1.0);
+    fcol = texture(tex,tex_out);
+}
