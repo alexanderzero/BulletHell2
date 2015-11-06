@@ -224,6 +224,8 @@
     <Image Include="png\fireball_1.png" />
     <Image Include="png\fireball_2.png" />
     <Image Include="png\flamingskull.png" />
+    <Image Include="png\ghost.png" />
+    <Image Include="png\gman.png" />
     <Image Include="png\lozange.png" />
     <Image Include="png\needle.png" />
     <Image Include="png\player_temp.png" />

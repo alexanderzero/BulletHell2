@@ -491,6 +491,73 @@ public:
    }
 };
 
+class SkullShot3 : public IShotType
+{
+public:
+	float angle;
+	float direction;
+	int timer = 0;
+	SkullShot3()
+	{
+		angle = 0.0;
+		direction = 1.0;
+	}
+	virtual void fire(BulletHellContext* context, Entity ent, Shot* shot)
+	{
+		timer++;
+		int average_switch_time = 300;
+		int switchr = randomInt(0, average_switch_time/getCooldown());
+		if (switchr == 0)
+			direction = -direction;
+
+		angle += 10.0*direction;
+
+		Vec2 position = ent.get<PositionComponent>()->pos;
+		Vec2 offset = polarToRect(degToRad(angle), 100.0f);
+		position -= offset;
+
+		int bullet_count = 20;
+		int second_count = 55;
+		int second_piece = 360.0 / second_count;
+		float piece = 360.0 / bullet_count;
+		for (size_t i = 0; i < bullet_count; i++)
+		{
+			Entity bullet(context->world);
+
+			float shot_angle = piece*i;
+
+			bullet.create<PositionComponent>(position);
+			bullet.create<VelocityComponent>(polarToRect(degToRad(shot_angle), 3.0));
+			bullet.create<RadiusComponent>(4.0);
+			bullet.create<SpriteComponent>("png/fireball_1.png");
+			bullet.create<EnemyBulletComponent>();
+
+			bullet.update();
+		}
+		if (timer % 3 == 0)
+		{
+			for (size_t i = 0; i < second_count; i++)
+			{
+				Entity bullet(context->world);
+
+				float shot_angle = second_piece*i;
+
+				bullet.create<PositionComponent>(position);
+				bullet.create<VelocityComponent>(polarToRect(degToRad(shot_angle), 3.0));
+				bullet.create<RadiusComponent>(4.0);
+				bullet.create<SpriteComponent>("png/fireball_2.png");
+				bullet.create<EnemyBulletComponent>();
+
+				bullet.update();
+			}
+		}
+	}
+	virtual int getCooldown()
+	{
+		return 10;
+	}
+};
+
 class SkullShot2 : public IShotType
 {
 public:
@@ -522,6 +589,41 @@ public:
    {
       return 20;
    }
+};
+
+class RandShot1 : public IShotType
+{
+	virtual void fire(BulletHellContext* context, Entity ent, Shot* shot)
+	{
+		Vec2 base_shot_direction = getPlayer(context).get<PositionComponent>()->pos;
+		base_shot_direction -= ent.get<PositionComponent>()->pos;
+
+		float base_angle = rectToPolar(base_shot_direction);
+		base_angle = radToDeg(base_angle);
+
+		float degree_difference = 7.0;
+		float starting_offset = -degree_difference * 2;
+		for (size_t i = 0; i < 5; i++)
+		{
+			Entity bullet(context->world);
+			Vec2 position = ent.get<PositionComponent>()->pos;
+
+			float shot_angle = base_angle + starting_offset;
+			shot_angle += degree_difference*i;
+
+			bullet.create<PositionComponent>(position);
+			bullet.create<VelocityComponent>(polarToRect(degToRad(shot_angle), 4.0));
+			bullet.create<RadiusComponent>(4.0);
+			bullet.create<SpriteComponent>("png/fireball_2.png");
+			bullet.create<EnemyBulletComponent>();
+
+			bullet.update();
+		}
+	}
+	virtual int getCooldown()
+	{
+		return 60 + randomInt(0,120);
+	}
 };
 
 
@@ -986,6 +1088,9 @@ void hackBuildTestShotTypes(EntitySystemView*& shotTypes)
    
    g_rawNonSpells.insert(std::make_pair("skullshot1", new SkullShot1));
    g_rawNonSpells.insert(std::make_pair("skullshot2", new SkullShot2));
+   g_rawNonSpells.insert(std::make_pair("skullshot3", new SkullShot3));
+
+   g_rawNonSpells.insert(std::make_pair("randshot1", new RandShot1));
 
    buildMeshOfLightAndDark();
    buildNueLaserBullets();

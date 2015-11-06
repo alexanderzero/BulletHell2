@@ -612,7 +612,7 @@ public:
 
       drawSpritesHacked(ctxt);
 
-      ctxt->window->drawSprite3D(GetSprite("png/flamingskull.png"));
+      //ctxt->window->drawSprite3D(GetSprite("png/flamingskull.png"));
 
       drawUI();
 

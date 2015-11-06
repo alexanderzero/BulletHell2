@@ -7,6 +7,7 @@
 #include "constants.hpp"
 #include <functional>
 #include "NameIndex.hpp"
+#include "random.hpp"
 
 #include "audio.hpp"
 
@@ -794,24 +795,24 @@ public:
 
    virtual void onEnter() override
    {
-      skull = Entity(ctxt->world);
+	   stuff_timer = 0;
+      gman = Entity(ctxt->world);
 
 
       //spawn her a bit to the left from center and off the screen.  She "flies in" as the first thing before she starts attacking.
       Vec2 pos(constants::cameraSize.x / 2, 900);
 
-      skull.create<PositionComponent>(pos);
+      gman.create<PositionComponent>(pos);
 
-      skull.create<EnemyComponent>();
-      skull.create<SizeComponent>(128.0f, 128.0f);
-
-      //most importantly....
-      skull.create<SpriteComponent>("png/flamingskull.png");
+      gman.create<EnemyComponent>();
+      gman.create<SizeComponent>(128.0f, 128.0f);
+      gman.create<SpriteComponent>("png/gman.png");
+	  gman.create<ShotComponent>(Shot("skullshot1"));
+	  gman.create<HealthComponent>(400);
 
       playBGM("music/bsong1.mp3");
 
-      skull.create<ShotComponent>(Shot("skullshot1"));
-      skull.create<HealthComponent>(100);
+
    }
 
    virtual void onUpdate() override
@@ -819,13 +820,38 @@ public:
       if (finished())
          return;
 
-      if (phase == 0 && skull.get<HealthComponent>()->hp <= 50)
-      {
-         for (auto shot : ctxt->world->system->entitiesWithComponent<EnemyBulletComponent>()) shot.destroy();
-         phase = 1;
-         //skull.get<ShotComponent>()->shots.push_back(Shot("skullshot2"));
-         skull.create<ShotComponent>(Shot("skullshot2"));
-      }
+	  stuff_timer++;
+
+	  if (stuff_timer % 500 == 0)
+	  {
+		  Entity robot(ctxt->world);
+
+		  Vec2 pos(constants::cameraSize.x / 2 + randomFloat(-200, 200), 900 + randomFloat(-100, 100));
+		  robot.create<PositionComponent>(pos);
+
+		  robot.create<EnemyComponent>();
+		  robot.create<SizeComponent>(40.0f, 40.0f);
+		  robot.create<SpriteComponent>("png/ghost.png");
+		  robot.create<ShotComponent>(Shot("randshot1"));
+		  robot.create<HealthComponent>(1);
+	  }
+
+	  if (phase == 0)
+	  {
+
+
+		if(gman.get<HealthComponent>()->hp <= 200)
+		  {
+			  for (auto shot : ctxt->world->system->entitiesWithComponent<EnemyBulletComponent>()) shot.destroy();
+			  phase = 1;
+			  //skull.get<ShotComponent>()->shots.push_back(Shot("skullshot2"));
+			  gman.create<ShotComponent>(Shot("skullshot3"));
+		  }
+	  }
+	  else if (phase == 1)
+	  {
+
+	  }
    }
 
    virtual bool finished() override
@@ -835,17 +861,18 @@ public:
 
    BulletHellContext* ctxt;
    int phase = 0;
-   Entity skull;
+   int stuff_timer;
+   Entity gman;
 };
 
 Level testLevelCreate(BulletHellContext* context)
 {
    Level out;
 
-   //out.sections.push_back(std::make_unique<TrevorSection>(context));
+   out.sections.push_back(std::make_unique<TrevorSection>(context));
    //out.sections.push_back(std::make_unique<CreateSomeTestEnemies>(context));
-   out.sections.push_back(std::make_unique<RanYakumoFromTouhouYouyoumuSection>(context));
-   out.sections.push_back(std::make_unique<WaitSection>(context, 60 * 60)); //1 minute of waiting
+   //out.sections.push_back(std::make_unique<RanYakumoFromTouhouYouyoumuSection>(context));
+   //out.sections.push_back(std::make_unique<WaitSection>(context, 60 * 60)); //1 minute of waiting
 
    return out;
 }

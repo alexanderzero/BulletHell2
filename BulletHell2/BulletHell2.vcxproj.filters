@@ -395,6 +395,12 @@
     <Image Include="png\ui.png">
       <Filter>Resource Files\png</Filter>
     </Image>
+    <Image Include="png\gman.png">
+      <Filter>Resource Files\png</Filter>
+    </Image>
+    <Image Include="png\ghost.png">
+      <Filter>Resource Files\png</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Text Include="shaders\fragment_shader_1.txt">
